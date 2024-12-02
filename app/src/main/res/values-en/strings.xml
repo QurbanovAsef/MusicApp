@@ -1,0 +1,83 @@
+<resources>
+    <!-- General -->
+    <string name="app_name">Blue Music</string>
+    <string name="welcome">Welcome!</string>
+    <string name="please_fill_fields">Please fill in the required fields to access our mobile app.</string>
+    <string name="please_fill_fields_register">Please fill in the required fields to register in our mobile app.</string>
+    <string name="email">Email</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="password">Password</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_apple">Continue with Apple</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="or">Or</string>
+    <string name="enter_username_or_email">Enter username or email</string>
+
+    <!-- Password Related -->
+    <string name="password_recovery">Password Recovery</string>
+    <string name="password_update">Update Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="please_fill_email">Please enter your email to recover your password.</string>
+
+    <!-- Playlist and Music -->
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="favorites">Favorites</string>
+    <string name="profile">Profile</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="no_results_found">No results found</string>
+    <string name="song_title">Song Title</string>
+    <string name="artist">Artist</string>
+    <string name="favorite_songs">Favorite Songs</string>
+
+    <!-- App Information -->
+    <string name="about_app">About App</string>
+    <string name="features">Features</string>
+    <string name="listen_music">• Listen to music\n• Create your playlists\n• Choose music quality</string>
+    <string name="version">Version</string>
+    <string name="version_number">Version 1.0.0</string>
+    <string name="contact">Contact</string>
+    <string name="support_email">Support: support@musicapp.com</string>
+
+    <!-- Error Messages -->
+    <string name="error_occurred">An error occurred. Please try again.</string>
+    <string name="enter_search_term">Please enter a search term</string>
+
+    <!-- Custom Additions -->
+    <string name="coldplay">Coldplay</string>
+    <string name="time_start">00:00</string>
+    <string name="time_end">00:00</string>
+    <string name="continue_">Continue</string>
+    <string name="Adjustments">Adjustments</string>
+    <string name="System_settings">System Settings</string>
+    <string name="User_data">User Data</string>
+    <string name="exit">Exit</string>
+    <string name="About_the_application">About the Application</string>
+    <string name="music_settings">Music Settings</string>
+    <string name="language_selection">Language Selection</string>
+    <string name="azerbaijani">Azerbaijani</string>
+    <string name="english">English</string>
+    <string name="theme_selection">Theme Selection</string>
+    <string name="light_mode">Light Mode</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="successfully_register">Your registration was successful!</string>
+    <string name="click_button">Click the button below to proceed to the main page of the application.</string>
+    <string name="go_to_home_page">Go to Home Page</string>
+    <string name="update_password">Update Password</string>
+    <string name="update_password_again">Update your password and re-enter our mobile app.</string>
+    <string name="new_password">New Password</string>
+    <string name="again_new_password">Repeat New Password</string>
+    <string name="user_name">Username</string>
+    <string name="user_email">email@example.com</string>
+    <string name="name">Name and Surname</string>
+    <string name="save">Save</string>
+    <string name="album_name">Album Name</string>
+    <string name="artist_name">Artist Name</string>
+    <string name="duration">Duration</string>
+</resources>

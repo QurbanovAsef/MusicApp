@@ -1,0 +1,86 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_color"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <!-- Album Art -->
+    <ImageView
+        android:id="@+id/notification_album_art"
+        android:layout_width="70dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/notification" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:orientation="vertical">
+
+        <!-- Title and Artist -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/notification_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/song_title"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/notification_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/artist"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Playback Controls -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <!-- Previous Button -->
+            <ImageButton
+                android:id="@+id/notification_previous"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="12dp"
+                android:src="@drawable/previous" />
+
+            <!-- Play/Pause Button -->
+            <ImageButton
+                android:id="@+id/notification_play_pause"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="12dp"
+                android:src="@drawable/play" />
+
+            <!-- Next Button -->
+            <ImageButton
+                android:id="@+id/notification_next"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="12dp"
+                android:src="@drawable/next" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

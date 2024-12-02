@@ -1,0 +1,84 @@
+<resources>
+    <!-- Ümumi -->
+    <string name="app_name">Blue Music</string>
+    <string name="welcome">Xoş gəlmisiniz!</string>
+    <string name="please_fill_fields">Mobil tətbiqimizə daxil olmaq üçün zəhmət olmasa uyğun xanaları doldurun</string>
+    <string name="please_fill_fields_register">Mobil tətbiqimizə daxil olmaq üçün zəhmət olmasa uyğun xanaları doldurun</string>
+    <string name="email">E-poçt</string>
+    <string name="email_hint">Emailinizi qeyd edin</string>
+    <string name="password">Şifrə</string>
+    <string name="password_hint">Şifrənizi daxil edin</string>
+    <string name="login">Daxil ol</string>
+    <string name="register">Qeydiyyatdan keç</string>
+    <string name="forgot_password">Şifrəmi unutdum</string>
+    <string name="continue_with_google">Google ilə davam et</string>
+    <string name="continue_with_apple">Apple ilə davam et</string>
+    <string name="no_account">Hesabınız yoxdur?</string>
+    <string name="already_have_account">Hesabınız var?</string>
+    <string name="or">Və ya</string>
+    <string name="enter_username_or_email">İstifadəçi adı və ya e-poçt qeyd edin</string>
+
+    <!-- Şifrə ilə əlaqəli -->
+    <string name="password_recovery">Şifrə bərpası</string>
+    <string name="password_update">Şifrəni yenilə</string>
+    <string name="confirm_password">Şifrənin təsdiqi</string>
+    <string name="repeat_password">Təkrar şifrə</string>
+    <string name="please_fill_email">Şifrənizi bərpa etmək üçün zəhmət olmasa emailinizi qeyd edin.</string>
+
+    <!-- Pleylist və musiqi -->
+    <string name="home">Ana səhifə</string>
+    <string name="search">Axtarış</string>
+    <string name="favorites">Favoritlər</string>
+    <string name="profile">Profil</string>
+    <string name="shuffle">Təsadüfi seç</string>
+    <string name="no_results_found">Nəticə tapılmadı</string>
+    <string name="song_title">Mahnının adı</string>
+    <string name="artist">İfaçı</string>
+    <string name="favorite_songs">Sevimli mahnılar</string>
+
+    <!-- Tətbiq məlumatları -->
+    <string name="about_app">Tətbiq Haqqında</string>
+    <string name="features">Xüsusiyyətlər</string>
+    <string name="listen_music">• Musiqi dinləmək\n• Öz pleylistlərinizi yaratmaq\n• Musiqi keyfiyyətini seçmək</string>
+    <string name="version">Versiya</string>
+    <string name="version_number">Versiya 1.0.0</string>
+    <string name="contact">Əlaqə</string>
+    <string name="support_email">Dəstək üçün: support@musicapp.com</string>
+
+    <!-- Hata mesajları -->
+    <string name="error_occurred">Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.</string>
+    <string name="enter_search_term">Zəhmət olmasa axtarış sözünü daxil edin</string>
+
+    <!-- menim elave etdiklerim -->
+    <string name="coldplay">soyuq oyun</string>
+    <string name="time_start">00:00</string>
+    <string name="time_end">00:00</string>
+    <string name="continue_">Davam et</string>
+    <string name="Adjustments">Tənzimləmələr</string>
+    <string name="System_settings">Sistem tənzimləmələri</string>
+    <string name="User_data">İstifadəçi məlumatları</string>
+    <string name="exit">Çıxış</string>
+    <string name="About_the_application">Tətbiq haqqında</string>
+    <string name="music_settings">Musiqi Parametrləri</string>
+    <string name="language_selection">Dil Seçimi</string>
+    <string name="azerbaijani">Azərbaycan</string>
+    <string name="english">İngilis</string>
+    <string name="theme_selection">Tema Seçimi</string>
+    <string name="light_mode">İşıq rejimi</string>
+    <string name="dark_mode">Qaranlıq rejim</string>
+    <string name="successfully_register">Qeydiyyatınız uğurla tamamlandı!</string>
+    <string name="click_button">Aşağıdakı düyməyə klikləməklə tətbiqin əsas səhifəsinə keçə bilərsiniz.</string>
+    <string name="go_to_home_page">Əsas səhifəyə keç</string>
+    <string name="update_password">Parolu yeniləyin</string>
+    <string name="update_password_again">Şifrənizi yeniləyin və mobil tətbiqimizə yenidən daxil olun.</string>
+    <string name="new_password">Yeni şifrə</string>
+    <string name="again_new_password">Təkrar yeni şifrə</string>
+    <string name="user_name">İstifadəçi Adı</string>
+    <string name="user_email">email@example.com</string>
+    <string name="name">Ad və soyad</string>
+    <string name="save">Yadda saxla</string>
+    <string name="album_name">Albom Adı</string>
+    <string name="artist_name">İfaçı Adı</string>
+    <string name="duration">Müddət</string>
+    <string name="a">A</string>
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "499685239329",
+    "project_id": "music-player-effff",
+    "storage_bucket": "music-player-effff.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499685239329:android:a7fdc4f15cc3746821d160",
+        "android_client_info": {
+          "package_name": "com.example.androidprojecttest1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAU7GNQmp5yInYbLSaHZjF9qa5EPg3adek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

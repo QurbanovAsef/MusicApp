@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <!-- Login Fragment -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.music.presentation.auth.login.LoginFragment"
+        tools:layout="@layout/fragment_login">
+        <!-- Action from Login to Registration -->
+        <action
+            android:id="@+id/action_login_to_registration"
+            app:destination="@id/registration" />
+        <!-- Action from Login to SuccessfullyRegister -->
+        <action
+            android:id="@+id/action_loginFragment_to_passwordRecovery"
+            app:destination="@id/passwordRecovery" />
+        <action
+            android:id="@+id/action_loginFragment_to_successfullyRegister2"
+            app:destination="@id/successfullyRegister2" />
+    </fragment>
+
+    <!-- Registration Fragment -->
+    <fragment
+        android:id="@+id/registration"
+        android:name="com.example.music.presentation.auth.register.Registration"
+        tools:layout="@layout/fragment_registration">
+        <!-- Action from Registration back to Login -->
+        <action
+            android:id="@+id/action_registration_to_login"
+            app:destination="@id/loginFragment" />
+        <!-- Action from Registration to SuccessfullyRegister -->
+        <action
+            android:id="@+id/action_registration_to_successfullyRegister2"
+            app:destination="@id/successfullyRegister2" />
+    </fragment>
+
+    <!-- Password Recovery Fragment -->
+    <fragment
+        android:id="@+id/passwordRecovery"
+        android:name="com.example.music.presentation.auth.forgot_password.PasswordRecovery"
+        android:label="PasswordRecovery">
+        <action
+            android:id="@+id/action_passwordRecovery_to_updatePassword"
+            app:destination="@id/updatePassword" />
+    </fragment>
+
+    <!-- Update Password Fragment -->
+    <fragment
+        android:id="@+id/updatePassword"
+        android:name="com.example.music.presentation.auth.forgot_password.UpdatePassword"
+        android:label="UpdatePassword">
+        <action
+            android:id="@+id/action_updatePassword_to_successfullyRegister2"
+            app:destination="@id/successfullyRegister2" />
+    </fragment>
+
+    <!-- Successfully Register Fragment -->
+    <fragment
+        android:id="@+id/successfullyRegister2"
+        android:name="com.example.music.presentation.auth.register.SuccessfullyRegister"
+        android:label="SuccessfullyRegister">
+        <action
+            android:id="@+id/action_successfullyRegister2_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+
+
+    <!-- Home Fragment -->
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.music.presentation.auth.bottomMenu.home.HomeFragment"
+        android:label="HomeFragment" />
+
+    <!-- Search Fragment -->
+    <fragment
+        android:id="@+id/nav_search"
+        android:name="com.example.music.presentation.auth.bottomMenu.search.SearchFragment"
+        android:label="SearchFragment" />
+
+    <!-- Favorite Fragment -->
+    <fragment
+        android:id="@+id/nav_heart"
+        android:name="com.example.music.presentation.auth.bottomMenu.favorite.FavoriteFragment"
+        android:label="FavoriteFragment" />
+
+    <!-- Profile Fragment -->
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.music.presentation.auth.bottomMenu.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+
+
+    <action
+        android:id="@+id/action_HomeFragment"
+        app:destination="@id/nav_home" />
+
+    <action
+        android:id="@+id/action_MusicFragment"
+        app:destination="@id/musicFragment"/>
+    <fragment
+        android:id="@+id/aboutAppFragment"
+        android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.AboutAppFragment"
+        android:label="fragment_about_app"
+        tools:layout="@layout/fragment_about_app" />
+    <fragment
+        android:id="@+id/userInfoFragment"
+        android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.UserInfoFragment"
+        android:label="fragment_user_info"
+        tools:layout="@layout/fragment_user_info" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <!-- News Fragment -->
+    <fragment
+        android:id="@+id/newsFragment"
+        android:name="com.example.music.presentation.auth.bottomMenu.home.fragmens.NewsFragment"
+        android:label="NewsFragment">
+        <action
+            android:id="@+id/action_newsFragment_to_musicFragment"
+            app:destination="@id/musicFragment" />
+    </fragment>
+
+    <!-- Music Fragment -->
+    <fragment
+        android:id="@+id/musicFragment"
+        android:name="com.example.music.presentation.auth.bottomMenu.music.MusicFragment"
+        android:label="MusicFragment">
+        <argument
+            android:name="song"
+            app:argType="com.example.music.data.model.response.PlaylistItem"
+            app:nullable="true" />
+        <argument
+            android:name="show"
+            app:argType="com.example.music.data.model.response.ShowResponse"
+            app:nullable="true" />
+    </fragment>
+
+
+
+
+
+</navigation>

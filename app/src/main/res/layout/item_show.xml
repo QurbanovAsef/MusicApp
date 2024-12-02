@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grey"
+    android:padding="8dp">
+
+    <!-- Şou tarixi -->
+    <TextView
+        android:id="@+id/showDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Show Date"
+        android:textColor="@color/text_color_primary"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Şou məkanı -->
+    <TextView
+        android:id="@+id/showVenue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Venue"
+        android:textColor="@color/text_color_primary"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/showDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Şou yeri -->
+    <TextView
+        android:id="@+id/showLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:textColor="@color/text_color_primary"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/showVenue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Mahnı sayı -->
+    <TextView
+        android:id="@+id/showTracksCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Tracks Count"
+        android:textColor="@color/text_color_primary"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/showLocation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
