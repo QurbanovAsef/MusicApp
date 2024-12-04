@@ -1,5 +1,6 @@
 package com.example.music.data.service
 
+import ShowResponse
 import SongResponse
 import com.example.music.data.model.request.CommentRequest
 import com.example.music.data.model.request.SongRequest
@@ -13,6 +14,9 @@ interface MusicApiService {
 
     @GET("search")
     suspend fun searchSongs(@Query("term") searchTerm: String): Response<SearchResponse>
+    @GET("shows")
+    suspend fun getAllShows(): Response<ShowResponse> // Bu metod düzgün tərtib edilib
+
 
     @GET("songs")
     suspend fun getAllSongs(): Response<List<PlaylistItem>>
@@ -74,8 +78,8 @@ interface MusicApiService {
 
     // **7. Şoular və Treklər**
 
-    @GET("shows")
-    suspend fun getAllShows(): Response<AllShowsResponse>
+//    @GET("shows")
+//    suspend fun getAllShows(): Response<AllShowsResponse>
 
     @GET("shows/{show_date}/tracks")
     suspend fun getTracksByShow(

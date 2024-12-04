@@ -1,19 +1,18 @@
 package com.example.music.data.retrofit
 
 import com.example.music.data.service.MusicApiService
+import com.google.android.gms.common.api.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 
 object RetrofitInstance {
-
-    private const val BASE_URL = "https://phish.in/api/v2/" // API URL
-
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()) // JSON dönüşümü
+        .baseUrl("https://phish.in/api/v2/")
+        .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    fun create(): MusicApiService {
-        return retrofit.create(MusicApiService::class.java)
+    val api: MusicApiService by lazy {
+        retrofit.create(MusicApiService::class.java)
     }
 }

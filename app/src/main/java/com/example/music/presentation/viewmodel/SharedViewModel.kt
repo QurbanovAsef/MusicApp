@@ -1,12 +1,12 @@
 package com.example.music.presentation.viewmodel
 
+import ShowResponse
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.music.data.model.response.PlaylistItem
-import com.example.music.data.model.response.ShowResponse
 import com.example.music.data.retrofit.RetrofitInstance
 import kotlinx.coroutines.launch
 
@@ -24,12 +24,11 @@ class SharedViewModel : ViewModel() {
     fun getAllShows() {
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.create().getAllShows()
+                val response = RetrofitInstance.api.getAllShows()  // RetrofitInstance ilə API çağırışı
                 if (response.isSuccessful) {
-                    val show = response.body()
-
-                    _allShows.value = show?.shows.orEmpty()
-
+                    _allShows.value = response.body()?.let {
+                        listOf(it) // Json cavabında bir şou olduğu üçün onu bir siyahıya çeviririk
+                    }.orEmpty()
                 } else {
                     Log.e("SharedViewModel", "API Error: ${response.message()}")
                 }
@@ -43,7 +42,7 @@ class SharedViewModel : ViewModel() {
     fun getAllSongs() {
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.create().getAllSongs()
+                val response = RetrofitInstance.api.getAllSongs()  // Use RetrofitInstance.api
                 if (response.isSuccessful) {
                     _allSongs.value = response.body()?.map {
                         PlaylistItem(
@@ -61,13 +60,6 @@ class SharedViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("SharedViewModel", "Error: ${e.message}")
             }
-        }
-    }
-    fun toggleFavorite(song: PlaylistItem) {
-        if (isFavorite(song)) {
-            removeFavorite(song)
-        } else {
-            addFavorite(song)
         }
     }
 
