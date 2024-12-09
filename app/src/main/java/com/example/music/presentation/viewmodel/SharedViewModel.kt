@@ -38,8 +38,6 @@ class SharedViewModel : ViewModel() {
             }
         }
     }
-
-
     fun getAllSongs() {
         viewModelScope.launch {
             try {

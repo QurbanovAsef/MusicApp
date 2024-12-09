@@ -5,14 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ShowResponse(
-    val id: Int = 0, // Default olaraq 0
-    val date: String = "", // Default olaraq boş string
-    val venue: String = "",
-    val location: String = "",
-    val tracks_count: Int? = 0 // Default olaraq 0
+    val id: Int,
+    val name: String,
+    val date: String,
+    val venue: String,
+    val location: String,
+    val tracksCount: Int
 ) : Parcelable
-
-
-data class AllShowsResponse(
-    val shows: List<ShowResponse>
-)

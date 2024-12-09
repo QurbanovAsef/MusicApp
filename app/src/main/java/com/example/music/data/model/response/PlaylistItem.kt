@@ -9,6 +9,6 @@ data class PlaylistItem(
     val title: String,
     val artist: String,
     val duration: String,
-    val url: String,  // Mahnı URL-i
+    val url: String,
     var isLiked: Boolean = false
 ) : Parcelable

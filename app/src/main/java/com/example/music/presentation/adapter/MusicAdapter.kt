@@ -25,11 +25,11 @@ class MusicAdapter(
     }
 
     override fun getItemCount(): Int = songs.size
-
     fun setItems(newSongs: List<PlaylistItem>) {
         songs = newSongs.toMutableList()
         notifyDataSetChanged()
     }
+
 
     inner class MusicViewHolder(private val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {

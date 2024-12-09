@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidprojecttest1.databinding.ItemShowBinding
-import com.example.music.data.model.response.AllShowsResponse
 import com.example.music.data.model.response.ShowResponse
 
 class ShowAdapter(
     private val onItemClick: (ShowResponse) -> Unit
 ) : RecyclerView.Adapter<ShowAdapter.ShowViewHolder>() {
+
     private var items: List<ShowResponse> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowViewHolder {
@@ -35,7 +35,7 @@ class ShowAdapter(
             binding.showDate.text = show.date
             binding.showVenue.text = show.venue
             binding.showLocation.text = show.location
-            binding.showTracksCount.text = "Tracks: ${show.tracks_count}"
+            binding.showTracksCount.text = "Tracks: ${show.tracksCount}"
             binding.root.setOnClickListener { onItemClick(show) }
         }
     }
