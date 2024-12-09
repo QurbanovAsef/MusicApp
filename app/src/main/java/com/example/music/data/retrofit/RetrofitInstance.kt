@@ -13,7 +13,5 @@ object RetrofitInstance {
         .addConverterFactory(GsonConverterFactory.create()) // JSON dönüşümü
         .build()
 
-    fun create(): MusicApiService {
-        return retrofit.create(MusicApiService::class.java)
-    }
+    val api: MusicApiService = retrofit.create(MusicApiService::class.java)
 }
