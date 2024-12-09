@@ -15,15 +15,15 @@ interface MusicApiService {
     @GET("shows/{show_date}/tracks")
     suspend fun getTracksByShow(
         @Path("show_date") showDate: String
-    ): Response<List<SongResponse>>
+    ): Response<List<ShowsResponse>>
 
     // Bütün mahnıların siyahısı
     @GET("songs")
-    suspend fun getAllSongs(): Response<List<SongResponse>>
+    suspend fun getAllSongs(): Response<List<Song>>
 
     // Mahnının detalları
     @GET("songs/{id}")
     suspend fun getSongDetails(
         @Path("id") id: Int
-    ): Response<SongResponse>
+    ): Response<Song>
 }

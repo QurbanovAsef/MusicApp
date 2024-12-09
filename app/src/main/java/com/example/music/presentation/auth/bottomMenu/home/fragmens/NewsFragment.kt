@@ -14,6 +14,7 @@ import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentNewsBinding
 import com.example.music.presentation.adapter.MusicAdapter
 import com.example.music.presentation.adapter.ShowAdapter
+import com.example.music.presentation.adapter.SongsAdapter
 import com.example.music.presentation.viewmodel.SharedViewModel
 
 class NewsFragment : Fragment(R.layout.fragment_news) {
@@ -23,6 +24,8 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
     private val sharedViewModel by viewModels<SharedViewModel>()
     private lateinit var showAdapter: ShowAdapter
     private lateinit var musicAdapter: MusicAdapter
+    private lateinit var songsAdapter: SongsAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -62,7 +65,6 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         binding.songRecyclerView.adapter = musicAdapter
         binding.songRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        // API-dən məlumatların alınması
         sharedViewModel.getAllShows()
         sharedViewModel.getAllSongs()
 

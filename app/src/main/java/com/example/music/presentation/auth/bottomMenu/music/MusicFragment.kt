@@ -123,7 +123,6 @@ class MusicFragment : Fragment() {
             }
         }
     }
-
     private fun playSongAt(index: Int) {
         currentSong = songsList[index]
         updateUI(currentSong!!)
@@ -134,7 +133,6 @@ class MusicFragment : Fragment() {
         binding.songName.text = song.title
         binding.artistName.text = song.artist
         binding.startTime.text = "00:00"
-        binding.endTime.text = formatMillisToTime(parseDurationToMillis(song.duration))
     }
 
     private fun parseDurationToMillis(duration: String): Long {

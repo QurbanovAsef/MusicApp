@@ -1,15 +1,22 @@
 package com.example.music.data.model.response
 
 import android.os.Parcelable
+import com.google.gson.JsonElement
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ShowsResponse(
     val shows: List<Show>? = null,
-    val totalPages: Int? = null,
-    val currentPage: Int? = null,
-    val totalEntries: Int? = null
+    val songs: List<Song>? = null,
+    @SerializedName("total_pages")
+    val totalPages: Long? = null,
+
+    @SerializedName("current_page")
+    val currentPage: Long? = null,
+
+    @SerializedName("total_entries")
+    val totalEntries: Long? = null
 ) : Parcelable
 
 
@@ -36,6 +43,14 @@ data class Show(
 ) : Parcelable
 
 @Parcelize
+data class Song(
+    val slug: String? = null,
+    val title: String? = null,
+    val artist: String? = null,
+    @SerializedName("tracks_count") val tracksCount: Long? = null,
+    @SerializedName("updated_at") val updatedAt: String? = null
+) : Parcelable
+@Parcelize
 data class CoverArtUrls(
     val large: String? = null,
     val medium: String? = null,
@@ -43,9 +58,10 @@ data class CoverArtUrls(
 ) : Parcelable
 
 enum class TourName {
-    DividedSkyFoundationBenefit2024,
-    SummerTour2024
+    DIVIDED_SKY_FOUNDATION_BENEFIT_2024,
+    SUMMER_TOUR_2024
 }
+
 
 @Parcelize
 data class Venue(

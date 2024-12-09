@@ -21,13 +21,17 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
         _binding = FragmentFavoriteBinding.bind(view)
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
-        adapter = FavoriteAdapter(mutableListOf()) { song ->
-            sharedViewModel.removeFavorite(song) // Favoritdən silmək
-        }
+        adapter = FavoriteAdapter({ song ->
+            // Mahnıya tıkladıqda onun detallarına keç
+            sharedViewModel.removeFavorite(song)
+        }, { song ->
+            // Mahnıya bəyənmə/dislike funksiyasını çağırır
+            sharedViewModel.toggleFavorite(song)
+        })
         binding.favoriteRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.favoriteRecyclerView.adapter = adapter
 
-        // Observe favoriteSongs LiveData
+        // Favorite songs-u observer edirik
         sharedViewModel.favoriteSongs.observe(viewLifecycleOwner) { updatedSongs ->
             adapter.updateData(updatedSongs)
         }
