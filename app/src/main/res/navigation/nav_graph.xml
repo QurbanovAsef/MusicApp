@@ -137,7 +137,7 @@
             app:nullable="true" />
         <argument
             android:name="show"
-            app:argType="com.example.music.data.model.response.ShowResponse"
+            app:argType="com.example.music.data.model.response.ShowsResponse"
             app:nullable="true" />
 
     </fragment>

@@ -9,7 +9,7 @@ interface MusicApiService {
 
     // Bütün Şouların Alınması
     @GET("shows")
-    suspend fun getAllShows(): Response<AllShowsResponse>
+    suspend fun getAllShows(): Response<ShowsResponse>
 
     // Şouya aid treklərin alınması
     @GET("shows/{show_date}/tracks")

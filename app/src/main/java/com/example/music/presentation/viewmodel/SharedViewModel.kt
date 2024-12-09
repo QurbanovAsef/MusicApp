@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.music.data.model.response.PlaylistItem
-import com.example.music.data.model.response.ShowResponse
+import com.example.music.data.model.response.Show
+import com.example.music.data.model.response.ShowsResponse
 import com.example.music.data.model.response.SongResponse
 import com.example.music.data.retrofit.RetrofitInstance
 import kotlinx.coroutines.launch
@@ -19,8 +20,8 @@ class SharedViewModel : ViewModel() {
     private val _allSongs = MutableLiveData<List<PlaylistItem>>()
     val allSongs: LiveData<List<PlaylistItem>> get() = _allSongs
 
-    private val _allShows = MutableLiveData<List<ShowResponse>>()
-    val allShows: LiveData<List<ShowResponse>> get() = _allShows
+    private val _allShows = MutableLiveData<List<Show>>()
+    val allShows: LiveData<List<Show>> get() = _allShows
 
     private val _tracksByShow = MutableLiveData<List<SongResponse>>()
     val tracksByShow: LiveData<List<SongResponse>> get() = _tracksByShow

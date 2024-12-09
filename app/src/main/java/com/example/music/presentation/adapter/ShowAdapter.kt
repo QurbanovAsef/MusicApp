@@ -1,16 +1,19 @@
 package com.example.music.presentation.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.databinding.ItemShowBinding
-import com.example.music.data.model.response.ShowResponse
+import com.example.music.data.model.response.Show
+import com.example.music.data.model.response.ShowsResponse
 
 class ShowAdapter(
-    private val onItemClick: (ShowResponse) -> Unit
+    private val onItemClick: (Show) -> Unit
 ) : RecyclerView.Adapter<ShowAdapter.ShowViewHolder>() {
 
-    private var items: List<ShowResponse> = emptyList()
+    private var items: List<Show> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowViewHolder {
         val binding = ItemShowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,7 +26,7 @@ class ShowAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    fun setItems(newItems: List<ShowResponse>) {
+    fun setItems(newItems: List<Show>) {
         items = newItems
         notifyDataSetChanged()
     }
@@ -31,12 +34,18 @@ class ShowAdapter(
     inner class ShowViewHolder(private val binding: ItemShowBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(show: ShowResponse) {
-            binding.showDate.text = show.date
-            binding.showVenue.text = show.venue
-            binding.showLocation.text = show.location
-            binding.showTracksCount.text = "Tracks: ${show.tracksCount}"
-            binding.root.setOnClickListener { onItemClick(show) }
+        @SuppressLint("SetTextI18n")
+        fun bind(show: Show) = with(binding){
+           showDate.text = show.date
+           showVenue.text = show.venueName ?: "Venue name"
+           showLocation.text = show.venue?.location ?: "Location not found"
+           showTracksCount.text = "Tracks: ${show.venue?.showsCount ?: 0}"
+
+            Glide.with(itemView.context) // Pass the context
+                .load(show.albumCoverURL) // URL or local image
+                .into(imageShow) // Target ImageView
+
+           root.setOnClickListener { onItemClick(show) }
         }
     }
 }
