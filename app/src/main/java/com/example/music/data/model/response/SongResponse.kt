@@ -1,3 +1,5 @@
+package com.example.music.data.model.response
+
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 

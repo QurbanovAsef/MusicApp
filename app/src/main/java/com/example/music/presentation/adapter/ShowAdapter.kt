@@ -1,15 +1,19 @@
 package com.example.music.presentation.adapter
 
-import ShowResponse
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.databinding.ItemShowBinding
+import com.example.music.data.model.response.Show
+import com.example.music.data.model.response.ShowsResponse
 
 class ShowAdapter(
-    private val onItemClick: (ShowResponse) -> Unit // Burada ShowResponse modelini qəbul edirik
+    private val onItemClick: (Show) -> Unit
 ) : RecyclerView.Adapter<ShowAdapter.ShowViewHolder>() {
-    private var items: List<ShowResponse> = emptyList() // ShowResponse tipi
+
+    private var items: List<Show> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowViewHolder {
         val binding = ItemShowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,7 +26,7 @@ class ShowAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    fun setItems(newItems: List<ShowResponse>) { // ShowResponse tipi
+    fun setItems(newItems: List<Show>) {
         items = newItems
         notifyDataSetChanged()
     }
@@ -30,12 +34,18 @@ class ShowAdapter(
     inner class ShowViewHolder(private val binding: ItemShowBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(show: ShowResponse) { // ShowResponse tipi
-            binding.showDate.text = show.date
-            binding.showVenue.text = show.venue_name
-            binding.showLocation.text = show.venue.location // Venue obyekti daxilində location var
-            binding.showTracksCount.text = "Tracks: ${show.tracks.size}" // Tracks sayı
-            binding.root.setOnClickListener { onItemClick(show) }
+        @SuppressLint("SetTextI18n")
+        fun bind(show: Show) = with(binding){
+           showDate.text = show.date
+           showVenue.text = show.venueName ?: "Venue name"
+           showLocation.text = show.venue?.location ?: "Location not found"
+           showTracksCount.text = "Tracks: ${show.venue?.showsCount ?: 0}"
+
+            Glide.with(itemView.context) // Pass the context
+                .load(show.albumCoverURL) // URL or local image
+                .into(imageShow) // Target ImageView
+
+           root.setOnClickListener { onItemClick(show) }
         }
     }
 }

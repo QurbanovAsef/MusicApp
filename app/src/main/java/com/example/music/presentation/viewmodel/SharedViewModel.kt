@@ -1,12 +1,14 @@
 package com.example.music.presentation.viewmodel
 
-import ShowResponse
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.music.data.model.response.PlaylistItem
+import com.example.music.data.model.response.Show
+import com.example.music.data.model.response.ShowsResponse
+import com.example.music.data.model.response.SongResponse
 import com.example.music.data.retrofit.RetrofitInstance
 import kotlinx.coroutines.launch
 
@@ -18,17 +20,21 @@ class SharedViewModel : ViewModel() {
     private val _allSongs = MutableLiveData<List<PlaylistItem>>()
     val allSongs: LiveData<List<PlaylistItem>> get() = _allSongs
 
-    private val _allShows = MutableLiveData<List<ShowResponse>>()
-    val allShows: LiveData<List<ShowResponse>> get() = _allShows
+    private val _allShows = MutableLiveData<List<Show>>()
+    val allShows: LiveData<List<Show>> get() = _allShows
+
+    private val _tracksByShow = MutableLiveData<List<SongResponse>>()
+    val tracksByShow: LiveData<List<SongResponse>> get() = _tracksByShow
+
+    private val _songDetails = MutableLiveData<SongResponse?>()
+    val songDetails: LiveData<SongResponse?> get() = _songDetails
 
     fun getAllShows() {
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getAllShows()  // RetrofitInstance ilə API çağırışı
+                val response = RetrofitInstance.api.getAllShows()
                 if (response.isSuccessful) {
-                    _allShows.value = response.body()?.let {
-                        listOf(it) // Json cavabında bir şou olduğu üçün onu bir siyahıya çeviririk
-                    }.orEmpty()
+                    _allShows.value = response.body()?.shows ?: emptyList()
                 } else {
                     Log.e("SharedViewModel", "API Error: ${response.message()}")
                 }
@@ -38,11 +44,10 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-
     fun getAllSongs() {
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getAllSongs()  // Use RetrofitInstance.api
+                val response = RetrofitInstance.api.getAllSongs()
                 if (response.isSuccessful) {
                     _allSongs.value = response.body()?.map {
                         PlaylistItem(
@@ -63,25 +68,36 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    fun getTracksByShow(showDate: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.getTracksByShow(showDate)
+                if (response.isSuccessful) {
+                    _tracksByShow.value = response.body() ?: emptyList()
+                } else {
+                    Log.e("SharedViewModel", "API Error: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("SharedViewModel", "Error: ${e.message}")
+            }
+        }
+    }
 
-//    fun getSongDetails(songId: Int) {
-//        viewModelScope.launch {
-//            try {
-//                val response = RetrofitInstance.create().getSongDetails(songId)
-//                if (response.isSuccessful) {
-//                    val songDetail = response.body()
-//                    Log.d("SongDetails", songDetail.toString())
-//                } else {
-//                    Log.e("SharedViewModel", "API Error: ${response.message()}")
-//                }
-//            } catch (e: Exception) {
-//                Log.e("SharedViewModel", "Error: ${e.message}")
-//            }
-//        }
-//    }
+    fun getSongDetails(songId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.getSongDetails(songId)
+                if (response.isSuccessful) {
+                    _songDetails.value = response.body()
+                } else {
+                    Log.e("SharedViewModel", "API Error: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                Log.e("SharedViewModel", "Error: ${e.message}")
+            }
+        }
+    }
 
-
-    // Favoritlərə musiqi əlavə edir
     fun addFavorite(song: PlaylistItem): Boolean {
         _favoriteSongs.value?.let {
             if (isFavorite(song)) return false
@@ -91,7 +107,6 @@ class SharedViewModel : ViewModel() {
         return true
     }
 
-    // Favoritdən musiqini silir
     fun removeFavorite(song: PlaylistItem) {
         _favoriteSongs.value?.let {
             it.removeIf { it.id == song.id }
@@ -99,8 +114,15 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    // Mahnının favoritdə olub-olmamasını yoxlayırıq
     fun isFavorite(song: PlaylistItem): Boolean {
         return _favoriteSongs.value?.any { it.id == song.id } == true
+    }
+
+    fun toggleFavorite(song: PlaylistItem) {
+        if (isFavorite(song)) {
+            removeFavorite(song)
+        } else {
+            addFavorite(song)
+        }
     }
 }

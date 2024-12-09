@@ -1,10 +1,12 @@
 package com.example.music.presentation.auth.bottomMenu.home.fragmens
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +20,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
     private var _binding: FragmentNewsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var sharedViewModel: SharedViewModel
+    private val sharedViewModel by viewModels<SharedViewModel>()
     private lateinit var showAdapter: ShowAdapter
     private lateinit var musicAdapter: MusicAdapter
 
@@ -31,8 +33,6 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
         // Şou Adapter
         showAdapter = ShowAdapter { show ->

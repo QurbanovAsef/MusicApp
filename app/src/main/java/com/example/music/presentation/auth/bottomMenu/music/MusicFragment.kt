@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentMusicBinding
 import com.example.music.data.model.response.PlaylistItem
-import com.example.music.data.model.response.ShowResponse
+import com.example.music.data.model.response.Show
+import com.example.music.data.model.response.ShowsResponse
 import com.example.music.presentation.viewmodel.SharedViewModel
 
 class MusicFragment : Fragment() {
@@ -38,7 +40,7 @@ class MusicFragment : Fragment() {
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
         // Göstərilən "show" məlumatı və ya seçilən mahnı məlumatı alınır
-        val show = arguments?.getParcelable<ShowResponse>("show")
+        val show = arguments?.getParcelable<Show>("show")
         currentSong = arguments?.getParcelable("song")
 
         // API-dən mahnılar alınır
@@ -106,6 +108,10 @@ class MusicFragment : Fragment() {
                 }
             }
             isLiked = !isLiked
+        }
+
+        binding.backArrow.setOnClickListener {
+            findNavController().popBackStack()
         }
 
         sharedViewModel.favoriteSongs.observe(viewLifecycleOwner) {

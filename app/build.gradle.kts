@@ -61,8 +61,8 @@ dependencies {
     implementation(libs.hilt)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.retrofit2.kotlin.coroutines.adapter)
 
     implementation(libs.coroutines)
     implementation(libs.androidx.core.ktx)
@@ -75,4 +75,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation (libs.glide) // Check for the latest version
+    annotationProcessor (libs.compiler)
 }

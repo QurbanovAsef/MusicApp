@@ -8,8 +8,10 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ActivityContainer2Binding
+import com.example.music.presentation.viewmodel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,11 +20,15 @@ class ContainerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContainer2Binding
     private lateinit var sharedPreferences: SharedPreferences
 
+    private lateinit var sharedViewModel: SharedViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Layout-u binding vasitəsilə qururuq
         binding = ActivityContainer2Binding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
         // SharedPreferences-dən tema seçimlərini yüklə
         sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
