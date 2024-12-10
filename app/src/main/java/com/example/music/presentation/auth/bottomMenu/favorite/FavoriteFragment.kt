@@ -28,6 +28,7 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
             // Mahnıya bəyənmə/dislike funksiyasını çağırır
             sharedViewModel.toggleFavorite(song)
         })
+
         binding.favoriteRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.favoriteRecyclerView.adapter = adapter
 

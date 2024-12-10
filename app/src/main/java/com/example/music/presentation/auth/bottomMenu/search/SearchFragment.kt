@@ -30,10 +30,12 @@ class SearchFragment : Fragment() {
 
         binding.searchIcon.setOnClickListener {
             val query = binding.searchEditText.text.toString()
-            viewModel.getAllSongs() // Filtrləmə funksiyasını əlavə edə bilərik.
+            if (query.isNotEmpty()) {
+                searchSongs(query) // Axtarışı işə salırıq
+            }
         }
 
-        viewModel.allSongs.observe(viewLifecycleOwner) { songs ->
+        viewModel.searchResults.observe(viewLifecycleOwner) { songs ->
             if (songs.isEmpty()) {
                 binding.emptyStateTextView.visibility = View.VISIBLE
             } else {
@@ -41,6 +43,10 @@ class SearchFragment : Fragment() {
                 searchAdapter.setItems(songs)
             }
         }
+    }
+
+    private fun searchSongs(query: String) {
+        viewModel.searchSongs(query) // ViewModel vasitəsilə axtarış sorğusunu göndəririk
     }
 
     private fun setupRecyclerView() {

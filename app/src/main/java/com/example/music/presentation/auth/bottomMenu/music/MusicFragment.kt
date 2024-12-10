@@ -2,18 +2,19 @@ package com.example.music.presentation.auth.bottomMenu.music
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentMusicBinding
-import com.example.music.data.model.response.PlaylistItem
 import com.example.music.data.model.response.Show
-import com.example.music.data.model.response.ShowsResponse
+import com.example.music.data.model.response.Song
 import com.example.music.presentation.viewmodel.SharedViewModel
 
 class MusicFragment : Fragment() {
@@ -24,9 +25,10 @@ class MusicFragment : Fragment() {
     private var mediaPlayer: MediaPlayer? = null
     private var isPlaying = false
     private var isLiked = false
-    private var currentSong: PlaylistItem? = null
-    private var songsList: List<PlaylistItem> = listOf()
+    private var currentSong: Song? = null
+    private var songsList: List<Song> = listOf()
     private var currentSongIndex = 0
+    private val handler = Handler()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -39,7 +41,7 @@ class MusicFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
-        // Göstərilən "show" məlumatı və ya seçilən mahnı məlumatı alınır
+        // Argumentlərdən mahnı və ya şou məlumatını alırıq
         val show = arguments?.getParcelable<Show>("show")
         currentSong = arguments?.getParcelable("song")
 
@@ -70,6 +72,7 @@ class MusicFragment : Fragment() {
                 mediaPlayer?.start()
                 binding.playPauseButton.setImageResource(R.drawable.ic_pause)
                 Toast.makeText(requireContext(), "Playing", Toast.LENGTH_SHORT).show()
+                updateSeekBar() // Start updating the SeekBar
             }
             isPlaying = !isPlaying
         }
@@ -94,14 +97,14 @@ class MusicFragment : Fragment() {
             }
         }
 
-        // "Like" düyməsi
+        // Like düyməsi
         binding.likeButton.setOnClickListener {
             if (isLiked) {
                 binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)
                 currentSong?.let { sharedViewModel.removeFavorite(it) }
             } else {
                 val addedSuccessfully = currentSong?.let { sharedViewModel.addFavorite(it) } ?: false
-                if (addedSuccessfully) {
+                if (addedSuccessfully as Boolean) {
                     binding.likeButton.setImageResource(R.drawable.ic_favorite_full)
                 } else {
                     Toast.makeText(requireContext(), "Already in Favorites", Toast.LENGTH_SHORT).show()
@@ -110,10 +113,12 @@ class MusicFragment : Fragment() {
             isLiked = !isLiked
         }
 
+        // Geri gedən düymə
         binding.backArrow.setOnClickListener {
             findNavController().popBackStack()
         }
 
+        // Favoritləri izləmək
         sharedViewModel.favoriteSongs.observe(viewLifecycleOwner) {
             currentSong?.let {
                 isLiked = sharedViewModel.isFavorite(it)
@@ -122,48 +127,94 @@ class MusicFragment : Fragment() {
                 )
             }
         }
+
+        // SeekBar-ın toxunulabilir olması
+        binding.progressBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    mediaPlayer?.seekTo(progress)
+                    binding.startTime.text = formatTime(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
     }
+
+    // Mahnı siyahısında mövcud olan bir mahnını oynamaq
     private fun playSongAt(index: Int) {
         currentSong = songsList[index]
         updateUI(currentSong!!)
         setupMediaPlayer(currentSong!!)
     }
 
-    private fun updateUI(song: PlaylistItem) {
+    // UI-nı yeniləyirik
+    private fun updateUI(song: Song) {
         binding.songName.text = song.title
         binding.artistName.text = song.artist
         binding.startTime.text = "00:00"
+        binding.endTime.text = formatTime(song.tracksCount?.toInt() ?: 0)
     }
 
-    private fun parseDurationToMillis(duration: String): Long {
-        val parts = duration.split(":")
-        return (parts[0].toInt() * 60 + parts[1].toInt()) * 1000L
-    }
-
-    private fun formatMillisToTime(millis: Long): String {
-        val minutes = (millis / 1000) / 60
-        val seconds = (millis / 1000) % 60
-        return String.format("%02d:%02d", minutes, seconds)
-    }
-
-    private fun setupMediaPlayer(song: PlaylistItem) {
+    // MediaPlayer qurulması və oynadılması
+    private fun setupMediaPlayer(song: Song) {
         mediaPlayer?.release()
-        mediaPlayer?.apply {
-            if (!isPlaying) {
+        mediaPlayer = MediaPlayer().apply {
+            song.url?.let {
+                setDataSource(it) // Song URL-sini stream etmək
+            } ?: run {
+                Toast.makeText(requireContext(), "Song URL is missing", Toast.LENGTH_SHORT).show()
+                return@apply
+            }
+            prepareAsync()
+            setOnPreparedListener {
                 start()
                 binding.playPauseButton.setImageResource(R.drawable.ic_pause)
                 this@MusicFragment.isPlaying = true
+                updateSeekBar() // Start updating the SeekBar
             }
 
-
-        setOnCompletionListener {
+            setOnCompletionListener {
                 this@MusicFragment.isPlaying = false
                 binding.playPauseButton.setImageResource(R.drawable.ic_play)
                 Toast.makeText(requireContext(), "Song finished", Toast.LENGTH_SHORT).show()
+                binding.progressBar.progress = 0 // Reset SeekBar after song completion
+                binding.startTime.text = "00:00"
+            }
+
+            setOnErrorListener { mp, what, extra ->
+                Toast.makeText(requireContext(), "Error: $what, $extra", Toast.LENGTH_SHORT).show()
+                false
             }
         }
     }
 
+    // SeekBar-ı yeniləyirik
+    private fun updateSeekBar() {
+        val totalDuration = mediaPlayer?.duration ?: 0
+        binding.progressBar.max = totalDuration
+
+        val updateRunnable = object : Runnable {
+            override fun run() {
+                val currentPosition = mediaPlayer?.currentPosition ?: 0
+                binding.progressBar.progress = currentPosition
+                binding.startTime.text = formatTime(currentPosition)
+                handler.postDelayed(this, 1000) // Update every second
+            }
+        }
+
+        handler.postDelayed(updateRunnable, 0)
+    }
+
+    // Format time as MM:SS
+    private fun formatTime(milliseconds: Int): String {
+        val seconds = (milliseconds / 1000) % 60
+        val minutes = (milliseconds / 1000) / 60
+        return String.format("%02d:%02d", minutes, seconds)
+    }
+
+    // Fragmentdən ayrılarkən MediaPlayer resurslarını təmizləyirik
     override fun onDestroyView() {
         super.onDestroyView()
         mediaPlayer?.release()
