@@ -1,10 +1,12 @@
 package com.example.music.data.service
 
-import com.example.music.data.model.response.*
+import com.example.music.data.model.response.SearchResponse
+import com.example.music.data.model.response.ShowsResponse
+import com.example.music.data.model.response.Song
+import com.example.music.data.model.response.SongsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface MusicApiService {
 
@@ -21,12 +23,14 @@ interface MusicApiService {
     // Bütün mahnıların siyahısı
     @GET("songs")
     suspend fun getSongs(): Response<SongsResponse>
+
     // Mahnının detalları
-    @GET("songs/{id}")
+    @GET("songs/{slug}")
     suspend fun getSongDetails(
-        @Path("id") id: Int
-    ): Response<SongsResponse>
+        @Path("slug") id: Int
+    ): Response<Song>
+
     // Mahnıların axtarılması
-    @GET("songs/search")
-    suspend fun searchSongs(@Query("query") query: String): Response<List<Song>> // Axtarış üçün yeni metod
+    @GET("search/{key}")
+    suspend fun searchSongs(@Path("key") key: String): Response<SearchResponse> // Axtarış üçün yeni metod
 }

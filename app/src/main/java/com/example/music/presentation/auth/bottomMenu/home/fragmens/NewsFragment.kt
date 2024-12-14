@@ -5,21 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentNewsBinding
+import com.example.music.data.entity.toMusicEntity
+import com.example.music.data.entity.toMusicListFromShows
+import com.example.music.data.entity.toMusicListFromSongs
 import com.example.music.presentation.adapter.ShowAdapter
 import com.example.music.presentation.adapter.SongsAdapter
 import com.example.music.presentation.viewmodel.SharedViewModel
+
 class NewsFragment : Fragment(R.layout.fragment_news) {
 
     private var _binding: FragmentNewsBinding? = null
     private val binding get() = _binding!!
-    private val sharedViewModel by viewModels<SharedViewModel>()
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
     private lateinit var showAdapter: ShowAdapter
     private lateinit var songsAdapter: SongsAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -32,10 +37,13 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
         // Set up ShowAdapter and SongsAdapter correctly
         showAdapter = ShowAdapter { show ->
-            val bundle = Bundle().apply {
-                putParcelable("show", show)
-            }
-            findNavController().navigate(R.id.musicFragment, bundle)
+            val musicList = show.toMusicListFromShows()
+
+            if (musicList.isEmpty()) {
+                sharedViewModel.setPlayerSongs(songsAdapter.items.toMusicListFromSongs())
+            } else
+                sharedViewModel.setPlayerSongs(musicList)
+            findNavController().navigate(R.id.musicFragment)
         }
         binding.showRecyclerView.adapter = showAdapter
         binding.showRecyclerView.layoutManager =
@@ -43,10 +51,8 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
         songsAdapter = SongsAdapter(
             onItemClick = { song ->
-                val bundle = Bundle().apply {
-                    putParcelable("song", song)
-                }
-                findNavController().navigate(R.id.musicFragment, bundle)
+                sharedViewModel.setPlayerSongs(songsAdapter.items.toMusicListFromSongs(), song.toMusicEntity())
+                findNavController().navigate(R.id.musicFragment)
             },
             onLikeDislike = { song ->
                 sharedViewModel.toggleFavorite(song)

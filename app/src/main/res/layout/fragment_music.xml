@@ -50,7 +50,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/albumArt"
+        android:id="@+id/songImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="100dp"
@@ -74,7 +74,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/likeButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/albumArt" />
+        app:layout_constraintTop_toBottomOf="@id/songImage" />
 
 
     <ImageView

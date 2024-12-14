@@ -3,30 +3,32 @@ package com.example.music.presentation.auth.bottomMenu.music
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentMusicBinding
+import com.example.music.data.entity.MusicEntity
 import com.example.music.data.model.response.Show
-import com.example.music.data.model.response.Song
 import com.example.music.presentation.viewmodel.SharedViewModel
 
 class MusicFragment : Fragment() {
 
     private var _binding: FragmentMusicBinding? = null
     private val binding get() = _binding!!
-    private lateinit var sharedViewModel: SharedViewModel
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private var mediaPlayer: MediaPlayer? = null
     private var isPlaying = false
     private var isLiked = false
-    private var currentSong: Song? = null
-    private var songsList: List<Song> = listOf()
+    private var currentSong: MusicEntity? = null
+    private var songsList: List<MusicEntity> = listOf()
     private var currentSongIndex = 0
     private val handler = Handler()
 
@@ -39,22 +41,32 @@ class MusicFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
         // Argumentlərdən mahnı və ya şou məlumatını alırıq
         val show = arguments?.getParcelable<Show>("show")
-        currentSong = arguments?.getParcelable("song")
+//        currentSong = arguments?.getParcelable("song")
 
         // API-dən mahnılar alınır
-        sharedViewModel.getAllSongs()
+//        sharedViewModel.getAllSongs()
 
-        sharedViewModel.allSongs.observe(viewLifecycleOwner) { songs ->
+
+        currentSong = sharedViewModel.playerActiveMusic
+        sharedViewModel.playerMusicList.observe(viewLifecycleOwner) { songs ->
+            if (songs.isEmpty()) {
+                Toast.makeText(requireContext(), "No song found", Toast.LENGTH_SHORT).show()
+                return@observe
+            }
+
             songsList = songs
-            if (currentSong == null && songs.isNotEmpty()) {
+            if (currentSong == null) {
                 currentSong = songs[0]
                 currentSongIndex = 0
             } else {
-                currentSongIndex = songsList.indexOf(currentSong)
+                currentSongIndex = songsList.indexOfFirst { it.slug == currentSong?.slug }
+                if (currentSongIndex == -1) {
+                    currentSong = songs[0]
+                    currentSongIndex = 0
+                }
             }
             currentSong?.let {
                 updateUI(it)
@@ -67,11 +79,9 @@ class MusicFragment : Fragment() {
             if (isPlaying) {
                 mediaPlayer?.pause()
                 binding.playPauseButton.setImageResource(R.drawable.ic_play)
-                Toast.makeText(requireContext(), "Paused", Toast.LENGTH_SHORT).show()
             } else {
                 mediaPlayer?.start()
                 binding.playPauseButton.setImageResource(R.drawable.ic_pause)
-                Toast.makeText(requireContext(), "Playing", Toast.LENGTH_SHORT).show()
                 updateSeekBar() // Start updating the SeekBar
             }
             isPlaying = !isPlaying
@@ -150,21 +160,27 @@ class MusicFragment : Fragment() {
     }
 
     // UI-nı yeniləyirik
-    private fun updateUI(song: Song) {
-        binding.songName.text = song.title
-        binding.artistName.text = song.artist
-        binding.startTime.text = "00:00"
-        binding.endTime.text = formatTime(song.tracksCount?.toInt() ?: 0)
+    private fun updateUI(song: MusicEntity) = with(binding) {
+        songName.text = song.title
+        artistName.text = song.artist
+        startTime.text = "00:00"
+
+        Glide.with(requireContext()) // Pass the context
+            .load(song.imageUrl) // URL or local image
+            .into(songImage) // Target ImageView
     }
 
     // MediaPlayer qurulması və oynadılması
-    private fun setupMediaPlayer(song: Song) {
+    private fun setupMediaPlayer(song: MusicEntity) {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
-            song.url?.let {
+            song.trackUrl?.let {
+                Log.d("DDDDD", it)
+                if (it.isEmpty())
+                    return
                 setDataSource(it) // Song URL-sini stream etmək
             } ?: run {
-                Toast.makeText(requireContext(), "Song URL is missing", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Song URL not found", Toast.LENGTH_SHORT).show()
                 return@apply
             }
             prepareAsync()
@@ -178,29 +194,32 @@ class MusicFragment : Fragment() {
             setOnCompletionListener {
                 this@MusicFragment.isPlaying = false
                 binding.playPauseButton.setImageResource(R.drawable.ic_play)
-                Toast.makeText(requireContext(), "Song finished", Toast.LENGTH_SHORT).show()
                 binding.progressBar.progress = 0 // Reset SeekBar after song completion
                 binding.startTime.text = "00:00"
             }
 
             setOnErrorListener { mp, what, extra ->
                 Toast.makeText(requireContext(), "Error: $what, $extra", Toast.LENGTH_SHORT).show()
+                Log.d("MediaPlayerLog", "Song:   ${song.trackUrl}")
                 false
             }
         }
     }
 
     // SeekBar-ı yeniləyirik
-    private fun updateSeekBar() {
+    private fun updateSeekBar() = with(binding) {
         val totalDuration = mediaPlayer?.duration ?: 0
-        binding.progressBar.max = totalDuration
+        progressBar.max = totalDuration
+        endTime.text = formatTime(totalDuration)
 
         val updateRunnable = object : Runnable {
             override fun run() {
-                val currentPosition = mediaPlayer?.currentPosition ?: 0
-                binding.progressBar.progress = currentPosition
-                binding.startTime.text = formatTime(currentPosition)
-                handler.postDelayed(this, 1000) // Update every second
+                if (isAdded) {
+                    val currentPosition = mediaPlayer?.currentPosition ?: 0
+                    progressBar.progress = currentPosition
+                    startTime.text = formatTime(currentPosition)
+                    handler.postDelayed(this, 1000) // Update every second
+                }
             }
         }
 

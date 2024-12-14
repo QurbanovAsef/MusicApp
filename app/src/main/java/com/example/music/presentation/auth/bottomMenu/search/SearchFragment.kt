@@ -4,10 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentSearchBinding
+import com.example.music.data.entity.toMusicListFromShows
 import com.example.music.presentation.adapter.SearchAdapter
 import com.example.music.presentation.viewmodel.SharedViewModel
 
@@ -15,7 +20,7 @@ class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: SharedViewModel
+    private val viewModel: SharedViewModel by activityViewModels()
     private lateinit var searchAdapter: SearchAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -25,7 +30,6 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[SharedViewModel::class.java]
         setupRecyclerView()
 
         binding.searchIcon.setOnClickListener {
@@ -36,7 +40,10 @@ class SearchFragment : Fragment() {
         }
 
         viewModel.searchResults.observe(viewLifecycleOwner) { songs ->
+            binding.progressBar.isVisible = false
+
             if (songs.isEmpty()) {
+                Toast.makeText(requireContext(), "Songs not found", Toast.LENGTH_SHORT).show()
                 binding.emptyStateTextView.visibility = View.VISIBLE
             } else {
                 binding.emptyStateTextView.visibility = View.GONE
@@ -46,12 +53,14 @@ class SearchFragment : Fragment() {
     }
 
     private fun searchSongs(query: String) {
+        binding.progressBar.isVisible = true
         viewModel.searchSongs(query) // ViewModel vasitəsilə axtarış sorğusunu göndəririk
     }
 
     private fun setupRecyclerView() {
-        searchAdapter = SearchAdapter { song ->
-            viewModel.addFavorite(song)
+        searchAdapter = SearchAdapter { show ->
+            viewModel.setPlayerSongs(show.toMusicListFromShows())
+            findNavController().navigate(R.id.musicFragment)
         }
         binding.recyclerView.adapter = searchAdapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)

@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.databinding.ItemShowBinding
 import com.example.music.data.model.response.Show
-import com.example.music.data.model.response.ShowsResponse
 
 class ShowAdapter(
     private val onItemClick: (Show) -> Unit
 ) : RecyclerView.Adapter<ShowAdapter.ShowViewHolder>() {
 
-    private var items: List<Show> = emptyList()
+    var items: List<Show> = emptyList()
+        private set
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowViewHolder {
         val binding = ItemShowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -35,17 +35,17 @@ class ShowAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(show: Show) = with(binding){
-           showDate.text = show.date
-           showVenue.text = show.venueName ?: "Venue name"
-           showLocation.text = show.venue?.location ?: "Location not found"
-           showTracksCount.text = "Tracks: ${show.venue?.showsCount ?: 0}"
+        fun bind(show: Show) = with(binding) {
+            showDate.text = show.date
+            showVenue.text = show.venueName ?: "Venue name"
+            showLocation.text = show.venue?.location ?: "Location not found"
+            showTracksCount.text = "Tracks: ${show.venue?.showsCount ?: 0}"
 
             Glide.with(itemView.context) // Pass the context
                 .load(show.albumCoverURL) // URL or local image
                 .into(imageShow) // Target ImageView
 
-           root.setOnClickListener { onItemClick(show) }
+            root.setOnClickListener { onItemClick(show) }
         }
     }
 }

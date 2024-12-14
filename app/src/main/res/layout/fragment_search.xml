@@ -57,6 +57,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchCardView" />
@@ -69,6 +70,7 @@
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/no_results_found"
+        android:visibility="gone"
         android:textColor="@color/text_color_primary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"

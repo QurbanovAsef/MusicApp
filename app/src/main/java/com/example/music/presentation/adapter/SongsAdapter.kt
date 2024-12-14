@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.androidprojecttest1.R
+import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.databinding.ItemSongBinding
 import com.example.music.data.model.response.Song
 
@@ -13,7 +13,8 @@ class SongsAdapter(
     private val onLikeDislike: (Song) -> Unit
 ) : RecyclerView.Adapter<SongsAdapter.SongViewHolder>() {
 
-    private var items: List<Song> = emptyList()
+    var items: List<Song> = emptyList()
+        private set
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
         val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -40,9 +41,12 @@ class SongsAdapter(
             songArtist.text = song.artist ?: "Naməlum İfaçı" // İfaçının adı
             songDuration.text = "Müddət: ${song.tracksCount ?: "Bilinmir"}" // Mahnının müddəti
 
+            Glide.with(root.context) // Pass the context
+                .load(song.imageUrl) // URL or local image
+                .into(songImage) // Target ImageView
+
             // Mahnıya toxunduqda detallarına keçid
             root.setOnClickListener { onItemClick(song) }
-
 
             favoriteIcon.setOnClickListener {
                 onLikeDislike(song)

@@ -38,7 +38,9 @@ data class Show(
     @SerializedName("updated_at")
     val updatedAt: String? = null,
     @SerializedName("liked_by_user")
-    val likedByUser: Boolean? = null
+    val likedByUser: Boolean? = null,
+    @SerializedName("tracks")
+    val tracks: List<TrackResponse>? = null
 ) : Parcelable
 
 @Parcelize
@@ -63,7 +65,7 @@ data class Venue(
     @SerializedName("shows_count")
     val showsCount: Int? = null,
     @SerializedName("updated_at")
-    val updatedAt: String? = null
+    val updatedAt: String? = null,
 ) : Parcelable
 
 enum class TourName {

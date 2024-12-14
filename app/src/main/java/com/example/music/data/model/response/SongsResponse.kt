@@ -27,8 +27,10 @@ data class Song(
     val tracksCount: Long? = null,
     @SerializedName("updated_at")
     val updatedAt: String? = null,
-    @SerializedName("url") // Bu sahəni API-dən alacağımız URL üçün əlavə edirik
-    val url: String? = null,  // URL sahəsi
+    @SerializedName("mp3_url")
+    val mp3Url: String? = null,  // URL sahəsi
+    val trackUrl: String? = null,  // URL sahəsi
+    val imageUrl: String? = null,  // URL sahəsi
     var isLiked: Boolean = false // Yeni sahə
 ) : Parcelable
 
