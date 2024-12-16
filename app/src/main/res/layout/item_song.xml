@@ -4,7 +4,7 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp"
-    android:background="@color/background_color"
+    app:cardBackgroundColor="@color/background_color"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
@@ -48,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00:00"
+                android:visibility="gone"
                 android:textSize="14sp"
                 android:textColor="@color/text_color_primary" />
         </LinearLayout>
@@ -57,6 +58,7 @@
             android:id="@+id/favoriteIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:visibility="gone"
             android:src="@drawable/ic_favorite_empty" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

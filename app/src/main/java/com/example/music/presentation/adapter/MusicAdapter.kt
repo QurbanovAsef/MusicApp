@@ -2,6 +2,7 @@
 package com.example.music.presentation.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidprojecttest1.R
@@ -36,9 +37,8 @@ class MusicAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(song: Song, onItemClick: (Song) -> Unit, onLikeDislike: (Song) -> Unit) {
-            binding.songTitle.text = song.title ?: "Naməlum Mahnı"
-            binding.songArtist.text = song.artist ?: "Naməlum İfaçı"
-            binding.songDuration.text = "Müddət: ${song.tracksCount ?: "Bilinmir"}"
+            binding.songTitle.text = song.title ?: "Unknown Song"
+            binding.songArtist.text = song.artist ?: "Unknown Artist"
 
             binding.root.setOnClickListener { onItemClick(song) }
 

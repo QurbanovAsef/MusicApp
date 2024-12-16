@@ -11,6 +11,7 @@ import com.example.music.presentation.adapter.FavoriteAdapter
 import com.example.music.presentation.viewmodel.SharedViewModel
 
 class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
+
     private var _binding: FragmentFavoriteBinding? = null
     private val binding get() = _binding!!
     private lateinit var sharedViewModel: SharedViewModel
@@ -19,20 +20,26 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentFavoriteBinding.bind(view)
+
+        // ViewModel-i inicializasiya edirik
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 
-        adapter = FavoriteAdapter({ song ->
-            // Mahnıya tıkladıqda onun detallarına keç
-            sharedViewModel.removeFavorite(song)
-        }, { song ->
-            // Mahnıya bəyənmə/dislike funksiyasını çağırır
-            sharedViewModel.toggleFavorite(song)
-        })
+        // Adapteri inicializasiya edirik
+        adapter = FavoriteAdapter(
+            onItemClick = { selectedSong ->
 
+            },
+            onLikeDislike = { song ->
+                // Burada mahnının 'like' və ya 'dislike' vəziyyətini dəyişə bilərsiniz
+                sharedViewModel.toggleFavorite(song)
+            }
+        )
+
+        // RecyclerView üçün LayoutManager və Adapter təyin edilir
         binding.favoriteRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.favoriteRecyclerView.adapter = adapter
 
-        // Favorite songs-u observer edirik
+        // Favorit mahnılar siyahısını izləyirik
         sharedViewModel.favoriteSongs.observe(viewLifecycleOwner) { updatedSongs ->
             adapter.updateData(updatedSongs)
         }

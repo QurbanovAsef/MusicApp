@@ -17,6 +17,7 @@ import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentMusicBinding
 import com.example.music.data.entity.MusicEntity
 import com.example.music.data.model.response.Show
+import com.example.music.data.model.response.Song
 import com.example.music.presentation.viewmodel.SharedViewModel
 
 class MusicFragment : Fragment() {
@@ -27,7 +28,8 @@ class MusicFragment : Fragment() {
     private var mediaPlayer: MediaPlayer? = null
     private var isPlaying = false
     private var isLiked = false
-    private var currentSong: MusicEntity? = null
+    private var currentSong: Song? = null
+    private var currentSongEntity: MusicEntity? = null
     private var songsList: List<MusicEntity> = listOf()
     private var currentSongIndex = 0
     private val handler = Handler()
@@ -44,13 +46,21 @@ class MusicFragment : Fragment() {
 
         // Argumentlərdən mahnı və ya şou məlumatını alırıq
         val show = arguments?.getParcelable<Show>("show")
-//        currentSong = arguments?.getParcelable("song")
+        currentSong = arguments?.getParcelable("song")
+        currentSongEntity = arguments?.getParcelable("songEntity")
 
-        // API-dən mahnılar alınır
-//        sharedViewModel.getAllSongs()
+        currentSong?.let {
+            updateUI(it)
+            isLiked = sharedViewModel.isFavorite(it)
+            updateLikeButton()
+        }
 
+        currentSongEntity?.let {
+            updateUI(it)
+            isLiked = sharedViewModel.isFavorite(it.toSong())
+            updateLikeButton()
+        }
 
-        currentSong = sharedViewModel.playerActiveMusic
         sharedViewModel.playerMusicList.observe(viewLifecycleOwner) { songs ->
             if (songs.isEmpty()) {
                 Toast.makeText(requireContext(), "No song found", Toast.LENGTH_SHORT).show()
@@ -58,21 +68,22 @@ class MusicFragment : Fragment() {
             }
 
             songsList = songs
-            if (currentSong == null) {
-                currentSong = songs[0]
+            if (currentSongEntity == null) {
+                currentSongEntity = songs[0]
                 currentSongIndex = 0
             } else {
-                currentSongIndex = songsList.indexOfFirst { it.slug == currentSong?.slug }
+                currentSongIndex = songsList.indexOfFirst { it.slug == currentSongEntity?.slug }
                 if (currentSongIndex == -1) {
-                    currentSong = songs[0]
+                    currentSongEntity = songs[0]
                     currentSongIndex = 0
                 }
             }
-            currentSong?.let {
+            currentSongEntity?.let {
                 updateUI(it)
                 setupMediaPlayer(it)
             }
         }
+
 
         // Play/Pause düyməsi funksionallığı
         binding.playPauseButton.setOnClickListener {
@@ -113,11 +124,13 @@ class MusicFragment : Fragment() {
                 binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)
                 currentSong?.let { sharedViewModel.removeFavorite(it) }
             } else {
-                val addedSuccessfully = currentSong?.let { sharedViewModel.addFavorite(it) } ?: false
+                val addedSuccessfully =
+                    currentSong?.let { sharedViewModel.addFavorite(it) } ?: false
                 if (addedSuccessfully as Boolean) {
                     binding.likeButton.setImageResource(R.drawable.ic_favorite_full)
                 } else {
-                    Toast.makeText(requireContext(), "Already in Favorites", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Already in Favorites", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
             isLiked = !isLiked
@@ -154,21 +167,48 @@ class MusicFragment : Fragment() {
 
     // Mahnı siyahısında mövcud olan bir mahnını oynamaq
     private fun playSongAt(index: Int) {
-        currentSong = songsList[index]
-        updateUI(currentSong!!)
-        setupMediaPlayer(currentSong!!)
+        currentSongEntity = songsList[index]
+        currentSongEntity?.let {
+            updateUI(it)
+            setupMediaPlayer(it)
+        }
     }
 
-    // UI-nı yeniləyirik
-    private fun updateUI(song: MusicEntity) = with(binding) {
-        songName.text = song.title
-        artistName.text = song.artist
-        startTime.text = "00:00"
-
-        Glide.with(requireContext()) // Pass the context
-            .load(song.imageUrl) // URL or local image
-            .into(songImage) // Target ImageView
+    private fun updateUI(song: Song) {
+        binding.songTitle.text = song.title
+        binding.artistName.text = song.artist
     }
+
+    private fun updateUI(songEntity: MusicEntity) {
+        binding.songTitle.text = songEntity.title
+        binding.artistName.text = songEntity.artist
+    }
+
+    private fun handleLikeDislike(song: Song) {
+        if (isLiked) {
+            sharedViewModel.removeFavorite(song)
+        } else {
+            sharedViewModel.addFavorite(song)
+        }
+        isLiked = !isLiked
+        updateLikeButton()
+    }
+
+    private fun handleLikeDislike(songEntity: MusicEntity) {
+        if (isLiked) {
+            sharedViewModel.removeFavorite(songEntity.toSong())
+        } else {
+            sharedViewModel.addFavorite(songEntity.toSong())
+        }
+        isLiked = !isLiked
+        updateLikeButton()
+}
+    private fun updateLikeButton() {
+        binding.likeButton.setImageResource(
+            if (isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+        )
+    }
+
 
     // MediaPlayer qurulması və oynadılması
     private fun setupMediaPlayer(song: MusicEntity) {
@@ -225,18 +265,27 @@ class MusicFragment : Fragment() {
 
         handler.postDelayed(updateRunnable, 0)
     }
-
+    private fun MusicEntity.toSong(): Song {
+        return Song(
+            slug = this.slug,
+            title = this.title,
+            artist = this.artist,
+            trackUrl = this.trackUrl,
+            imageUrl = this.imageUrl,
+            isLiked = true
+        )
+    }
     // Format time as MM:SS
     private fun formatTime(milliseconds: Int): String {
         val seconds = (milliseconds / 1000) % 60
         val minutes = (milliseconds / 1000) / 60
         return String.format("%02d:%02d", minutes, seconds)
     }
-
-    // Fragmentdən ayrılarkən MediaPlayer resurslarını təmizləyirik
     override fun onDestroyView() {
         super.onDestroyView()
-        mediaPlayer?.release()
         _binding = null
     }
 }
+
+
+

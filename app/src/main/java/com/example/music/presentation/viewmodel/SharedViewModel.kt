@@ -45,6 +45,10 @@ class SharedViewModel : ViewModel() {
         "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg",
     )
 
+
+    private val _playerMusicList = MutableLiveData<List<MusicEntity>>(emptyList())
+    val playerMusicList: LiveData<List<MusicEntity>> get() = _playerMusicList
+
     private val _favoriteSongs = MutableLiveData<List<Song>>(emptyList())
     val favoriteSongs: LiveData<List<Song>> get() = _favoriteSongs
 
@@ -72,9 +76,6 @@ class SharedViewModel : ViewModel() {
 
             modifiedList
         }
-
-    private val _playerMusicList = MutableLiveData<List<MusicEntity>>(emptyList())
-    val playerMusicList: LiveData<List<MusicEntity>> get() = _playerMusicList
 
     var playerActiveMusic: MusicEntity? = null
         private set
@@ -126,48 +127,11 @@ class SharedViewModel : ViewModel() {
     }
 
 
-//    fun getTracksByShow(showDate: String) {
-//        viewModelScope.launch {
-//            try {
-//                val response = RetrofitInstance.api.getTracksByShow(showDate)
-//                if (response.isSuccessful) {
-//                    _tracksByShow.value = response.body() ?: emptyList()
-//                } else {
-//                    Log.e("SharedViewModel", "API Error: ${response.message()}")
-//                }
-//            } catch (e: Exception) {
-//                Log.e("SharedViewModel", "Error: ${e.message}")
-//            }
-//        }
-//    }
-
-    //    fun getSongDetails(songId: Int) {
-//        viewModelScope.launch {
-//            try {
-//                val response = RetrofitInstance.api.getSongDetails(songId)
-//                if (response.isSuccessful) {
-//                    _songDetails.value = response.body()
-//                } else {
-//                    Log.e("SharedViewModel", "API Error: ${response.message()}")
-//                }
-//            } catch (e: Exception) {
-//                Log.e("SharedViewModel", "Error: ${e.message}")
-//            }
-//        }
-//    }
-//
     fun addFavorite(song: Song) {
         val currentList = _favoriteSongs.value.orEmpty().toMutableList()
         if (currentList.none { it.slug == song.slug }) {
-            currentList.add(song)
-            song.isLiked = true
+            currentList.add(song.copy(isLiked = true))
             _favoriteSongs.value = currentList
-        }
-    }
-
-    fun addFavorite(song: MusicEntity) {
-        _allSongs.value?.find { it.slug == song.slug }?.let {
-            addFavorite(it)
         }
     }
 
@@ -178,11 +142,8 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun removeFavorite(music: MusicEntity) {
-        val currentList = _favoriteSongs.value.orEmpty().toMutableList()
-        if (currentList.removeIf { it.slug == music.slug }) {
-            _favoriteSongs.value = currentList
-        }
+    fun isFavorite(song: Song): Boolean {
+        return _favoriteSongs.value?.any { it.slug == song.slug } == true
     }
 
 
@@ -193,16 +154,6 @@ class SharedViewModel : ViewModel() {
             addFavorite(song)
         }
     }
-
-
-    fun isFavorite(song: Song): Boolean {
-        return _favoriteSongs.value?.any { it.slug == song.slug } == true
-    }
-
-    fun isFavorite(song: MusicEntity): Boolean {
-        return _favoriteSongs.value?.any { it.slug == song.slug } == true
-    }
-
     // Axtarış funksiyası
     fun searchSongs(query: String) {
         viewModelScope.launch {
@@ -224,4 +175,3 @@ class SharedViewModel : ViewModel() {
         playerActiveMusic = activeSong
     }
 }
-

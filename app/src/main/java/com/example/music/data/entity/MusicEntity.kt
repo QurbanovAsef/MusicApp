@@ -1,15 +1,18 @@
 package com.example.music.data.entity
 
+import android.os.Parcelable
 import com.example.music.data.model.response.Show
 import com.example.music.data.model.response.Song
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class MusicEntity(
     val slug: String,
     val title: String,
     val artist: String,
     val trackUrl: String,
     val imageUrl: String
-)
+): Parcelable
 
 fun List<Song>.toMusicListFromSongs() = this.map { it.toMusicEntity() }
 

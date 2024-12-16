@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ItemSongBinding
 import com.example.music.data.model.response.Song
-
 class FavoriteAdapter(
     private val onItemClick: (Song) -> Unit,
     private val onLikeDislike: (Song) -> Unit
@@ -35,9 +34,8 @@ class FavoriteAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(song: Song, onItemClick: (Song) -> Unit, onLikeDislike: (Song) -> Unit) {
-            binding.songTitle.text = song.title ?: "Naməlum Mahnı"
-            binding.songArtist.text = song.artist ?: "Naməlum İfaçı"
-            binding.songDuration.text = "Müddət: ${song.tracksCount ?: "Bilinmir"}"
+            binding.songTitle.text = song.title ?: "Unknown Song"
+            binding.songArtist.text = song.artist ?: "Unknown Artist"
 
             binding.root.setOnClickListener { onItemClick(song) }
 

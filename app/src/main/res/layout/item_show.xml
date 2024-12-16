@@ -2,11 +2,11 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="120dp"
-    android:layout_height="200dp"
+    android:layout_height="150dp"
     android:layout_margin="8dp"
     android:layout_marginHorizontal="8dp"
     app:cardCornerRadius="8dp"
-    android:background="@color/background_color"
+    app:cardBackgroundColor="@color/background_color"
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,14 +14,15 @@
         android:layout_height="wrap_content"
         android:padding="8dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageShow"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:cornerSize="16dp" />
 
         <!-- Şou tarixi -->
         <TextView
@@ -31,6 +32,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Show Date"
+            android:visibility="gone"
             android:textColor="@color/text_color_primary"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -60,6 +62,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Location"
+            android:visibility="gone"
             android:textColor="@color/text_color_primary"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
