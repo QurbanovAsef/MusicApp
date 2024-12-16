@@ -80,5 +80,7 @@
     <string name="album_name">Albom Adı</string>
     <string name="artist_name">İfaçı Adı</string>
     <string name="duration">Müddət</string>
-    <string name="a">A</string>
+    <string name="todo" translatable="false">TODO</string>
+    <string name="Topic">Mövzu</string>
+    <string name="Edit_profile">Profili redaktə edin</string>
 </resources>

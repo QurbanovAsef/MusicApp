@@ -19,7 +19,6 @@ class ContainerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityContainer2Binding
     private lateinit var sharedPreferences: SharedPreferences
-
     private lateinit var sharedViewModel: SharedViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +29,10 @@ class ContainerActivity : AppCompatActivity() {
 
         sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
-        // SharedPreferences-dən tema seçimlərini yüklə
+        // SharedPreferences-dən tema və dil seçimlərini yüklə
         sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
         loadThemePreference()
+        loadLanguagePreference()
 
         // NavHostFragment və NavController ilə işləyirik
         val navHostFragment =
@@ -48,26 +48,23 @@ class ContainerActivity : AppCompatActivity() {
                 R.id.nav_home,
                 R.id.nav_search,
                 R.id.favoriteFragment,
-                R.id.nav_profile -> true
+                R.id.profileFragment -> true
                 else -> false
             }
         }
     }
 
+    // Logout funksiyası
     fun logout() {
-        // SharedPreferences məlumatlarını təmizləyirik
         val sharedPreferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply()
-
-        // LoginFragment-ə keçid
-        val navController =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
         navController.navigate(R.id.loginFragment)
     }
 
-    // Tema seçimlərini SharedPreferences-dən yükləmək
     private fun loadThemePreference() {
-        val theme = sharedPreferences.getString("theme", "light")
+        // Tema seçimini SharedPreferences-dən oxuyuruq, əgər tapılmasa, "light" olaraq təyin edirik
+        val theme = sharedPreferences.getString("theme", "light") ?: "light"
         AppCompatDelegate.setDefaultNightMode(
             when (theme) {
                 "dark" -> AppCompatDelegate.MODE_NIGHT_YES
@@ -75,6 +72,26 @@ class ContainerActivity : AppCompatActivity() {
             }
         )
     }
+
+    private fun loadLanguagePreference() {
+        // Dil seçimini SharedPreferences-dən oxuyuruq, əgər tapılmasa, "English" olaraq təyin edirik
+        val language = sharedPreferences.getString("language", "English") ?: "English"
+        updateLanguageUI(language)
+    }
+
+    // Dil konfiqurasiyasını dəyişdirmək
+    private fun updateLanguageUI(language: String) {
+        val locale = when (language) {
+            "English" -> java.util.Locale("en")
+            "Azərbaycan" -> java.util.Locale("az")
+            else -> java.util.Locale("en")
+        }
+
+        val config = resources.configuration
+        config.setLocale(locale)
+        createConfigurationContext(config)
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

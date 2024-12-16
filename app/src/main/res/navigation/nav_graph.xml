@@ -85,10 +85,6 @@
     <!-- Favorite Fragment -->
 
     <!-- Profile Fragment -->
-    <fragment
-        android:id="@+id/nav_profile"
-        android:name="com.example.music.presentation.auth.bottomMenu.profile.ProfileFragment"
-        android:label="ProfileFragment" />
 
 
     <action
@@ -108,11 +104,7 @@
         android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.UserInfoFragment"
         android:label="fragment_user_info"
         tools:layout="@layout/fragment_user_info" />
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.SettingsFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+
     <!-- News Fragment -->
     <fragment
         android:id="@+id/newsFragment"
@@ -146,6 +138,10 @@
             android:id="@+id/action_favoriteFragment_to_musicFragment"
             app:destination="@id/musicFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.music.presentation.auth.bottomMenu.profile.ProfileFragment"
+        android:label="ProfileFragment" />
 
 
 </navigation>
