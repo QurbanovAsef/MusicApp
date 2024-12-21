@@ -12,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentSearchBinding
-import com.example.music.data.entity.toMusicListFromShows
 import com.example.music.presentation.adapter.SearchAdapter
 import com.example.music.presentation.viewmodel.SharedViewModel
 
@@ -23,7 +22,11 @@ class SearchFragment : Fragment() {
     private val viewModel: SharedViewModel by activityViewModels()
     private lateinit var searchAdapter: SearchAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -59,8 +62,10 @@ class SearchFragment : Fragment() {
 
     private fun setupRecyclerView() {
         searchAdapter = SearchAdapter { show ->
-            viewModel.setPlayerSongs(show.toMusicListFromShows())
-            findNavController().navigate(R.id.musicFragment)
+            show.tracks?.let {
+                viewModel.setPlayerTracks(show.tracks)
+                findNavController().navigate(R.id.musicFragment)
+            }
         }
         binding.recyclerView.adapter = searchAdapter
         binding.recyclerView.layoutManager = LinearLayoutManager(context)

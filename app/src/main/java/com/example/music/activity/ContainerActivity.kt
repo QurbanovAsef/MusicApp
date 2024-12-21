@@ -47,6 +47,7 @@ class ContainerActivity : AppCompatActivity() {
             binding.bottomNavigationView.isVisible = when (destination.id) {
                 R.id.nav_home,
                 R.id.nav_search,
+                R.id.musicFragment,
                 R.id.favoriteFragment,
                 R.id.profileFragment -> true
                 else -> false

@@ -19,6 +19,8 @@ data class TrackResponse(
     val updatedAt: String? = null,
     val showDate: String? = null,
     val showCoverArtUrls: ShowCoverArtUrls? = null,
+
+    @SerializedName("show_album_cover_url")
     val showAlbumCoverURL: String? = null,
     val venueSlug: String? = null,
     val venueName: String? = null,
@@ -28,6 +30,8 @@ data class TrackResponse(
 
     @SerializedName("mp3_url")
     val mp3Url: String? = null,
+
+    var isLiked: Boolean? = null
 ) : Parcelable
 
 @Parcelize

@@ -4,97 +4,43 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.example.music.data.entity.MusicEntity
+import com.example.music.data.model.response.Playlist
 import com.example.music.data.model.response.Show
-import com.example.music.data.model.response.Song
+import com.example.music.data.model.response.TrackResponse
 import com.example.music.data.retrofit.RetrofitInstance
 import com.example.music.data.service.MusicApiService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
 class SharedViewModel : ViewModel() {
 
-    private val songUrls = listOf(
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3",
-        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3",
-    )
+    private val _playerTracks = MutableLiveData<List<TrackResponse>>(emptyList())
+    val playerTracks: LiveData<List<TrackResponse>> get() = _playerTracks
 
-    private val songImagesUrls = listOf(
-        "https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png",
-        "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9",
-        "https://images.pexels.com/photos/34950/pexels-photo.jpg",
-        "https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg",
-        "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
-        "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg",
-    )
+    private var playerActiveTrack: TrackResponse? = null
 
-
-    private val _playerMusicList = MutableLiveData<List<MusicEntity>>(emptyList())
-    val playerMusicList: LiveData<List<MusicEntity>> get() = _playerMusicList
-
-    private val _favoriteSongs = MutableLiveData<List<Song>>(emptyList())
-    val favoriteSongs: LiveData<List<Song>> get() = _favoriteSongs
+    private val _favoriteSongs = MutableLiveData<List<TrackResponse>>(emptyList())
+    val favoriteSongs: LiveData<List<TrackResponse>> get() = _favoriteSongs
 
     private val _searchResults = MutableLiveData<List<Show>>()
     val searchResults: LiveData<List<Show>> get() = _searchResults
 
-    // RetrofitInstance vasitəsilə MusicApiService əldə edilir
     private val musicApiService: MusicApiService = RetrofitInstance.api
 
-    private val _allSongs = MutableLiveData<List<Song>>()
-    val allSongs: LiveData<List<Song>>
-        get() = _allSongs.map {
-            val modifiedList = mutableListOf<Song>()
+    private val _playlistsFlow = MutableStateFlow<List<Playlist>?>(null)
+    val playlistsFlow = _playlistsFlow.asStateFlow()
 
-            it.forEachIndexed { index, song ->
-                val songIndex = index % songUrls.size
-                val imageIndex = index % songImagesUrls.size
-                modifiedList.add(
-                    song.copy(
-                        trackUrl = songUrls[songIndex],
-                        imageUrl = songImagesUrls[imageIndex]
-                    )
-                )
-            }
-
-            modifiedList
-        }
-
-    var playerActiveMusic: MusicEntity? = null
-        private set
-
-    private val _allShows = MutableLiveData<List<Show>>()
-    val allShows: LiveData<List<Show>> get() = _allShows
-
-    private val _tracksByShow = MutableLiveData<List<Song>>()
-    val tracksByShow: LiveData<List<Song>> get() = _tracksByShow
-
-    private val _songDetails = MutableLiveData<Song?>()
-    val songDetails: LiveData<Song?> get() = _songDetails
-
-    fun getAllShows() {
+    private fun playlistApiCall() {
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getAllShows()
+                val response = RetrofitInstance.api.getPlaylists()
                 if (response.isSuccessful) {
-                    _allShows.value = response.body()?.shows ?: emptyList()
+                    val playlists = response.body()?.playlists.orEmpty()
+                    _playlistsFlow.emit(playlists)
+                    getPlaylistDetailsBySlug(playlists[0].slug)
                 } else {
                     Log.e("SharedViewModel", "API Error: ${response.message()}")
                 }
@@ -104,63 +50,50 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun getAllSongs() {
-        viewModelScope.launch {
-            try {
-                val response = RetrofitInstance.api.getSongs() // 'getAllSongs' əvəzinə 'getSongs' istifadə olunur
-                if (response.isSuccessful) {
-                    // API-dən gələn cavab
-                    val songsResponse = response.body()
-
-                    // songs null olarsa, boş bir siyahı qaytarılır
-                    val allSongsList = songsResponse?.songs.orEmpty() ?: emptyList()
-
-                    // Nəticəni təyin etmək
-                    _allSongs.value = allSongsList
-                } else {
-                    Log.e("SharedViewModel", "API Error: ${response.message()}")
-                }
-            } catch (e: Exception) {
-                Log.e("SharedViewModel", "Error: ${e.message}")
-            }
-        }
+    fun getPlaylists(force: Boolean = true) {
+        if (force)
+            playlistApiCall()
+        else if (playlistsFlow.value == null)
+            playlistApiCall()
     }
 
-
-    fun addFavorite(song: Song) {
+    fun addFavorite(song: TrackResponse) {
         val currentList = _favoriteSongs.value.orEmpty().toMutableList()
-        if (currentList.none { it.slug == song.slug }) {
+        if (currentList.none { it.slug == song?.slug }) {
             currentList.add(song.copy(isLiked = true))
             _favoriteSongs.value = currentList
         }
     }
 
-    fun removeFavorite(song: Song) {
+    fun removeFavorite(song: TrackResponse) {
         val currentList = _favoriteSongs.value.orEmpty().toMutableList()
         if (currentList.removeIf { it.slug == song.slug }) {
             _favoriteSongs.value = currentList
         }
     }
 
-    fun isFavorite(song: Song): Boolean {
+    fun isFavorite(song: TrackResponse): Boolean {
         return _favoriteSongs.value?.any { it.slug == song.slug } == true
     }
 
 
-    fun toggleFavorite(song: Song) {
+    fun toggleFavorite(song: TrackResponse) {
         if (isFavorite(song)) {
             removeFavorite(song)
         } else {
             addFavorite(song)
         }
     }
+
     // Axtarış funksiyası
     fun searchSongs(query: String) {
         viewModelScope.launch {
             try {
                 val response = musicApiService.searchSongs(query)
                 if (response.isSuccessful) {
-                    _searchResults.postValue(response.body()?.shows ?: listOf()) // Nəticələri LiveData-ya ötürürük
+                    _searchResults.postValue(
+                        response.body()?.shows ?: listOf()
+                    ) // Nəticələri LiveData-ya ötürürük
                 } else {
                     _searchResults.postValue(emptyList())
                 }
@@ -170,8 +103,29 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun setPlayerSongs(songs: List<MusicEntity>, activeSong: MusicEntity? = null) {
-        _playerMusicList.postValue(songs)
-        playerActiveMusic = activeSong
+    fun setPlayerTracks(tracks: List<TrackResponse>, activeTrack: TrackResponse? = null) {
+        if (_playerTracks.value != tracks)
+            _playerTracks.postValue(tracks)
+        playerActiveTrack = activeTrack
+    }
+
+    fun getPlaylistDetailsBySlug(
+        slug: String?,
+        activeTrack: TrackResponse? = null,
+    ) = slug?.let {
+        viewModelScope.launch {
+            try {
+                val response = musicApiService.getPlaylistDetails(slug)
+                if (response.isSuccessful) {
+                    playerActiveTrack = activeTrack
+                    _playerTracks.postValue(response.body()?.entries?.filterNot { it.track == null }
+                        ?.map { it.track!! } ?: listOf())
+                } else {
+                    _playerTracks.postValue(emptyList())
+                }
+            } catch (e: Exception) {
+                _searchResults.postValue(emptyList())
+            }
+        }
     }
 }

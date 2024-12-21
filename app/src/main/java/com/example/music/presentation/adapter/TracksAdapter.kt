@@ -6,43 +6,43 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.databinding.ItemSongBinding
-import com.example.music.data.model.response.Song
+import com.example.music.data.model.response.TrackResponse
 
-class SongsAdapter(
-    private val onItemClick: (Song) -> Unit,
-    private val onLikeDislike: (Song) -> Unit
-) : RecyclerView.Adapter<SongsAdapter.SongViewHolder>() {
+class TracksAdapter(
+    private val onItemClick: (TrackResponse) -> Unit,
+    private val onLikeDislike: (TrackResponse) -> Unit
+) : RecyclerView.Adapter<TracksAdapter.TrackViewHolder>() {
 
-    var items: List<Song> = emptyList()
+    var items: List<TrackResponse> = emptyList()
         private set
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SongViewHolder(binding)
+        return TrackViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(items[position])
     }
 
     override fun getItemCount(): Int = items.size
 
-    fun setItems(newItems: List<Song>) {
+    fun setItems(newItems: List<TrackResponse>) {
         items = newItems
         notifyDataSetChanged()
     }
 
-    inner class SongViewHolder(private val binding: ItemSongBinding) :
+    inner class TrackViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(song: Song) = with(binding) {
+        fun bind(song: TrackResponse) = with(binding) {
             songTitle.text = song.title ?: "Naməlum Mahnı" // Mahnının adı
-            songArtist.text = song.artist ?: "Naməlum İfaçı" // İfaçının adı
-            songDuration.text = "Müddət: ${song.tracksCount ?: "Bilinmir"}" // Mahnının müddəti
+            songArtist.text = song.venueName ?: "Naməlum İfaçı" // İfaçının adı
+            songDuration.text = "Müddət: ${song.duration ?: "Bilinmir"}" // Mahnının müddəti
 
             Glide.with(root.context) // Pass the context
-                .load(song.imageUrl) // URL or local image
+                .load(song.showAlbumCoverURL) // URL or local image
                 .into(songImage) // Target ImageView
 
             // Mahnıya toxunduqda detallarına keçid

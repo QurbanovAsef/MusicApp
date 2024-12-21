@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ItemSongBinding
-import com.example.music.data.model.response.Song
+import com.example.music.data.model.response.TrackResponse
 class FavoriteAdapter(
-    private val onItemClick: (Song) -> Unit,
-    private val onLikeDislike: (Song) -> Unit
+    private val onItemClick: (TrackResponse) -> Unit,
+    private val onLikeDislike: (TrackResponse) -> Unit
 ) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
-    private var songs: List<Song> = emptyList()
+    private var songs: List<TrackResponse> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
         val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -25,7 +25,7 @@ class FavoriteAdapter(
 
     override fun getItemCount(): Int = songs.size
 
-    fun updateData(newSongs: List<Song>) {
+    fun updateData(newSongs: List<TrackResponse>) {
         songs = newSongs
         notifyDataSetChanged()
     }
@@ -33,14 +33,14 @@ class FavoriteAdapter(
     inner class FavoriteViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(song: Song, onItemClick: (Song) -> Unit, onLikeDislike: (Song) -> Unit) {
-            binding.songTitle.text = song.title ?: "Unknown Song"
-            binding.songArtist.text = song.artist ?: "Unknown Artist"
+        fun bind(song: TrackResponse, onItemClick: (TrackResponse) -> Unit, onLikeDislike: (TrackResponse) -> Unit) {
+            binding.songTitle.text = song.title ?: "Unknown TrackResponse"
+            binding.songArtist.text = song.venueName ?: "Unknown Artist"
 
             binding.root.setOnClickListener { onItemClick(song) }
 
             binding.favoriteIcon.setImageResource(
-                if (song.isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+                if (song.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
             )
 
             binding.favoriteIcon.setOnClickListener { onLikeDislike(song) }

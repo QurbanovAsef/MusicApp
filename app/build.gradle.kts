@@ -77,4 +77,6 @@ dependencies {
 
     implementation (libs.glide) // Check for the latest version
     annotationProcessor (libs.compiler)
+
+    implementation(libs.kotlinx.coroutines.core)
 }

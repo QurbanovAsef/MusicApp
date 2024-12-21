@@ -4,26 +4,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentNewsBinding
-import com.example.music.data.entity.toMusicEntity
-import com.example.music.data.entity.toMusicListFromShows
-import com.example.music.data.entity.toMusicListFromSongs
-import com.example.music.presentation.adapter.ShowAdapter
-import com.example.music.presentation.adapter.SongsAdapter
+import com.example.music.presentation.adapter.PlaylistsAdapter
+import com.example.music.presentation.adapter.TracksAdapter
+import com.example.music.presentation.auth.bottomMenu.music.MusicFragmentDirections
 import com.example.music.presentation.viewmodel.SharedViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class NewsFragment : Fragment(R.layout.fragment_news) {
 
     private var _binding: FragmentNewsBinding? = null
     private val binding get() = _binding!!
     private val sharedViewModel by activityViewModels<SharedViewModel>()
-    private lateinit var showAdapter: ShowAdapter
-    private lateinit var songsAdapter: SongsAdapter
+    private lateinit var playlistsAdapter: PlaylistsAdapter
+    private lateinit var tracksAdapter: TracksAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedViewModel.getPlaylists()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -36,40 +44,36 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         super.onViewCreated(view, savedInstanceState)
 
         // Set up ShowAdapter and SongsAdapter correctly
-        showAdapter = ShowAdapter { show ->
-            val musicList = show.toMusicListFromShows()
-
-            if (musicList.isEmpty()) {
-                sharedViewModel.setPlayerSongs(songsAdapter.items.toMusicListFromSongs())
-            } else
-                sharedViewModel.setPlayerSongs(musicList)
-            findNavController().navigate(R.id.musicFragment)
+        playlistsAdapter = PlaylistsAdapter { playlist ->
+            sharedViewModel.getPlaylistDetailsBySlug(playlist.slug)
         }
-        binding.showRecyclerView.adapter = showAdapter
+        binding.showRecyclerView.adapter = playlistsAdapter
         binding.showRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        songsAdapter = SongsAdapter(
-            onItemClick = { song ->
-                sharedViewModel.setPlayerSongs(songsAdapter.items.toMusicListFromSongs(), song.toMusicEntity())
-                findNavController().navigate(R.id.musicFragment)
+        tracksAdapter = TracksAdapter(
+            onItemClick = { trackEntry ->
+                sharedViewModel.setPlayerTracks(tracksAdapter.items, trackEntry)
+                findNavController().navigate(MusicFragmentDirections.actionMusicFragment(trackEntry))
             },
             onLikeDislike = { song ->
                 sharedViewModel.toggleFavorite(song)
             }
         )
-        binding.songRecyclerView.adapter = songsAdapter
+        binding.songRecyclerView.adapter = tracksAdapter
         binding.songRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        sharedViewModel.getAllSongs()
-        sharedViewModel.getAllShows()
-
-        sharedViewModel.allShows.observe(viewLifecycleOwner) { shows ->
-            showAdapter.setItems(shows)
+        lifecycleScope.launch {
+            sharedViewModel.playlistsFlow.collectLatest { playlists ->
+                playlists?.let {
+                    playlistsAdapter.setItems(it)
+                }
+            }
         }
 
-        sharedViewModel.allSongs.observe(viewLifecycleOwner) { songs ->
-            songsAdapter.setItems(songs)
+        sharedViewModel.playerTracks.observe(viewLifecycleOwner) { tracks ->
+            tracksAdapter.setItems(tracks)
+            binding.progressTracks.isGone = true
         }
     }
 

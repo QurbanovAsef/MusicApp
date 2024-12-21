@@ -75,6 +75,10 @@
         android:id="@+id/nav_home"
         android:name="com.example.music.presentation.auth.bottomMenu.home.HomeFragment"
         android:label="HomeFragment" />
+    <action
+        android:id="@+id/action_HomeFragment"
+        app:destination="@id/nav_home" />
+
 
     <!-- Search Fragment -->
     <fragment
@@ -82,18 +86,11 @@
         android:name="com.example.music.presentation.auth.bottomMenu.search.SearchFragment"
         android:label="SearchFragment" />
 
-    <!-- Favorite Fragment -->
-
-    <!-- Profile Fragment -->
-
-
-    <action
-        android:id="@+id/action_HomeFragment"
-        app:destination="@id/nav_home" />
-
     <action
         android:id="@+id/action_MusicFragment"
         app:destination="@id/musicFragment"/>
+
+
     <fragment
         android:id="@+id/aboutAppFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.AboutAppFragment"
@@ -120,14 +117,12 @@
         android:id="@+id/musicFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.music.MusicFragment"
         android:label="MusicFragment">
+
         <argument
-            android:name="song"
-            app:argType="com.example.music.data.model.response.Song"
-            app:nullable="true" />
-        <argument
-            android:name="show"
-            app:argType="com.example.music.data.model.response.ShowsResponse"
-            app:nullable="true" />
+            android:name="track"
+            app:argType="com.example.music.data.model.response.TrackResponse"
+            app:nullable="true"
+         />
     </fragment>
 
     <fragment

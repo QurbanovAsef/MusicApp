@@ -28,6 +28,7 @@
     <!-- Pleylist və musiqi -->
     <string name="home">Ana səhifə</string>
     <string name="search">Axtarış</string>
+    <string name="music">musiqi</string>
     <string name="favorites">Favoritlər</string>
     <string name="profile">Profil</string>
     <string name="shuffle">Təsadüfi seç</string>
