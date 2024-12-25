@@ -16,7 +16,6 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentMusicBinding
-import com.example.music.data.model.response.Song
 import com.example.music.data.model.response.TrackResponse
 import com.example.music.presentation.viewmodel.SharedViewModel
 
@@ -145,14 +144,18 @@ class MusicFragment : Fragment() {
         }
 
         // Favoritləri izləmək
-        sharedViewModel.favoriteSongs.observe(viewLifecycleOwner) {
-            currentSongEntity?.let {
-                isLiked = sharedViewModel.isFavorite(it)
+
+        // FavoriteTracks-u izləmək
+        sharedViewModel.favoriteTracks.observe(viewLifecycleOwner) { favoriteSongs ->
+            currentSongEntity?.let { song ->
+                // FavoriteTrack obyektini ilə TrackResponse obyektini müqayisə etmək üçün
+                isLiked = favoriteSongs.any { it.slug == song.slug }
                 binding.likeButton.setImageResource(
                     if (isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
                 )
             }
         }
+
 
         // SeekBar-ın toxunulabilir olması
         binding.SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {

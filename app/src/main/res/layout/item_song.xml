@@ -14,11 +14,25 @@
         android:padding="16dp">
 
         <!-- Song Art (Image) -->
-        <ImageView
-            android:id="@+id/songImage"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/songImageCard"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:src="@drawable/rectangle_18" />
+            app:cardCornerRadius="10dp"
+            app:cardElevation="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/songName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerContainer">
+
+            <ImageView
+                android:id="@+id/songImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/rectangle_19" />
+        </androidx.cardview.widget.CardView>
+
 
         <!-- Song Details -->
         <LinearLayout
@@ -36,6 +50,15 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
+
+            <TextView
+                android:id="@+id/songName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Song Name"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/songArtist"
                 android:layout_width="wrap_content"
@@ -44,10 +67,17 @@
                 android:textSize="14sp"
                 android:textColor="@color/text_color_primary" />
             <TextView
-                android:id="@+id/songDuration"
+                android:id="@+id/songDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="00:00"
+                android:text="0000-00-00"
+                android:textSize="14sp"
+                android:textColor="@color/text_color_primary" />
+            <TextView
+                android:id="@+id/trackIdTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0000"
                 android:visibility="gone"
                 android:textSize="14sp"
                 android:textColor="@color/text_color_primary" />
@@ -58,7 +88,6 @@
             android:id="@+id/favoriteIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:visibility="gone"
             android:src="@drawable/ic_favorite_empty" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

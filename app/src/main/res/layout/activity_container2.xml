@@ -30,5 +30,7 @@
         app:itemIconTint="@color/primary_color"
         app:itemTextColor="@color/primary_color"
         app:itemBackground="@color/grey"
+        app:itemIconSize="24dp"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav_menu" />
 </androidx.constraintlayout.widget.ConstraintLayout>

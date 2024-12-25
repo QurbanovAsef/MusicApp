@@ -23,9 +23,7 @@ class SearchFragment : Fragment() {
     private lateinit var searchAdapter: SearchAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
@@ -34,41 +32,60 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        setupSearchFunctionality()
+        observeSearchResults()
+    }
 
-        binding.searchIcon.setOnClickListener {
-            val query = binding.searchEditText.text.toString()
-            if (query.isNotEmpty()) {
-                searchSongs(query) // Axtarışı işə salırıq
+    private fun setupRecyclerView() {
+        searchAdapter = SearchAdapter { exactShow ->
+            exactShow.tracks?.let { trackStrings ->
+                val trackResponses = viewModel.mapStringsToTrackResponses(trackStrings)
+                val activeTrack = trackResponses.firstOrNull()
+                viewModel.setPlayerTracks(trackResponses, activeTrack)
+                navigateToMusicFragment()
             }
         }
 
-        viewModel.searchResults.observe(viewLifecycleOwner) { songs ->
-            binding.progressBar.isVisible = false
+        binding.recyclerView.adapter = searchAdapter
 
-            if (songs.isEmpty()) {
-                Toast.makeText(requireContext(), "Songs not found", Toast.LENGTH_SHORT).show()
-                binding.emptyStateTextView.visibility = View.VISIBLE
+        // LayoutManager təyini
+        val layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.layoutManager = layoutManager
+    }
+
+
+    private fun setupSearchFunctionality() {
+        binding.searchIcon.setOnClickListener {
+            val query = binding.searchEditText.text.toString()
+            if (query.isNotEmpty()) {
+                searchSongs(query)
             } else {
-                binding.emptyStateTextView.visibility = View.GONE
-                searchAdapter.setItems(songs)
+                Toast.makeText(requireContext(), "Please enter a search term", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun observeSearchResults() {
+        viewModel.searchResults.observe(viewLifecycleOwner) { response ->
+            binding.progressBar.isVisible = false
+            if (response.isEmpty()) {
+                binding.emptyStateTextView.isVisible = true
+                Toast.makeText(requireContext(), "No results found", Toast.LENGTH_SHORT).show()
+            } else {
+                binding.emptyStateTextView.isVisible = false
+                searchAdapter.setItems(response) // ExactShow obyektlərini adapterə göndəririk
             }
         }
     }
 
     private fun searchSongs(query: String) {
         binding.progressBar.isVisible = true
-        viewModel.searchSongs(query) // ViewModel vasitəsilə axtarış sorğusunu göndəririk
+        binding.emptyStateTextView.isVisible = false
+        viewModel.searchSongs(query) // ViewModel-ə axtarış sorğusunu göndəririk
     }
 
-    private fun setupRecyclerView() {
-        searchAdapter = SearchAdapter { show ->
-            show.tracks?.let {
-                viewModel.setPlayerTracks(show.tracks)
-                findNavController().navigate(R.id.musicFragment)
-            }
-        }
-        binding.recyclerView.adapter = searchAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+    private fun navigateToMusicFragment() {
+        findNavController().navigate(R.id.musicFragment)
     }
 
     override fun onDestroyView() {

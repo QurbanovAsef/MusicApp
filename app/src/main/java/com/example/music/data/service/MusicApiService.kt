@@ -43,8 +43,7 @@ interface MusicApiService {
     @GET("playlists")
     suspend fun getPlaylists(): Response<PlaylistsResponse>
 
+    @GET("search/{term}")
+    suspend fun searchExactShows(@Path("term") term: String): Response<SearchResponse>
 
-    // Mahnıların axtarılması
-    @GET("search/{key}")
-    suspend fun searchSongs(@Path("key") key: String): Response<SearchResponse> // Axtarış üçün yeni metod
 }

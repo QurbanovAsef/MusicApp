@@ -1,5 +1,7 @@
 package com.example.music.data.model.response
 
+import com.google.gson.annotations.SerializedName
+
 data class PlaylistsResponse (
     val playlists: List<Playlist>? = null,
     val totalPages: Int? = null,
@@ -18,5 +20,8 @@ data class Playlist (
     val likesCount: Int? = null,
     val updatedAt: String? = null,
     val published: Boolean? = null,
-    val likedByUser: Boolean? = null
+    @SerializedName("track_ids")
+    val trackIds: Int? = null,
+    val likedByUser: Boolean? = null,
+    val albumCoverURL: String? = null
 )

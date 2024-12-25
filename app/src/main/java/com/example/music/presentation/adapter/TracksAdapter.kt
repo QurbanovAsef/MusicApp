@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ItemSongBinding
 import com.example.music.data.model.response.TrackResponse
 
@@ -13,7 +14,7 @@ class TracksAdapter(
     private val onLikeDislike: (TrackResponse) -> Unit
 ) : RecyclerView.Adapter<TracksAdapter.TrackViewHolder>() {
 
-    var items: List<TrackResponse> = emptyList()
+    var items: MutableList<TrackResponse> = mutableListOf()
         private set
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
@@ -27,8 +28,18 @@ class TracksAdapter(
 
     override fun getItemCount(): Int = items.size
 
+    // Yeni gələn itemləri adapterə əlavə edirik
     fun setItems(newItems: List<TrackResponse>) {
-        items = newItems
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
+    // Favorit trackləri yeniləyən metod
+    fun updateFavoriteStatus(favoriteTracks: List<TrackResponse>) {
+        items.forEach { track ->
+            track.isLiked = favoriteTracks.any { it.slug == track.slug && it.isLiked == true }
+        }
         notifyDataSetChanged()
     }
 
@@ -36,20 +47,25 @@ class TracksAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
-        fun bind(song: TrackResponse) = with(binding) {
-            songTitle.text = song.title ?: "Naməlum Mahnı" // Mahnının adı
-            songArtist.text = song.venueName ?: "Naməlum İfaçı" // İfaçının adı
-            songDuration.text = "Müddət: ${song.duration ?: "Bilinmir"}" // Mahnının müddəti
+        fun bind(track: TrackResponse) = with(binding) {
+            songTitle.text = track.title ?: "Naməlum Mahnı"
+            songArtist.text = track.venueName ?: "Naməlum İfaçı"
+            songDate.text = track.showDate ?: "Naməlum vaxt"
 
-            Glide.with(root.context) // Pass the context
-                .load(song.showAlbumCoverURL) // URL or local image
-                .into(songImage) // Target ImageView
+            Glide.with(root.context)
+                .load(track.showAlbumCoverURL)
+                .into(songImage)
+            root.setOnClickListener { onItemClick(track) }
 
-            // Mahnıya toxunduqda detallarına keçid
-            root.setOnClickListener { onItemClick(song) }
+
+            favoriteIcon.setImageResource(
+                if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+            )
 
             favoriteIcon.setOnClickListener {
-                onLikeDislike(song)
+                track.isLiked = !(track.isLiked ?: false)
+                notifyItemChanged(adapterPosition)
+                onLikeDislike(track)
             }
         }
     }

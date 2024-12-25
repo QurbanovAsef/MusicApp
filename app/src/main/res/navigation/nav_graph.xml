@@ -136,7 +136,11 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.profile.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
+    </fragment>
 
 
 </navigation>

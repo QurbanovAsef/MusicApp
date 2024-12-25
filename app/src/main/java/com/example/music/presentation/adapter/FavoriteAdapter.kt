@@ -1,17 +1,26 @@
 package com.example.music.presentation.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ItemSongBinding
-import com.example.music.data.model.response.TrackResponse
+import com.example.music.data.model.response.FavoriteTrack
+
+
 class FavoriteAdapter(
-    private val onItemClick: (TrackResponse) -> Unit,
-    private val onLikeDislike: (TrackResponse) -> Unit
+    private val onItemClick: (FavoriteTrack) -> Unit,
+    private val onLikeDislike: (FavoriteTrack) -> Unit
 ) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
-    private var songs: List<TrackResponse> = emptyList()
+    private var favoriteTracks: List<FavoriteTrack> = emptyList()
+
+    fun updateData(updatedTracks: List<FavoriteTrack>) {
+        favoriteTracks = updatedTracks
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
         val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -19,31 +28,34 @@ class FavoriteAdapter(
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
-        val song = songs[position]
-        holder.bind(song, onItemClick, onLikeDislike)
+        holder.bind(favoriteTracks[position])
     }
 
-    override fun getItemCount(): Int = songs.size
-
-    fun updateData(newSongs: List<TrackResponse>) {
-        songs = newSongs
-        notifyDataSetChanged()
-    }
+    override fun getItemCount(): Int = favoriteTracks.size
 
     inner class FavoriteViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(song: TrackResponse, onItemClick: (TrackResponse) -> Unit, onLikeDislike: (TrackResponse) -> Unit) {
-            binding.songTitle.text = song.title ?: "Unknown TrackResponse"
-            binding.songArtist.text = song.venueName ?: "Unknown Artist"
 
-            binding.root.setOnClickListener { onItemClick(song) }
+        @SuppressLint("SetTextI18n")
+        fun bind(favoriteTracks: FavoriteTrack) = with(binding) {
+            songTitle.text = favoriteTracks.title ?: "Naməlum Mahnı"
+            songArtist.text = favoriteTracks.venueName ?: "Naməlum İfaçı"
+            songDate.text = favoriteTracks.showDate ?: "Naməlum vaxt"
+
+            Glide.with(root.context)
+                .load(favoriteTracks.showAlbumCoverURL)
+                .into(songImage)
 
             binding.favoriteIcon.setImageResource(
-                if (song.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+                if (favoriteTracks.isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
             )
-
-            binding.favoriteIcon.setOnClickListener { onLikeDislike(song) }
+            root.setOnClickListener { onItemClick(favoriteTracks) }
+            binding.favoriteIcon.setOnClickListener {
+                favoriteTracks.isLiked = !(favoriteTracks.isLiked)
+                onLikeDislike(favoriteTracks)
+            }
         }
     }
 }
+

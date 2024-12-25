@@ -5,7 +5,6 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs")
     id ("kotlin-parcelize")
-
     alias(libs.plugins.google.gms.google.services)
 }
 
@@ -57,13 +56,14 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
+    kapt(libs.hiltCompiler) // Hilt compiler burada
+    kapt(libs.room.compiler)
     implementation(libs.room.runtime)
     implementation(libs.hilt)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.retrofit2.kotlin.coroutines.adapter)
-
     implementation(libs.coroutines)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

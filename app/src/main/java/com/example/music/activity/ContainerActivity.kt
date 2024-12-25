@@ -23,6 +23,7 @@ class ContainerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         // Layout-u binding vasitəsilə qururuq
         binding = ActivityContainer2Binding.inflate(layoutInflater)
         setContentView(binding.root)

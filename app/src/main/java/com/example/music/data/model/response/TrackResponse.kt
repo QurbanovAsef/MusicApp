@@ -17,12 +17,13 @@ data class TrackResponse(
     val waveformImageURL: String? = null,
     val tags: List<Tag>? = null,
     val updatedAt: String? = null,
+    @SerializedName("show_date")
     val showDate: String? = null,
     val showCoverArtUrls: ShowCoverArtUrls? = null,
-
     @SerializedName("show_album_cover_url")
     val showAlbumCoverURL: String? = null,
     val venueSlug: String? = null,
+    @SerializedName("venue_name")
     val venueName: String? = null,
     val venueLocation: String? = null,
     val songs: List<Song>? = null,

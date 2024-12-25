@@ -1,41 +1,56 @@
 package com.example.music.presentation.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.databinding.ItemSongBinding
-import com.example.music.data.model.response.Show
+import com.example.music.data.model.response.ExactShow
 
-class SearchAdapter(
-    private val onItemClick: (Show) -> Unit
-) : RecyclerView.Adapter<SearchAdapter.SongViewHolder>() {
+class SearchAdapter(private val onTrackClick: (ExactShow) -> Unit) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
-    var items: List<Show> = emptyList()
-        private set
+    private var items: List<ExactShow> = listOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
-        val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SongViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        holder.bind(items[position])
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    fun setItems(newItems: List<Show>) {
+    fun setItems(newItems: List<ExactShow>) {
         items = newItems
         notifyDataSetChanged()
     }
 
-    inner class SongViewHolder(private val binding: ItemSongBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
+        val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return SearchViewHolder(binding)
+    }
 
-        fun bind(song: Show) {
-            binding.songTitle.text = song.venueName
-            binding.songArtist.text = song.venue?.city
-            binding.root.setOnClickListener { onItemClick(song) }
+    override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
+        val exactShow = items[position]
+        holder.bind(exactShow)
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    inner class SearchViewHolder(private val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
+        fun bind(exactShow: ExactShow) {
+            binding.songArtist.text = exactShow.venueName ?: "Naməlum İfaçı"
+            binding.songTitle.text = exactShow.tourName ?: "Naməlum Tur"
+            binding.trackIdTextView.text = exactShow.id.toString()
+
+
+            val trackString = exactShow.tracks?.joinToString(", ") ?: "No tracks available"
+            binding.trackIdTextView.text = trackString
+
+            val imageUrl = exactShow.albumCoverUrl
+
+            Glide.with(itemView.context)
+                .load(imageUrl)
+                .into(binding.songImage)
+
+            binding.root.setOnClickListener {
+                onTrackClick(exactShow) // Click etdikdə ExactShow-u geri göndəririk
+            }
         }
+
+
     }
 }
