@@ -14,26 +14,28 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     val theme: MutableLiveData<String> = MutableLiveData("light")
 
     private val sharedPreferences = application.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-
-    init {
-        // Əgər əvvəlcədən dil və tema saxlanılıbsa, onu yüklə
-        language.value = sharedPreferences.getString("language", "English")
-        theme.value = sharedPreferences.getString("theme", "light")
-    }
-
-    // Dilin dəyişdirilməsi
+//
+//    init {
+//        // Əgər əvvəlcədən dil və tema saxlanılıbsa, onu yüklə
+//        language.value = sharedPreferences.getString("language", "English")
+//        theme.value = sharedPreferences.getString("theme", "light")
+//    }
     fun setLanguage(language: String, context: Context) {
-        this.language.value = language
-        saveLanguagePreference(language, context)
-        changeAppLanguage(language, context)
+        if (this.language.value != language) {
+            this.language.value = language
+            saveLanguagePreference(language, context)
+            changeAppLanguage(language, context)
+        }
     }
 
-    // Tema dəyişdirilməsi
     fun setTheme(theme: String, context: Context) {
-        this.theme.value = theme
-        saveThemePreference(theme, context)
-        changeAppTheme(theme, context)
+        if (this.theme.value != theme) {
+            this.theme.value = theme
+            saveThemePreference(theme, context)
+            changeAppTheme(theme, context)
+        }
     }
+
 
     private fun changeAppLanguage(language: String, context: Context) {
         val locale = when (language) {
@@ -53,15 +55,15 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun saveLanguagePreference(language: String, context: Context) {
-        val editor = sharedPreferences.edit()
-        editor.putString("language", language)
-        editor.apply()
+        if (sharedPreferences.getString("language", "") != language) {
+            sharedPreferences.edit().putString("language", language).apply()
+        }
     }
 
     private fun saveThemePreference(theme: String, context: Context) {
-        val editor = sharedPreferences.edit()
-        editor.putString("theme", theme)
-        editor.apply()
+        if (sharedPreferences.getString("theme", "") != theme) {
+            sharedPreferences.edit().putString("theme", theme).apply()
+        }
     }
 
 }

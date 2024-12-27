@@ -14,6 +14,7 @@ import com.example.androidprojecttest1.databinding.FragmentProfileBinding
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.music.activity.ContainerActivity
+import java.util.Locale
 
 class ProfileFragment : Fragment() {
 
@@ -73,6 +74,7 @@ class ProfileFragment : Fragment() {
             .setItems(languages) { _, which ->
                 val selectedLanguage = languages[which]
                 profileViewModel.setLanguage(selectedLanguage, requireContext())
+                updateLanguageUI(selectedLanguage)
             }
             .show()
     }
@@ -84,6 +86,7 @@ class ProfileFragment : Fragment() {
             .setItems(themes) { _, which ->
                 val selectedTheme = if (which == 0) "light" else "dark"
                 profileViewModel.setTheme(selectedTheme, requireContext())
+                updateThemeUI(selectedTheme)
             }
             .show()
     }
@@ -106,25 +109,28 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateLanguageUI(language: String) {
-        val locale = when (language) {
-            "English" -> java.util.Locale("en")
-            "Azərbaycan" -> java.util.Locale("az")
-            else -> java.util.Locale("en")
+        val currentLocale = resources.configuration.locales[0]
+        val newLocale = when (language) {
+            "English" -> Locale("en")
+            "Azərbaycan" -> Locale("az")
+            else -> Locale("en")
         }
 
-        val config = resources.configuration
-        config.setLocale(locale)
-        requireContext().createConfigurationContext(config)
-
-        // Dil dəyişikliklərini tərtib etmək üçün tətbiqin yenidən yaradılması
-        requireActivity().recreate()
+        if (currentLocale != newLocale) {
+            val config = resources.configuration
+            config.setLocale(newLocale)
+            requireContext().createConfigurationContext(config)
+            requireActivity().recreate()
+        }
     }
+
     private fun updateThemeUI(theme: String) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (theme == "dark") AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-        )
-        // Tema dəyişdikdən sonra tətbiqin yenidən yaradılması
-        requireActivity().recreate()
+        val currentMode = AppCompatDelegate.getDefaultNightMode()
+        val newMode = if (theme == "dark") AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        if (currentMode != newMode) {
+            AppCompatDelegate.setDefaultNightMode(newMode)
+            requireActivity().recreate()
+        }
     }
 
 

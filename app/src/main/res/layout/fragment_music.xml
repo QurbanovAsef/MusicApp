@@ -14,9 +14,9 @@
         android:layout_marginTop="28dp"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/backArrow"
@@ -29,45 +29,35 @@
             android:id="@+id/songTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/song_title"
             android:textColor="@color/primary_color"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center" />
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/likeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:src="@drawable/ic_favorite_empty"
             app:tint="@color/text_color_primary" />
     </LinearLayout>
 
-    <!-- Song Image -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/songImageCard"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="8dp"
-android:layout_marginTop="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerContainer"
-        app:layout_constraintDimensionRatio="1">
 
         <ImageView
             android:id="@+id/songImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerInside"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:layout_marginTop="30dp"
             android:src="@drawable/rectangle_19"
-            />
-    </androidx.cardview.widget.CardView>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerContainer"/>
+
 
     <TextView
         android:id="@+id/songName"
@@ -78,9 +68,8 @@ android:layout_marginTop="30dp"
         android:textColor="@color/primary_color"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/songImageCard"
         app:layout_constraintStart_toStartOf="parent"
-      />
+        app:layout_constraintTop_toBottomOf="@id/songImage" />
 
     <TextView
         android:id="@+id/artistName"
@@ -90,20 +79,19 @@ android:layout_marginTop="30dp"
         android:text="@string/coldplay"
         android:textColor="@color/text_color_primary"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/songName"
         app:layout_constraintStart_toStartOf="parent"
-         />
+        app:layout_constraintTop_toBottomOf="@id/songName" />
 
     <SeekBar
         android:id="@+id/SeekBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:progressTint="@color/text_color_primary"
         android:progressBackgroundTint="@color/text_color_primary"
+        android:progressTint="@color/text_color_primary"
         android:thumbTint="@color/primary_color"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/artistName" />
 
     <LinearLayout
@@ -112,8 +100,8 @@ android:layout_marginTop="30dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/SeekBar">
 
         <TextView
@@ -129,10 +117,10 @@ android:layout_marginTop="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="end"
             android:text="@string/time_end"
             android:textColor="@color/text_color_primary"
-            android:textSize="14sp"
-            android:gravity="end" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <!-- Playback Controls -->
@@ -164,7 +152,6 @@ android:layout_marginTop="30dp"
             android:src="@drawable/previous"
             app:tint="@color/text_color_primary" />
 
-        />
 
         <ImageView
             android:id="@+id/playPauseButton"

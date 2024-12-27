@@ -78,19 +78,14 @@
     <action
         android:id="@+id/action_HomeFragment"
         app:destination="@id/nav_home" />
-
-
     <!-- Search Fragment -->
     <fragment
         android:id="@+id/nav_search"
         android:name="com.example.music.presentation.auth.bottomMenu.search.SearchFragment"
         android:label="SearchFragment" />
-
     <action
         android:id="@+id/action_MusicFragment"
         app:destination="@id/musicFragment"/>
-
-
     <fragment
         android:id="@+id/aboutAppFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.AboutAppFragment"
@@ -116,14 +111,13 @@
     <fragment
         android:id="@+id/musicFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.music.MusicFragment"
-        android:label="MusicFragment">
-
+        android:label="fragment_music"
+        tools:layout="@layout/fragment_music">
         <argument
             android:name="track"
-            app:argType="com.example.music.data.model.response.TrackResponse"
-            app:nullable="true"
-         />
+            app:argType="com.example.music.data.model.response.TrackResponse" />
     </fragment>
+
 
     <fragment
         android:id="@+id/favoriteFragment"

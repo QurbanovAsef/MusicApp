@@ -7,7 +7,6 @@
     <color name="primary_color">#00C2CB</color>
     <color name="grey">#F8F8F8</color>
 
-
     <!-- Ümumi TextInput Error Style -->
     <style name="TextInputErrorStyle" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textColor">@color/primary_color</item>

@@ -6,23 +6,32 @@
     android:background="@color/background_color">
 
 
-
+    <androidx.cardview.widget.CardView
+        android:id="@+id/tabLayoutCardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/grey"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
     <!-- Tab bölməsi -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/grey"
-        android:padding="4dp"
+        android:padding="8dp"
         app:tabGravity="fill"
         app:tabMode="fixed"
         app:tabRippleColor="@color/primary_color"
         app:tabSelectedTextColor="@color/primary_color"
         app:tabIndicatorColor="@color/primary_color"
-        app:layout_constraintTop_toTopOf="parent">
+    >
 
     </com.google.android.material.tabs.TabLayout>
-
+    </androidx.cardview.widget.CardView>
     <!-- ViewPager2 for Fragments -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -30,7 +39,7 @@
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintTop_toBottomOf="@id/tabLayoutCardView"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

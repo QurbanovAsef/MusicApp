@@ -9,7 +9,7 @@
         android:title="@string/search" />
     <item
         android:id="@+id/musicFragment"
-        android:icon="@drawable/ic_play_big"
+        android:icon="@drawable/play"
         android:title="@string/music" />
     <item
         android:id="@+id/favoriteFragment"

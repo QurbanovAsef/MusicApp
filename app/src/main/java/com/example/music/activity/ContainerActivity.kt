@@ -13,6 +13,7 @@ import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ActivityContainer2Binding
 import com.example.music.presentation.viewmodel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 @AndroidEntryPoint
 class ContainerActivity : AppCompatActivity() {
@@ -24,10 +25,8 @@ class ContainerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Layout-u binding vasitəsilə qururuq
         binding = ActivityContainer2Binding.inflate(layoutInflater)
         setContentView(binding.root)
-
         sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
         // SharedPreferences-dən tema və dil seçimlərini yüklə
@@ -56,7 +55,6 @@ class ContainerActivity : AppCompatActivity() {
         }
     }
 
-    // Logout funksiyası
     fun logout() {
         val sharedPreferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply()
@@ -65,35 +63,30 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     private fun loadThemePreference() {
-        // Tema seçimini SharedPreferences-dən oxuyuruq, əgər tapılmasa, "light" olaraq təyin edirik
         val theme = sharedPreferences.getString("theme", "light") ?: "light"
-        AppCompatDelegate.setDefaultNightMode(
-            when (theme) {
-                "dark" -> AppCompatDelegate.MODE_NIGHT_YES
-                else -> AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
+        val currentMode = AppCompatDelegate.getDefaultNightMode()
+        val newMode = if (theme == "dark") AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        if (currentMode != newMode) {
+            AppCompatDelegate.setDefaultNightMode(newMode)
+        }
     }
 
     private fun loadLanguagePreference() {
-        // Dil seçimini SharedPreferences-dən oxuyuruq, əgər tapılmasa, "English" olaraq təyin edirik
         val language = sharedPreferences.getString("language", "English") ?: "English"
-        updateLanguageUI(language)
-    }
-
-    // Dil konfiqurasiyasını dəyişdirmək
-    private fun updateLanguageUI(language: String) {
-        val locale = when (language) {
-            "English" -> java.util.Locale("en")
-            "Azərbaycan" -> java.util.Locale("az")
-            else -> java.util.Locale("en")
+        val currentLocale = resources.configuration.locales[0]
+        val newLocale = when (language) {
+            "English" -> Locale("en")
+            "Azərbaycan" -> Locale("az")
+            else -> Locale("en")
         }
 
-        val config = resources.configuration
-        config.setLocale(locale)
-        createConfigurationContext(config)
+        if (currentLocale != newLocale) {
+            val config = resources.configuration
+            config.setLocale(newLocale)
+            createConfigurationContext(config)
+            recreate()
+        }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

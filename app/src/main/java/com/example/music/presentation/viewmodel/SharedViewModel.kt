@@ -36,11 +36,8 @@ class SharedViewModel @Inject constructor(
     private val _favoriteTracks = MutableLiveData<List<FavoriteTrack>>(emptyList())
     val favoriteTracks: LiveData<List<FavoriteTrack>> get() = _favoriteTracks
 
-
     private val _searchResults = MutableLiveData<List<ExactShow>>()
     val searchResults: LiveData<List<ExactShow>> = _searchResults
-
-
     private val musicApiService: MusicApiService = RetrofitInstance.api
 
     private val favoriteTrackDao: FavoriteTrackDao = AppDatabase.getDatabase(application).favoriteTrackDao()
