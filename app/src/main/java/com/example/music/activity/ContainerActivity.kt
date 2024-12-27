@@ -87,6 +87,7 @@ class ContainerActivity : AppCompatActivity() {
             recreate()
         }
     }
+    //
 
     override fun onDestroy() {
         super.onDestroy()
