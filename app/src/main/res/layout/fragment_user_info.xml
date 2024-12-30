@@ -16,7 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/text_color_primary" />
 
-    <!-- Profil şəkli ilə dəyişdirmə düyməsi -->
     <ImageView
         android:id="@+id/profile_image"
         android:layout_width="200dp"
@@ -28,52 +27,100 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <!-- Ad və soyad -->
-    <EditText
-        android:id="@+id/edit_name"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInput_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="@string/name"
-        android:textColor="@color/text_color_primary"
+        android:textColorHint="@color/text_color_primary"
+        app:boxBackgroundColor="@color/grey"
+        app:hintTextColor="@color/text_color_primary"
+        app:passwordToggleTint="@color/text_color_primary"
+        app:boxStrokeColor="@color/text_color_primary"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxStrokeWidth="0dp"
+        app:placeholderText="Name and Surname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_image" />
+        app:layout_constraintTop_toBottomOf="@id/profile_image">
 
-    <!-- Email -->
-    <EditText
-        android:id="@+id/edit_email"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSend"
+            android:textColor="@color/text_color_primary" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInput_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="@string/email"
-        android:textColor="@color/text_color_primary"
+        android:textColorHint="@color/text_color_primary"
+        app:boxBackgroundColor="@color/grey"
+        app:hintTextColor="@color/text_color_primary"
+        app:passwordToggleTint="@color/text_color_primary"
+        app:boxStrokeColor="@color/text_color_primary"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxStrokeWidth="0dp"
+        app:placeholderText="test@example.com"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_name" />
+        app:layout_constraintTop_toBottomOf="@id/textInput_name">
 
-    <!-- Şifrə -->
-    <EditText
-        android:id="@+id/edit_password"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSend"
+            android:textColor="@color/text_color_primary" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInput_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="@string/password"
-        android:inputType="textPassword"
-        android:textColor="@color/text_color_primary"
+        android:textColorHint="@color/text_color_primary"
+        app:boxBackgroundColor="@color/grey"
+        app:hintTextColor="@color/text_color_primary"
+        app:passwordToggleTint="@color/text_color_primary"
+        app:boxStrokeColor="@color/text_color_primary"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxStrokeWidth="0dp"
+        app:passwordToggleEnabled="true"
+        app:placeholderText="********"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_email" />
+        app:layout_constraintTop_toBottomOf="@id/textInput_email">
 
-    <!-- Məlumatları yadda saxla düyməsi -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSend"
+            android:inputType="textMultiLine|textPassword"
+            android:textColor="@color/text_color_primary" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15.5dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="15.5dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/primary_color"
         android:padding="13dp"
         android:text="@string/save"
@@ -81,9 +128,22 @@
         android:textSize="16sp"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edit_password" />
+        app:layout_constraintEnd_toEndOf="@+id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@+id/guidelineStart" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="15.5dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="15.5dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
