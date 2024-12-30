@@ -16,14 +16,11 @@ interface MusicApiService {
     // Bütün Şouların Alınması
     @GET("shows")
     suspend fun getAllShows(): Response<ShowsResponse>
-
     // Şouya aid treklərin alınması
     @GET("shows/{show_date}/tracks")
     suspend fun getTracksByShow(
         @Path("show_date") showDate: String
     ): Response<List<ShowsResponse>>
-
-
     // Bütün mahnıların siyahısı
     @GET("songs")
     suspend fun getSongs(): Response<SongsResponse>
