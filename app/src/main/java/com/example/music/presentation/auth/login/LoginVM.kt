@@ -18,9 +18,9 @@ class LoginVM @Inject constructor(
     val state: LiveData<CoreUIState<State>> = _state
 
     // Login funksiyasının işləyişi
-    fun loginUser(email: String, password: String) {
+    fun loginUser(name: String, email: String, password: String) {
         // Validation üçün ValidationUtils istifadə edilir
-        val validationState = ValidationUtils.validate(email, password, password)
+        val validationState = ValidationUtils.validate(name,email, password, password)
 
         if (validationState.hasErrors()) {
             Log.d("DDDDDDDDD", validationState.toString())

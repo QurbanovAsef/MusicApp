@@ -30,21 +30,32 @@ class UserInfoFragment : Fragment() {
         binding.backButtonUserinfo.setOnClickListener {
             findNavController().popBackStack()
         }
-
-        // Yadda saxla düyməsinə klik
         binding.saveButton.setOnClickListener {
             val name = binding.editName.text.toString()
             val email = binding.editEmail.text.toString()
             val password = binding.editPassword.text.toString()
 
-            if (validateInputs(name, email, password)) {
-                // Firebase ilə məlumatları yenilə
+            val validationState = ValidationUtils.validate(name, email, password, "")
+
+            if (validationState.hasErrors()) {
+                // Səhvləri göstər
+                binding.inputName.error = validationState.nameError
+                binding.inputEmail.error = validationState.emailError
+                binding.inputPassword.error = validationState.passwordError
+            } else {
+                // Səhv yoxdursa, məlumatları Firebase ilə yeniləyin
+                binding.inputName.error = null
+                binding.inputEmail.error = null
+                binding.inputPassword.error = null
+
                 updateFirebaseUserInfo(name, email, password)
+                Toast.makeText(requireContext(), "Məlumatlar uğurla saxlanıldı!", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
-    private fun validateInputs(name: String, email: String, password: String): Boolean {
+        private fun validateInputs(name: String, email: String, password: String): Boolean {
         // Əsas yoxlama məntiqi
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(requireContext(), "Bütün sahələri doldurun!", Toast.LENGTH_SHORT).show()

@@ -40,10 +40,11 @@ class PasswordRecovery : Fragment() {
 
         binding?.Continue?.setOnClickListener {
             val email = binding?.textInputEditTextEmail?.text.toString()
+            val name = "" // Şifrəni əlavə edə bilərsiniz
             val password = "" // Şifrəni əlavə edə bilərsiniz
             val repeatPassword = "" // Təkrarlanan şifrəni əlavə edə bilərsiniz
 
-            passwordViewModel.validateFields(email, password, repeatPassword)
+            passwordViewModel.validateFields(name,email, password, repeatPassword)
 
             if (!passwordViewModel.validationState.value?.hasErrors()!!) {
                 findNavController().navigate(R.id.action_passwordRecovery_to_updatePassword)

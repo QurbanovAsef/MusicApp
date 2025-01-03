@@ -49,19 +49,17 @@ class TracksAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(track: TrackResponse) = with(binding) {
             songTitle.text = track.title ?: "Naməlum Mahnı"
-            songArtist.text = track.venueName ?: "Naməlum İfaçı"
+            songArtist.text = track.slug ?: "Naməlum İfaçı"
+            songName.text = track.venueName ?: "Naməlum İfaçı"
             songDate.text = track.showDate ?: "Naməlum vaxt"
-
             Glide.with(root.context)
                 .load(track.showAlbumCoverURL)
                 .into(songImage)
             root.setOnClickListener { onItemClick(track) }
 
-
             favoriteIcon.setImageResource(
                 if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
             )
-
             favoriteIcon.setOnClickListener {
                 track.isLiked = !(track.isLiked ?: false)
                 notifyItemChanged(adapterPosition)

@@ -33,6 +33,9 @@
     <string name="shuffle">Shuffle</string>
     <string name="no_results_found">No results found</string>
     <string name="song_title">Song Title</string>
+    <string name="song_name">Song Name</string>
+    <string name="show_name">Show Name </string>
+    <string name="show_surName">Show Surname</string>
     <string name="artist">Artist</string>
     <string name="favorite_songs">Favorite Songs</string>
 

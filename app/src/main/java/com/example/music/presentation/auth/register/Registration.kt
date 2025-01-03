@@ -78,10 +78,11 @@ class Registration : Fragment() {
 
     private fun onRegisterClick() {
         binding.apply {
+          val  name=""
             val email = textInputEditTextEmail.text.toString()
             val password = textInputEditTextPassword.text.toString()
             val repeatPassword = repeatPasswordET.text.toString()
-            viewModel.registerUser(email, password, repeatPassword)
+            viewModel.registerUser(name,email, password, repeatPassword)
         }
     }
 

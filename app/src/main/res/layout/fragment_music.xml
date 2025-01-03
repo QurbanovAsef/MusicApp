@@ -1,72 +1,116 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
     android:padding="16dp">
-
-    <!-- Header with back arrow, title, and more options -->
-    <LinearLayout
-        android:id="@+id/headerContainer"
+    <!-- Header with back arrow, title, and favorite icon -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/background_color"
+        tools:ignore="MissingConstraints">
 
-        <ImageView
-            android:id="@+id/backArrow"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:src="@drawable/ic_back"
-            app:tint="@color/text_color_primary" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/songTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/song_title"
-            android:textColor="@color/primary_color"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <!-- Back button -->
+            <ImageView
+                android:id="@+id/backArrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/text_color_primary" />
 
-        <ImageView
-            android:id="@+id/likeButton"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:src="@drawable/ic_favorite_empty"
-            app:tint="@color/text_color_primary" />
-    </LinearLayout>
-    <!-- Song Image -->
-    <ImageView
-        android:id="@+id/songImage"
+            <!-- Title -->
+            <TextView
+                android:id="@+id/songTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/song_title"
+                android:textColor="@color/primary_color"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:freezesText="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/likeButton"
+                app:layout_constraintStart_toEndOf="@id/backArrow"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <!-- Favorite icon -->
+            <ImageView
+                android:id="@+id/likeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/ic_favorite_empty"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/text_color_primary" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Song image -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/artistCoverContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:adjustViewBounds="true"
-        android:scaleType="centerInside"
-        android:src="@drawable/rectangle_19"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerContainer" />
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/songImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/backgrounds/scenic[0]" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Song name -->
     <TextView
         android:id="@+id/songName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:text="@string/song_title"
         android:textColor="@color/primary_color"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/songImage" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/artistCoverContainer" />
+
+
+    <!-- Artist name -->
     <TextView
         android:id="@+id/artistName"
         android:layout_width="wrap_content"
@@ -77,6 +121,8 @@
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/songName" />
+
+    <!-- SeekBar -->
     <SeekBar
         android:id="@+id/SeekBar"
         android:layout_width="0dp"
@@ -88,6 +134,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/artistName" />
+
+    <!-- Time container -->
     <LinearLayout
         android:id="@+id/timeContainer"
         android:layout_width="0dp"
@@ -97,6 +145,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/SeekBar">
+
         <TextView
             android:id="@+id/startTime"
             android:layout_width="wrap_content"
@@ -104,6 +153,7 @@
             android:text="@string/time_start"
             android:textColor="@color/text_color_primary"
             android:textSize="14sp" />
+
         <TextView
             android:id="@+id/endTime"
             android:layout_width="0dp"
@@ -114,42 +164,57 @@
             android:textColor="@color/text_color_primary"
             android:textSize="14sp" />
     </LinearLayout>
-    <!-- Playback Controls -->
+
+    <!-- Playback controls -->
     <LinearLayout
         android:id="@+id/playbackControls"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="60dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/timeContainer">
+
+        <ImageView
+            android:id="@+id/shuffleButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/shuffle_button_state" />
+
         <ImageView
             android:id="@+id/rewindButton"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="24dp"
+            android:contentDescription="@string/todo"
             android:src="@drawable/previous"
             app:tint="@color/text_color_primary" />
+
         <ImageView
             android:id="@+id/playPauseButton"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_gravity="center"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
+            android:contentDescription="@string/todo"
             android:src="@drawable/ic_play" />
+
         <ImageView
             android:id="@+id/forwardButton"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginEnd="24dp"
+            android:contentDescription="@string/todo"
             android:src="@drawable/next"
             app:tint="@color/text_color_primary" />
-
+        <ImageView
+            android:id="@+id/repeatButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/repeat_button_state" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -32,7 +32,10 @@ class MusicFragment : Fragment() {
     private var currentSongIndex = 0
     private val handler = Handler()
 
-    private val args : MusicFragmentArgs by navArgs()
+    private val args: MusicFragmentArgs by navArgs()
+
+    private var isShuffleEnabled = false // Shuffle rejimi
+    private var isRepeatEnabled = false // Repeat rejimi
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -77,7 +80,9 @@ class MusicFragment : Fragment() {
         }
 
         mediaPlayer?.setOnCompletionListener {
-            if (currentSongIndex < songsList.size - 1) {
+            if (isRepeatEnabled) {
+                playSongAt(currentSongIndex) // Repeat mahnı
+            } else if (currentSongIndex < songsList.size - 1) {
                 currentSongIndex++
                 playSongAt(currentSongIndex)
             } else {
@@ -87,7 +92,7 @@ class MusicFragment : Fragment() {
             }
         }
 
-        // Play/Pause düyməsi funksionallığı
+        // Play/Pause düyməsi
         binding.playPauseButton.setOnClickListener {
             if (isPlaying) {
                 mediaPlayer?.pause()
@@ -95,7 +100,7 @@ class MusicFragment : Fragment() {
             } else {
                 mediaPlayer?.start()
                 binding.playPauseButton.setImageResource(R.drawable.ic_pause)
-                updateSeekBar() // Start updating the SeekBar
+                updateSeekBar()
             }
             isPlaying = !isPlaying
         }
@@ -138,26 +143,34 @@ class MusicFragment : Fragment() {
             isLiked = !isLiked
         }
 
-        // Geri gedən düymə
+        // Geri düyməsi
         binding.backArrow.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        // Favoritləri izləmək
-
-        // FavoriteTracks-u izləmək
-        sharedViewModel.favoriteTracks.observe(viewLifecycleOwner) { favoriteSongs ->
-            currentSongEntity?.let { song ->
-                // FavoriteTrack obyektini ilə TrackResponse obyektini müqayisə etmək üçün
-                isLiked = favoriteSongs.any { it.slug == song.slug }
-                binding.likeButton.setImageResource(
-                    if (isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
-                )
+        // Shuffle düyməsi
+        binding.shuffleButton.setOnClickListener {
+            isShuffleEnabled = !isShuffleEnabled
+            binding.shuffleButton.setImageResource(
+                if (isShuffleEnabled) {
+                    R.drawable.shuffle_on
+                } else R.drawable.shuffle_off
+            )
+            if (isShuffleEnabled) {
+                shuffleSongs()
+            } else {
+                playSongAt(currentSongIndex)
             }
         }
+        // Repeat düyməsi
+        binding.repeatButton.setOnClickListener {
+            isRepeatEnabled = !isRepeatEnabled
+            binding.repeatButton.setImageResource(
+                if (isRepeatEnabled) R.drawable.repeat_on else R.drawable.repeat_off
+            )
+        }
 
-
-        // SeekBar-ın toxunulabilir olması
+        // SeekBar
         binding.SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -171,7 +184,6 @@ class MusicFragment : Fragment() {
         })
     }
 
-    // Mahnı siyahısında mövcud olan bir mahnını oynamaq
     private fun playSongAt(index: Int) {
         currentSongEntity = songsList[index]
         currentSongEntity?.let {
@@ -179,26 +191,18 @@ class MusicFragment : Fragment() {
             setupMediaPlayer(it)
         }
     }
-
-
     private fun updateUI(songEntity: TrackResponse) {
         binding.songTitle.text = songEntity.title
+        binding.songTitle.isSelected = true // Enable marquee for song title
         binding.artistName.text = songEntity.slug
+        binding.songName.text = songEntity.venueName
+        binding.songName.isSelected = true // Enable marquee for song name
 
-        Glide.with(requireContext()) // Pass the context
-            .load(songEntity.showAlbumCoverURL) // URL or local image
-            .into(binding.songImage) // Target ImageView
+        Glide.with(requireContext())
+            .load(songEntity.showAlbumCoverURL)
+            .into(binding.songImage)
     }
 
-    private fun handleLikeDislike(song: TrackResponse) {
-        if (isLiked) {
-            sharedViewModel.removeFavorite(song)
-        } else {
-            sharedViewModel.addFavorite(song)
-        }
-        isLiked = !isLiked
-        updateLikeButton()
-    }
 
     private fun updateLikeButton() {
         binding.likeButton.setImageResource(
@@ -206,15 +210,18 @@ class MusicFragment : Fragment() {
         )
     }
 
-    // MediaPlayer qurulması və oynadılması
+    private fun shuffleSongs() {
+        songsList = songsList.shuffled()
+        currentSongIndex = 0
+        playSongAt(currentSongIndex)
+    }
+
     private fun setupMediaPlayer(song: TrackResponse) {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
             song.mp3Url?.let {
-                Log.d("DDDDD", it)
-                if (it.isEmpty())
-                    return
-                setDataSource(it) // Song URL-sini stream etmək
+                if (it.isEmpty()) return
+                setDataSource(it)
             } ?: run {
                 Toast.makeText(requireContext(), "Song URL not found", Toast.LENGTH_SHORT).show()
                 return@apply
@@ -224,25 +231,11 @@ class MusicFragment : Fragment() {
                 start()
                 binding.playPauseButton.setImageResource(R.drawable.ic_pause)
                 this@MusicFragment.isPlaying = true
-                updateSeekBar() // Start updating the SeekBar
-            }
-
-            setOnCompletionListener {
-                this@MusicFragment.isPlaying = false
-                binding.playPauseButton.setImageResource(R.drawable.ic_play)
-                binding.SeekBar.progress = 0 // Reset SeekBar after song completion
-                binding.startTime.text = "00:00"
-            }
-
-            setOnErrorListener { mp, what, extra ->
-                Toast.makeText(requireContext(), "Error: $what, $extra", Toast.LENGTH_SHORT).show()
-                Log.d("MediaPlayerLog", "Song:   ${song.mp3Url}")
-                false
+                updateSeekBar()
             }
         }
     }
 
-    // SeekBar-ı yeniləyirik
     private fun updateSeekBar() = with(binding) {
         val totalDuration = mediaPlayer?.duration ?: 0
         SeekBar.max = totalDuration
@@ -254,7 +247,7 @@ class MusicFragment : Fragment() {
                     val currentPosition = mediaPlayer?.currentPosition ?: 0
                     SeekBar.progress = currentPosition
                     startTime.text = formatTime(currentPosition)
-                    handler.postDelayed(this, 1000) // Update every second
+                    handler.postDelayed(this, 1000)
                 }
             }
         }
@@ -262,19 +255,9 @@ class MusicFragment : Fragment() {
         handler.postDelayed(updateRunnable, 0)
     }
 
-
-    // Format time as MM:SS
-    private fun formatTime(milliseconds: Int): String {
-        val seconds = (milliseconds / 1000) % 60
-        val minutes = (milliseconds / 1000) / 60
+    private fun formatTime(timeInMillis: Int): String {
+        val minutes = (timeInMillis / 1000) / 60
+        val seconds = (timeInMillis / 1000) % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }
-
-
-

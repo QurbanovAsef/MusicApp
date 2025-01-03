@@ -1,0 +1,288 @@
+Index: app/src/main/res/drawable/shuffle_button_state.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/shuffle_button_state.xml b/app/src/main/res/drawable/shuffle_button_state.xml
+new file mode 100644
+--- /dev/null	(date 1735826190149)
++++ b/app/src/main/res/drawable/shuffle_button_state.xml	(date 1735826190149)
+@@ -0,0 +1,6 @@
++<selector xmlns:android="http://schemas.android.com/apk/res/android">
++    <!-- Seçilmiş vəziyyət üçün ikon -->
++    <item android:drawable="@drawable/shuffle_on" android:state_selected="true" />
++    <!-- Normal vəziyyət üçün ikon -->
++    <item android:drawable="@drawable/shuffle_off" />
++</selector>
+Index: app/src/main/java/com/example/music/presentation/auth/bottomMenu/music/MusicFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.music.presentation.auth.bottomMenu.music\r\n\r\nimport android.media.MediaPlayer\r\nimport android.os.Bundle\r\nimport android.os.Handler\r\nimport android.util.Log\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.SeekBar\r\nimport android.widget.Toast\r\nimport androidx.fragment.app.Fragment\r\nimport androidx.fragment.app.activityViewModels\r\nimport androidx.navigation.fragment.findNavController\r\nimport androidx.navigation.fragment.navArgs\r\nimport com.bumptech.glide.Glide\r\nimport com.example.androidprojecttest1.R\r\nimport com.example.androidprojecttest1.databinding.FragmentMusicBinding\r\nimport com.example.music.data.model.response.TrackResponse\r\nimport com.example.music.presentation.viewmodel.SharedViewModel\r\n\r\nclass MusicFragment : Fragment() {\r\n\r\n    private var _binding: FragmentMusicBinding? = null\r\n    private val binding get() = _binding!!\r\n    private val sharedViewModel: SharedViewModel by activityViewModels()\r\n    private var mediaPlayer: MediaPlayer? = null\r\n    private var isPlaying = false\r\n    private var isLiked = false\r\n    private var currentSongEntity: TrackResponse? = null\r\n    private var songsList: List<TrackResponse> = listOf()\r\n    private var currentSongIndex = 0\r\n    private val handler = Handler()\r\n\r\n    private val args : MusicFragmentArgs by navArgs()\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?\r\n    ): View {\r\n        _binding = FragmentMusicBinding.inflate(inflater, container, false)\r\n        return binding.root\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n        currentSongEntity = args.track\r\n\r\n        currentSongEntity?.let {\r\n            updateUI(it)\r\n            isLiked = sharedViewModel.isFavorite(it)\r\n            updateLikeButton()\r\n        }\r\n\r\n        sharedViewModel.playerTracks.observe(viewLifecycleOwner) { songs ->\r\n            if (songs.isEmpty()) {\r\n                Toast.makeText(requireContext(), \"No song found\", Toast.LENGTH_SHORT).show()\r\n                return@observe\r\n            }\r\n\r\n            songsList = songs\r\n            if (currentSongEntity == null) {\r\n                currentSongEntity = songs[0]\r\n                currentSongIndex = 0\r\n            } else {\r\n                currentSongIndex =\r\n                    songsList.indexOfFirst { it.slug == currentSongEntity?.slug }\r\n                if (currentSongIndex == -1) {\r\n                    currentSongEntity = songs[0]\r\n                    currentSongIndex = 0\r\n                }\r\n            }\r\n            currentSongEntity?.let {\r\n                updateUI(it)\r\n                setupMediaPlayer(it)\r\n            }\r\n        }\r\n\r\n        mediaPlayer?.setOnCompletionListener {\r\n            if (currentSongIndex < songsList.size - 1) {\r\n                currentSongIndex++\r\n                playSongAt(currentSongIndex)\r\n            } else {\r\n                Toast.makeText(requireContext(), \"No next song\", Toast.LENGTH_SHORT).show()\r\n                binding.playPauseButton.setImageResource(R.drawable.ic_play)\r\n                binding.SeekBar.progress = 0\r\n            }\r\n        }\r\n\r\n        // Play/Pause düyməsi funksionallığı\r\n        binding.playPauseButton.setOnClickListener {\r\n            if (isPlaying) {\r\n                mediaPlayer?.pause()\r\n                binding.playPauseButton.setImageResource(R.drawable.ic_play)\r\n            } else {\r\n                mediaPlayer?.start()\r\n                binding.playPauseButton.setImageResource(R.drawable.ic_pause)\r\n                updateSeekBar() // Start updating the SeekBar\r\n            }\r\n            isPlaying = !isPlaying\r\n        }\r\n\r\n        // Geri düyməsi\r\n        binding.rewindButton.setOnClickListener {\r\n            if (currentSongIndex > 0) {\r\n                currentSongIndex--\r\n                playSongAt(currentSongIndex)\r\n            } else {\r\n                Toast.makeText(requireContext(), \"No previous song\", Toast.LENGTH_SHORT).show()\r\n            }\r\n        }\r\n\r\n        // İrəli düyməsi\r\n        binding.forwardButton.setOnClickListener {\r\n            if (currentSongIndex < songsList.size - 1) {\r\n                currentSongIndex++\r\n                playSongAt(currentSongIndex)\r\n            } else {\r\n                Toast.makeText(requireContext(), \"No next song\", Toast.LENGTH_SHORT).show()\r\n            }\r\n        }\r\n\r\n        // Like düyməsi\r\n        binding.likeButton.setOnClickListener {\r\n            if (isLiked) {\r\n                binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)\r\n                currentSongEntity?.let { sharedViewModel.removeFavorite(it) }\r\n            } else {\r\n                val addedSuccessfully =\r\n                    currentSongEntity?.let { sharedViewModel.addFavorite(it) } ?: false\r\n                if (addedSuccessfully as Boolean) {\r\n                    binding.likeButton.setImageResource(R.drawable.ic_favorite_full)\r\n                } else {\r\n                    Toast.makeText(requireContext(), \"Already in Favorites\", Toast.LENGTH_SHORT)\r\n                        .show()\r\n                }\r\n            }\r\n            isLiked = !isLiked\r\n        }\r\n\r\n        // Geri gedən düymə\r\n        binding.backArrow.setOnClickListener {\r\n            findNavController().popBackStack()\r\n        }\r\n\r\n        // Favoritləri izləmək\r\n\r\n        // FavoriteTracks-u izləmək\r\n        sharedViewModel.favoriteTracks.observe(viewLifecycleOwner) { favoriteSongs ->\r\n            currentSongEntity?.let { song ->\r\n                // FavoriteTrack obyektini ilə TrackResponse obyektini müqayisə etmək üçün\r\n                isLiked = favoriteSongs.any { it.slug == song.slug }\r\n                binding.likeButton.setImageResource(\r\n                    if (isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty\r\n                )\r\n            }\r\n        }\r\n\r\n\r\n        // SeekBar-ın toxunulabilir olması\r\n        binding.SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {\r\n            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {\r\n                if (fromUser) {\r\n                    mediaPlayer?.seekTo(progress)\r\n                    binding.startTime.text = formatTime(progress)\r\n                }\r\n            }\r\n\r\n            override fun onStartTrackingTouch(seekBar: SeekBar?) {}\r\n            override fun onStopTrackingTouch(seekBar: SeekBar?) {}\r\n        })\r\n    }\r\n\r\n    // Mahnı siyahısında mövcud olan bir mahnını oynamaq\r\n    private fun playSongAt(index: Int) {\r\n        currentSongEntity = songsList[index]\r\n        currentSongEntity?.let {\r\n            updateUI(it)\r\n            setupMediaPlayer(it)\r\n        }\r\n    }\r\n\r\n\r\n    private fun updateUI(songEntity: TrackResponse) {\r\n        binding.songTitle.text = songEntity.title\r\n        binding.artistName.text = songEntity.slug\r\n\r\n        Glide.with(requireContext()) // Pass the context\r\n            .load(songEntity.showAlbumCoverURL) // URL or local image\r\n            .into(binding.songImage) // Target ImageView\r\n    }\r\n\r\n    private fun handleLikeDislike(song: TrackResponse) {\r\n        if (isLiked) {\r\n            sharedViewModel.removeFavorite(song)\r\n        } else {\r\n            sharedViewModel.addFavorite(song)\r\n        }\r\n        isLiked = !isLiked\r\n        updateLikeButton()\r\n    }\r\n\r\n    private fun updateLikeButton() {\r\n        binding.likeButton.setImageResource(\r\n            if (isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty\r\n        )\r\n    }\r\n\r\n    // MediaPlayer qurulması və oynadılması\r\n    private fun setupMediaPlayer(song: TrackResponse) {\r\n        mediaPlayer?.release()\r\n        mediaPlayer = MediaPlayer().apply {\r\n            song.mp3Url?.let {\r\n                Log.d(\"DDDDD\", it)\r\n                if (it.isEmpty())\r\n                    return\r\n                setDataSource(it) // Song URL-sini stream etmək\r\n            } ?: run {\r\n                Toast.makeText(requireContext(), \"Song URL not found\", Toast.LENGTH_SHORT).show()\r\n                return@apply\r\n            }\r\n            prepareAsync()\r\n            setOnPreparedListener {\r\n                start()\r\n                binding.playPauseButton.setImageResource(R.drawable.ic_pause)\r\n                this@MusicFragment.isPlaying = true\r\n                updateSeekBar() // Start updating the SeekBar\r\n            }\r\n\r\n            setOnCompletionListener {\r\n                this@MusicFragment.isPlaying = false\r\n                binding.playPauseButton.setImageResource(R.drawable.ic_play)\r\n                binding.SeekBar.progress = 0 // Reset SeekBar after song completion\r\n                binding.startTime.text = \"00:00\"\r\n            }\r\n\r\n            setOnErrorListener { mp, what, extra ->\r\n                Toast.makeText(requireContext(), \"Error: $what, $extra\", Toast.LENGTH_SHORT).show()\r\n                Log.d(\"MediaPlayerLog\", \"Song:   ${song.mp3Url}\")\r\n                false\r\n            }\r\n        }\r\n    }\r\n\r\n    // SeekBar-ı yeniləyirik\r\n    private fun updateSeekBar() = with(binding) {\r\n        val totalDuration = mediaPlayer?.duration ?: 0\r\n        SeekBar.max = totalDuration\r\n        endTime.text = formatTime(totalDuration)\r\n\r\n        val updateRunnable = object : Runnable {\r\n            override fun run() {\r\n                if (isAdded) {\r\n                    val currentPosition = mediaPlayer?.currentPosition ?: 0\r\n                    SeekBar.progress = currentPosition\r\n                    startTime.text = formatTime(currentPosition)\r\n                    handler.postDelayed(this, 1000) // Update every second\r\n                }\r\n            }\r\n        }\r\n\r\n        handler.postDelayed(updateRunnable, 0)\r\n    }\r\n\r\n\r\n    // Format time as MM:SS\r\n    private fun formatTime(milliseconds: Int): String {\r\n        val seconds = (milliseconds / 1000) % 60\r\n        val minutes = (milliseconds / 1000) / 60\r\n        return String.format(\"%02d:%02d\", minutes, seconds)\r\n    }\r\n\r\n    override fun onDestroyView() {\r\n        super.onDestroyView()\r\n        _binding = null\r\n    }\r\n}\r\n\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/music/presentation/auth/bottomMenu/music/MusicFragment.kt b/app/src/main/java/com/example/music/presentation/auth/bottomMenu/music/MusicFragment.kt
+--- a/app/src/main/java/com/example/music/presentation/auth/bottomMenu/music/MusicFragment.kt	(revision d95b557d7ef05a4d50c5e57ba3778b34a3cb985d)
++++ b/app/src/main/java/com/example/music/presentation/auth/bottomMenu/music/MusicFragment.kt	(date 1735826531194)
+@@ -32,8 +32,11 @@
+     private var currentSongIndex = 0
+     private val handler = Handler()
+ 
+-    private val args : MusicFragmentArgs by navArgs()
++    private val args: MusicFragmentArgs by navArgs()
+ 
++    private var isShuffleEnabled = false // Shuffle rejimi
++    private var isRepeatEnabled = false // Repeat rejimi
++
+     override fun onCreateView(
+         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+     ): View {
+@@ -77,7 +80,9 @@
+         }
+ 
+         mediaPlayer?.setOnCompletionListener {
+-            if (currentSongIndex < songsList.size - 1) {
++            if (isRepeatEnabled) {
++                playSongAt(currentSongIndex) // Repeat mahnı
++            } else if (currentSongIndex < songsList.size - 1) {
+                 currentSongIndex++
+                 playSongAt(currentSongIndex)
+             } else {
+@@ -87,7 +92,7 @@
+             }
+         }
+ 
+-        // Play/Pause düyməsi funksionallığı
++        // Play/Pause düyməsi
+         binding.playPauseButton.setOnClickListener {
+             if (isPlaying) {
+                 mediaPlayer?.pause()
+@@ -95,7 +100,7 @@
+             } else {
+                 mediaPlayer?.start()
+                 binding.playPauseButton.setImageResource(R.drawable.ic_pause)
+-                updateSeekBar() // Start updating the SeekBar
++                updateSeekBar()
+             }
+             isPlaying = !isPlaying
+         }
+@@ -138,26 +143,34 @@
+             isLiked = !isLiked
+         }
+ 
+-        // Geri gedən düymə
++        // Geri düyməsi
+         binding.backArrow.setOnClickListener {
+             findNavController().popBackStack()
+         }
+ 
+-        // Favoritləri izləmək
+-
+-        // FavoriteTracks-u izləmək
+-        sharedViewModel.favoriteTracks.observe(viewLifecycleOwner) { favoriteSongs ->
+-            currentSongEntity?.let { song ->
+-                // FavoriteTrack obyektini ilə TrackResponse obyektini müqayisə etmək üçün
+-                isLiked = favoriteSongs.any { it.slug == song.slug }
+-                binding.likeButton.setImageResource(
+-                    if (isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+-                )
++        // Shuffle düyməsi
++        binding.shuffleButton.setOnClickListener {
++            isShuffleEnabled = !isShuffleEnabled
++            binding.shuffleButton.setImageResource(
++                if (isShuffleEnabled) {
++                    R.drawable.shuffle_on
++                } else R.drawable.shuffle_off
++            )
++            if (isShuffleEnabled) {
++                shuffleSongs()
++            } else {
++                playSongAt(currentSongIndex)
+             }
+         }
+-
++        // Repeat düyməsi
++        binding.repeatButton.setOnClickListener {
++            isRepeatEnabled = !isRepeatEnabled
++            binding.repeatButton.setImageResource(
++                if (isRepeatEnabled) R.drawable.repeat_on else R.drawable.repeat_off
++            )
++        }
+ 
+-        // SeekBar-ın toxunulabilir olması
++        // SeekBar
+         binding.SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                 if (fromUser) {
+@@ -171,7 +184,6 @@
+         })
+     }
+ 
+-    // Mahnı siyahısında mövcud olan bir mahnını oynamaq
+     private fun playSongAt(index: Int) {
+         currentSongEntity = songsList[index]
+         currentSongEntity?.let {
+@@ -180,24 +192,13 @@
+         }
+     }
+ 
+-
+     private fun updateUI(songEntity: TrackResponse) {
+         binding.songTitle.text = songEntity.title
+         binding.artistName.text = songEntity.slug
+ 
+-        Glide.with(requireContext()) // Pass the context
+-            .load(songEntity.showAlbumCoverURL) // URL or local image
+-            .into(binding.songImage) // Target ImageView
+-    }
+-
+-    private fun handleLikeDislike(song: TrackResponse) {
+-        if (isLiked) {
+-            sharedViewModel.removeFavorite(song)
+-        } else {
+-            sharedViewModel.addFavorite(song)
+-        }
+-        isLiked = !isLiked
+-        updateLikeButton()
++        Glide.with(requireContext())
++            .load(songEntity.showAlbumCoverURL)
++            .into(binding.songImage)
+     }
+ 
+     private fun updateLikeButton() {
+@@ -206,15 +207,18 @@
+         )
+     }
+ 
+-    // MediaPlayer qurulması və oynadılması
++    private fun shuffleSongs() {
++        songsList = songsList.shuffled()
++        currentSongIndex = 0
++        playSongAt(currentSongIndex)
++    }
++
+     private fun setupMediaPlayer(song: TrackResponse) {
+         mediaPlayer?.release()
+         mediaPlayer = MediaPlayer().apply {
+             song.mp3Url?.let {
+-                Log.d("DDDDD", it)
+-                if (it.isEmpty())
+-                    return
+-                setDataSource(it) // Song URL-sini stream etmək
++                if (it.isEmpty()) return
++                setDataSource(it)
+             } ?: run {
+                 Toast.makeText(requireContext(), "Song URL not found", Toast.LENGTH_SHORT).show()
+                 return@apply
+@@ -224,25 +228,11 @@
+                 start()
+                 binding.playPauseButton.setImageResource(R.drawable.ic_pause)
+                 this@MusicFragment.isPlaying = true
+-                updateSeekBar() // Start updating the SeekBar
+-            }
+-
+-            setOnCompletionListener {
+-                this@MusicFragment.isPlaying = false
+-                binding.playPauseButton.setImageResource(R.drawable.ic_play)
+-                binding.SeekBar.progress = 0 // Reset SeekBar after song completion
+-                binding.startTime.text = "00:00"
+-            }
+-
+-            setOnErrorListener { mp, what, extra ->
+-                Toast.makeText(requireContext(), "Error: $what, $extra", Toast.LENGTH_SHORT).show()
+-                Log.d("MediaPlayerLog", "Song:   ${song.mp3Url}")
+-                false
++                updateSeekBar()
+             }
+         }
+     }
+ 
+-    // SeekBar-ı yeniləyirik
+     private fun updateSeekBar() = with(binding) {
+         val totalDuration = mediaPlayer?.duration ?: 0
+         SeekBar.max = totalDuration
+@@ -254,7 +244,7 @@
+                     val currentPosition = mediaPlayer?.currentPosition ?: 0
+                     SeekBar.progress = currentPosition
+                     startTime.text = formatTime(currentPosition)
+-                    handler.postDelayed(this, 1000) // Update every second
++                    handler.postDelayed(this, 1000)
+                 }
+             }
+         }
+@@ -262,19 +252,9 @@
+         handler.postDelayed(updateRunnable, 0)
+     }
+ 
+-
+-    // Format time as MM:SS
+-    private fun formatTime(milliseconds: Int): String {
+-        val seconds = (milliseconds / 1000) % 60
+-        val minutes = (milliseconds / 1000) / 60
++    private fun formatTime(timeInMillis: Int): String {
++        val minutes = (timeInMillis / 1000) / 60
++        val seconds = (timeInMillis / 1000) % 60
+         return String.format("%02d:%02d", minutes, seconds)
+     }
+-
+-    override fun onDestroyView() {
+-        super.onDestroyView()
+-        _binding = null
+-    }
+ }
+-
+-
+-
+Index: app/src/main/res/drawable/repeat_button_state.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/repeat_button_state.xml b/app/src/main/res/drawable/repeat_button_state.xml
+new file mode 100644
+--- /dev/null	(date 1735826275368)
++++ b/app/src/main/res/drawable/repeat_button_state.xml	(date 1735826275368)
+@@ -0,0 +1,6 @@
++<selector xmlns:android="http://schemas.android.com/apk/res/android">
++    <!-- Seçilmiş vəziyyət üçün ikon -->
++    <item android:drawable="@drawable/repeat_on" android:state_selected="true" />
++    <!-- Normal vəziyyət üçün ikon -->
++    <item android:drawable="@drawable/repeat_off" />
++</selector>
+Index: app/src/main/res/layout/fragment_music.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"@color/background_color\"\r\n    android:padding=\"16dp\">\r\n\r\n    <!-- Header with back arrow, title, and more options -->\r\n    <LinearLayout\r\n        android:id=\"@+id/headerContainer\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"8dp\"\r\n        android:layout_marginTop=\"28dp\"\r\n        android:layout_marginEnd=\"8dp\"\r\n        android:orientation=\"horizontal\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\">\r\n\r\n        <ImageView\r\n            android:id=\"@+id/backArrow\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:src=\"@drawable/ic_back\"\r\n            app:tint=\"@color/text_color_primary\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/songTitle\"\r\n            android:layout_width=\"0dp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginStart=\"16dp\"\r\n            android:layout_weight=\"1\"\r\n            android:gravity=\"center\"\r\n            android:text=\"@string/song_title\"\r\n            android:textColor=\"@color/primary_color\"\r\n            android:textSize=\"18sp\"\r\n            android:textStyle=\"bold\" />\r\n\r\n        <ImageView\r\n            android:id=\"@+id/likeButton\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:src=\"@drawable/ic_favorite_empty\"\r\n            app:tint=\"@color/text_color_primary\" />\r\n    </LinearLayout>\r\n\r\n\r\n        <ImageView\r\n            android:id=\"@+id/songImage\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:adjustViewBounds=\"true\"\r\n            android:scaleType=\"centerInside\"\r\n            android:layout_marginTop=\"30dp\"\r\n            android:src=\"@drawable/rectangle_19\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toBottomOf=\"@id/headerContainer\"/>\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/songName\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"16dp\"\r\n        android:text=\"@string/song_title\"\r\n        android:textColor=\"@color/primary_color\"\r\n        android:textSize=\"20sp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/songImage\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/artistName\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"4dp\"\r\n        android:text=\"@string/coldplay\"\r\n        android:textColor=\"@color/text_color_primary\"\r\n        android:textSize=\"16sp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/songName\" />\r\n\r\n    <SeekBar\r\n        android:id=\"@+id/SeekBar\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"16dp\"\r\n        android:progressBackgroundTint=\"@color/text_color_primary\"\r\n        android:progressTint=\"@color/text_color_primary\"\r\n        android:thumbTint=\"@color/primary_color\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/artistName\" />\r\n\r\n    <LinearLayout\r\n        android:id=\"@+id/timeContainer\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"4dp\"\r\n        android:orientation=\"horizontal\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/SeekBar\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/startTime\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"@string/time_start\"\r\n            android:textColor=\"@color/text_color_primary\"\r\n            android:textSize=\"14sp\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/endTime\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"1\"\r\n            android:gravity=\"end\"\r\n            android:text=\"@string/time_end\"\r\n            android:textColor=\"@color/text_color_primary\"\r\n            android:textSize=\"14sp\" />\r\n    </LinearLayout>\r\n\r\n    <!-- Playback Controls -->\r\n    <LinearLayout\r\n        android:id=\"@+id/playbackControls\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"32dp\"\r\n        android:layout_marginBottom=\"60dp\"\r\n        android:gravity=\"center\"\r\n        android:orientation=\"horizontal\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/timeContainer\">\r\n\r\n        <ImageView\r\n            android:id=\"@+id/shuffleButton\"\r\n            android:layout_width=\"32dp\"\r\n            android:layout_height=\"32dp\"\r\n            android:src=\"@drawable/shuffle_off\"\r\n            app:tint=\"@color/text_color_primary\" />\r\n\r\n        <ImageView\r\n            android:id=\"@+id/rewindButton\"\r\n            android:layout_width=\"32dp\"\r\n            android:layout_height=\"32dp\"\r\n            android:layout_marginStart=\"24dp\"\r\n            android:src=\"@drawable/previous\"\r\n            app:tint=\"@color/text_color_primary\" />\r\n\r\n\r\n        <ImageView\r\n            android:id=\"@+id/playPauseButton\"\r\n            android:layout_width=\"100dp\"\r\n            android:layout_height=\"100dp\"\r\n            android:layout_gravity=\"center\"\r\n            android:layout_marginStart=\"24dp\"\r\n            android:layout_marginEnd=\"24dp\"\r\n            android:src=\"@drawable/ic_play\" />\r\n\r\n        <ImageView\r\n            android:id=\"@+id/forwardButton\"\r\n            android:layout_width=\"32dp\"\r\n            android:layout_height=\"32dp\"\r\n            android:layout_marginEnd=\"24dp\"\r\n            android:src=\"@drawable/next\"\r\n            app:tint=\"@color/text_color_primary\" />\r\n\r\n        <ImageView\r\n            android:id=\"@+id/repeatButton\"\r\n            android:layout_width=\"32dp\"\r\n            android:layout_height=\"32dp\"\r\n            android:src=\"@drawable/repeat\"\r\n            app:tint=\"@color/text_color_primary\" />\r\n    </LinearLayout>\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_music.xml b/app/src/main/res/layout/fragment_music.xml
+--- a/app/src/main/res/layout/fragment_music.xml	(revision d95b557d7ef05a4d50c5e57ba3778b34a3cb985d)
++++ b/app/src/main/res/layout/fragment_music.xml	(date 1735826343320)
+@@ -141,8 +141,9 @@
+             android:id="@+id/shuffleButton"
+             android:layout_width="32dp"
+             android:layout_height="32dp"
+-            android:src="@drawable/shuffle_off"
+-            app:tint="@color/text_color_primary" />
++            android:src="@drawable/shuffle_button_state"
++       />
++
+ 
+         <ImageView
+             android:id="@+id/rewindButton"
+@@ -174,8 +175,9 @@
+             android:id="@+id/repeatButton"
+             android:layout_width="32dp"
+             android:layout_height="32dp"
+-            android:src="@drawable/repeat"
+-            app:tint="@color/text_color_primary" />
++            android:src="@drawable/repeat_button_state"
++        />
++
+     </LinearLayout>
+ 
+ </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/app/src/main/res/drawable/repeat.xml b/app/src/main/res/drawable/repeat_off.xml
+rename from app/src/main/res/drawable/repeat.xml
+rename to app/src/main/res/drawable/repeat_off.xml

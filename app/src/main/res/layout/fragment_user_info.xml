@@ -1,21 +1,37 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color">
 
-    <ImageView
-        android:id="@+id/back_buttonUserinfo"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_back"
-        app:layout_constraintStart_toStartOf="@+id/guidelineStart"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/text_color_primary" />
+    <!-- AppBar with Back Button -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_color"
+        tools:ignore="MissingConstraints">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
+            <!-- Back Button -->
+            <ImageView
+                android:id="@+id/back_buttonUserinfo"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="@string/todo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/text_color_primary" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- Profile Image -->
     <ImageView
         android:id="@+id/profile_image"
         android:layout_width="200dp"
@@ -25,101 +41,129 @@
         android:src="@drawable/circle_background1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
+    <!-- Name Input (Material Design) -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInput_name"
+        android:id="@+id/input_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16.5dp"
+        android:layout_marginTop="54dp"
+        android:layout_marginEnd="16.5dp"
         android:hint="@string/name"
         android:textColorHint="@color/text_color_primary"
         app:boxBackgroundColor="@color/grey"
         app:hintTextColor="@color/text_color_primary"
         app:passwordToggleTint="@color/text_color_primary"
         app:boxStrokeColor="@color/text_color_primary"
+        app:hintAnimationEnabled="false"
+        app:placeholderText="@string/name"
         app:boxCornerRadiusBottomEnd="10dp"
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
         app:boxCornerRadiusTopStart="10dp"
         app:boxStrokeWidth="0dp"
-        app:placeholderText="Name and Surname"
+        app:errorEnabled="true"
+        app:errorTextAppearance="@style/TextInputErrorStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_image">
+        app:layout_constraintTop_toBottomOf="@id/profile_image"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionSend"
-            android:textColor="@color/text_color_primary" />
+            android:inputType="textEmailAddress"
+            android:textColor="@color/text_color_primary"
+            android:textColorHint="@color/text_color_primary" />
+
     </com.google.android.material.textfield.TextInputLayout>
+    <!-- Email Input (Material Design) -->
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInput_email"
+        android:id="@+id/input_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16.5dp"
+        android:layout_marginEnd="16.5dp"
         android:hint="@string/email"
         android:textColorHint="@color/text_color_primary"
         app:boxBackgroundColor="@color/grey"
         app:hintTextColor="@color/text_color_primary"
         app:passwordToggleTint="@color/text_color_primary"
         app:boxStrokeColor="@color/text_color_primary"
+        app:hintAnimationEnabled="false"
+        app:placeholderText="test@example.com"
         app:boxCornerRadiusBottomEnd="10dp"
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
         app:boxCornerRadiusTopStart="10dp"
         app:boxStrokeWidth="0dp"
-        app:placeholderText="test@example.com"
+        app:errorEnabled="true"
+        app:errorTextAppearance="@style/TextInputErrorStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textInput_name">
+        app:layout_constraintTop_toBottomOf="@id/input_name"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionSend"
-            android:textColor="@color/text_color_primary" />
+            android:inputType="textEmailAddress"
+            android:textColor="@color/text_color_primary"
+            android:textColorHint="@color/text_color_primary" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Password Input (Material Design) -->
+
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInput_password"
+        android:id="@+id/input_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16.5dp"
+        android:layout_marginEnd="16.5dp"
         android:hint="@string/password"
         android:textColorHint="@color/text_color_primary"
         app:boxBackgroundColor="@color/grey"
         app:hintTextColor="@color/text_color_primary"
         app:passwordToggleTint="@color/text_color_primary"
         app:boxStrokeColor="@color/text_color_primary"
+        app:hintAnimationEnabled="false"
+        app:placeholderText="********"
         app:boxCornerRadiusBottomEnd="10dp"
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
         app:boxCornerRadiusTopStart="10dp"
         app:boxStrokeWidth="0dp"
+        app:errorEnabled="true"
         app:passwordToggleEnabled="true"
-        app:placeholderText="********"
+        app:errorTextAppearance="@style/TextInputErrorStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textInput_email">
+        app:layout_constraintTop_toBottomOf="@id/input_email"
+        app:layout_constraintVertical_chainStyle="packed">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionSend"
-            android:inputType="textMultiLine|textPassword"
-            android:textColor="@color/text_color_primary" />
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/text_color_primary"
+        android:textColorHint="@color/text_color_primary" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Save Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/primary_color"
         android:padding="13dp"
@@ -128,22 +172,7 @@
         android:textSize="16sp"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@+id/guidelineStart" />
-
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="15.5dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="15.5dp" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
