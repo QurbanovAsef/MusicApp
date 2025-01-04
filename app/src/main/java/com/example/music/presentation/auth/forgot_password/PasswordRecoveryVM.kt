@@ -9,8 +9,8 @@ class PasswordRecoveryVM : ViewModel() {
     private val _validationState = MutableLiveData<ValidationState>()
     val validationState: LiveData<ValidationState> = _validationState
 
-    fun validateFields(name: String,email: String, password: String, repeatPassword: String) {
-        val validationResult = ValidationUtils.validate(name,email, password, repeatPassword)
+    fun validateFields(email: String, password: String, repeatPassword: String) {
+        val validationResult = ValidationUtils.validate(email, password, repeatPassword)
         _validationState.value = validationResult
     }
 }

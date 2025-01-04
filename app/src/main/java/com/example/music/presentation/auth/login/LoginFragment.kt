@@ -54,10 +54,9 @@ class LoginFragment : Fragment() {
             }
 
             buttonSingIn.setOnClickListener {
-                val name =""
                 val email = textInputEditTextEmail.text.toString()
                 val password = textInputEditTextPassword.text.toString()
-                viewModel.loginUser(name,email, password)
+                viewModel.loginUser(email, password)
             }
 
             registerLink.setOnClickListener {

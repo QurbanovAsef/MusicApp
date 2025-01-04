@@ -16,8 +16,8 @@ class RegistrationVM @Inject constructor(
     private val _state: MutableLiveData<CoreUIState<State>> = MutableLiveData()
     val state: LiveData<CoreUIState<State>> = _state
 
-    fun registerUser(name: String,email: String, password: String, repeatPassword: String) {
-        val validationState = ValidationUtils.validate(name,email, password, repeatPassword)
+    fun registerUser(email: String, password: String, repeatPassword: String) {
+        val validationState = ValidationUtils.validate(email, password, repeatPassword)
 
         if (validationState.hasErrors()) {
             _state.value = CoreUIState.Success(

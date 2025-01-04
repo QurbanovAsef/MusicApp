@@ -3,21 +3,12 @@ import com.example.music.utils.ValidationState
 object ValidationUtils {
 
     // Əsas doğrulama funksiyası
-    fun validate(name: String, email: String, password: String, repeatPassword: String): ValidationState {
+    fun validate(email: String, password: String, repeatPassword: String): ValidationState {
         return ValidationState(
-            nameError = validateName(name),
             emailError = validateEmail(email),
             passwordError = validatePassword(password),
             repeatPasswordError = validateRepeatPassword(password, repeatPassword)
         )
-    }
-
-    private fun validateName(name: String): String? {
-        return when {
-            name.isBlank() -> "Ad boş ola bilməz"
-            name.length < 3 -> "Ad ən azı 3 simvol olmalıdır"
-            else -> null
-        }
     }
 
     // Email doğrulaması
@@ -51,6 +42,5 @@ object ValidationUtils {
             null
         }
     }
-
 
 }
