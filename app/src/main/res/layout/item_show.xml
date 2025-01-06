@@ -18,15 +18,15 @@
         <!-- Şəkil -->
         <androidx.cardview.widget.CardView
             android:id="@+id/showImageCard"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             app:cardBackgroundColor="@color/text_color_primary"
-            app:cardElevation="8dp"
+            app:cardElevation="15dp"
+            app:cardCornerRadius="8dp"
             app:layout_constraintBottom_toTopOf="@+id/showName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-
             <ImageView
                 android:id="@+id/imageShow"
                 android:layout_width="match_parent"

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentHomeBinding
@@ -51,7 +52,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.showRecyclerView.adapter = playlistsAdapter
         binding.showRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
         // HomeFragment-də Track məlumatını göndərmək
         tracksAdapter = TracksAdapter(
             onItemClick = { trackEntry ->
