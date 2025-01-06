@@ -14,7 +14,6 @@ import com.example.androidprojecttest1.databinding.ActivityContainer2Binding
 import com.example.music.presentation.viewmodel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
-
 @AndroidEntryPoint
 class ContainerActivity : AppCompatActivity() {
 
@@ -56,8 +55,10 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     fun logout() {
-        val sharedPreferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+        // SharedPreferences-u təmizləmək
         sharedPreferences.edit().clear().apply()
+
+        // Login fragment-ə keçmək
         val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
         navController.navigate(R.id.loginFragment)
     }
@@ -66,6 +67,8 @@ class ContainerActivity : AppCompatActivity() {
         val theme = sharedPreferences.getString("theme", "light") ?: "light"
         val currentMode = AppCompatDelegate.getDefaultNightMode()
         val newMode = if (theme == "dark") AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+
+        // Yalnız tələb olunduqda mod dəyişdiririk
         if (currentMode != newMode) {
             AppCompatDelegate.setDefaultNightMode(newMode)
         }
@@ -80,14 +83,14 @@ class ContainerActivity : AppCompatActivity() {
             else -> Locale("en")
         }
 
+        // Yalnız lazım olduqda dil dəyişdiririk
         if (currentLocale != newLocale) {
             val config = resources.configuration
             config.setLocale(newLocale)
-            createConfigurationContext(config)
-            recreate()
+            createConfigurationContext(config)  // Yenilənmiş lokal tənzimləmələr
+            recreate()  // Tətbiqi yenidən başladırıq
         }
     }
-    //
 
     override fun onDestroy() {
         super.onDestroy()

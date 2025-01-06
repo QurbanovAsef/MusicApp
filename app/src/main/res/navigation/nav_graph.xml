@@ -10,11 +10,9 @@
         android:id="@+id/loginFragment"
         android:name="com.example.music.presentation.auth.login.LoginFragment"
         tools:layout="@layout/fragment_login">
-        <!-- Action from Login to Registration -->
         <action
             android:id="@+id/action_login_to_registration"
             app:destination="@id/registration" />
-        <!-- Action from Login to SuccessfullyRegister -->
         <action
             android:id="@+id/action_loginFragment_to_passwordRecovery"
             app:destination="@id/passwordRecovery" />
@@ -28,11 +26,9 @@
         android:id="@+id/registration"
         android:name="com.example.music.presentation.auth.register.Registration"
         tools:layout="@layout/fragment_registration">
-        <!-- Action from Registration back to Login -->
         <action
             android:id="@+id/action_registration_to_login"
             app:destination="@id/loginFragment" />
-        <!-- Action from Registration to SuccessfullyRegister -->
         <action
             android:id="@+id/action_registration_to_successfullyRegister2"
             app:destination="@id/successfullyRegister2" />
@@ -42,7 +38,7 @@
     <fragment
         android:id="@+id/passwordRecovery"
         android:name="com.example.music.presentation.auth.forgot_password.PasswordRecovery"
-        android:label="PasswordRecovery">
+        tools:layout="@layout/fragment_password_recovery">
         <action
             android:id="@+id/action_passwordRecovery_to_updatePassword"
             app:destination="@id/updatePassword" />
@@ -52,7 +48,7 @@
     <fragment
         android:id="@+id/updatePassword"
         android:name="com.example.music.presentation.auth.forgot_password.UpdatePassword"
-        android:label="UpdatePassword">
+        tools:layout="@layout/fragment_update_password">
         <action
             android:id="@+id/action_updatePassword_to_successfullyRegister2"
             app:destination="@id/successfullyRegister2" />
@@ -62,79 +58,72 @@
     <fragment
         android:id="@+id/successfullyRegister2"
         android:name="com.example.music.presentation.auth.register.SuccessfullyRegister"
-        android:label="SuccessfullyRegister">
+        tools:layout="@layout/fragment_successfully_register">
         <action
             android:id="@+id/action_successfullyRegister2_to_nav_home"
             app:destination="@id/nav_home" />
     </fragment>
 
-
-
     <!-- Home Fragment -->
     <fragment
         android:id="@+id/nav_home"
         android:name="com.example.music.presentation.auth.bottomMenu.home.HomeFragment"
-        android:label="HomeFragment" />
-    <action
-        android:id="@+id/action_HomeFragment"
-        app:destination="@id/nav_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_nav_home_to_musicFragment"
+            app:destination="@id/musicFragment" />
+    </fragment>
+
     <!-- Search Fragment -->
     <fragment
         android:id="@+id/nav_search"
         android:name="com.example.music.presentation.auth.bottomMenu.search.SearchFragment"
-        android:label="SearchFragment" />
-    <action
-        android:id="@+id/action_MusicFragment"
-        app:destination="@id/musicFragment"/>
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_nav_search_to_musicFragment"
+            app:destination="@id/musicFragment" />
+    </fragment>
+
+    <!-- About App Fragment -->
     <fragment
         android:id="@+id/aboutAppFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.AboutAppFragment"
-        android:label="fragment_about_app"
         tools:layout="@layout/fragment_about_app" />
+
+    <!-- User Info Fragment -->
     <fragment
         android:id="@+id/userInfoFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.profile.fragments.UserInfoFragment"
-        android:label="fragment_user_info"
         tools:layout="@layout/fragment_user_info" />
-
-    <!-- News Fragment -->
-    <fragment
-        android:id="@+id/newsFragment"
-        android:name="com.example.music.presentation.auth.bottomMenu.home.fragmens.NewsFragment"
-        android:label="NewsFragment">
-        <action
-            android:id="@+id/action_newsFragment_to_musicFragment"
-            app:destination="@id/musicFragment" />
-    </fragment>
 
     <!-- Music Fragment -->
     <fragment
         android:id="@+id/musicFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.music.MusicFragment"
-        android:label="fragment_music"
-        tools:layout="@layout/fragment_music">
+        android:label="MusicFragment">
         <argument
             android:name="track"
             app:argType="com.example.music.data.model.response.TrackResponse" />
     </fragment>
 
 
+    <!-- Favorite Fragment -->
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.favorite.FavoriteFragment"
-        android:label="FavoriteFragment" >
+        tools:layout="@layout/fragment_favorite">
         <action
             android:id="@+id/action_favoriteFragment_to_musicFragment"
             app:destination="@id/musicFragment" />
     </fragment>
+
+    <!-- Profile Fragment -->
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.profile.ProfileFragment"
-        android:label="ProfileFragment" >
+        tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profileFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
     </fragment>
-
-
 </navigation>
