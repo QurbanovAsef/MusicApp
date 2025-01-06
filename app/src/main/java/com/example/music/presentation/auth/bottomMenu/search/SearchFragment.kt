@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentSearchBinding
 import com.example.music.presentation.adapter.SearchAdapter
 import com.example.music.presentation.viewmodel.SharedViewModel
@@ -37,13 +36,9 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        searchAdapter = SearchAdapter { exactShow ->
-            exactShow.tracks?.let { trackStrings ->
-                val trackResponses = viewModel.mapStringsToTrackResponses(trackStrings)
-                val activeTrack = trackResponses.firstOrNull()
-                viewModel.setPlayerTracks(trackResponses, activeTrack)
-                navigateToMusicFragment()
-            }
+        searchAdapter = SearchAdapter { track ->
+            viewModel.setPlayerTracks(searchAdapter.items)
+            findNavController().navigate(SearchFragmentDirections.actionNavSearchToMusicFragment(track))
         }
 
         binding.recyclerView.adapter = searchAdapter
@@ -82,10 +77,6 @@ class SearchFragment : Fragment() {
         binding.progressBar.isVisible = true
         binding.emptyStateTextView.isVisible = false
         viewModel.searchSongs(query) // ViewModel-ə axtarış sorğusunu göndəririk
-    }
-
-    private fun navigateToMusicFragment() {
-        findNavController().navigate(R.id.musicFragment)
     }
 
     override fun onDestroyView() {

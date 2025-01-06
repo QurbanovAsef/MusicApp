@@ -6,10 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.music.data.model.response.ExactShow
 import com.example.music.data.model.response.FavoriteTrack
 import com.example.music.data.model.response.Playlist
-
 import com.example.music.data.model.response.TrackResponse
 import com.example.music.data.model.response.toFavoriteTrack
 import com.example.music.data.retrofit.RetrofitInstance
@@ -31,13 +29,11 @@ class SharedViewModel @Inject constructor(
     private val _playerTracks = MutableLiveData<List<TrackResponse>>(emptyList())
     val playerTracks: LiveData<List<TrackResponse>> get() = _playerTracks
 
-    private var playerActiveTrack: TrackResponse? = null
-
     private val _favoriteTracks = MutableLiveData<List<FavoriteTrack>>(emptyList())
     val favoriteTracks: LiveData<List<FavoriteTrack>> get() = _favoriteTracks
 
-    private val _searchResults = MutableLiveData<List<ExactShow>>()
-    val searchResults: LiveData<List<ExactShow>> = _searchResults
+    private val _searchResults = MutableLiveData<List<TrackResponse>>()
+    val searchResults: LiveData<List<TrackResponse>> = _searchResults
     private val musicApiService: MusicApiService = RetrofitInstance.api
 
     private val favoriteTrackDao: FavoriteTrackDao = AppDatabase.getDatabase(application).favoriteTrackDao()
@@ -132,13 +128,8 @@ class SharedViewModel @Inject constructor(
                 val response = musicApiService.searchExactShows(query)
                 if (response.isSuccessful) {
                     // Cavab alındıqda success handler
-                    val exactShow = response.body()?.exactShow
-                    if (exactShow?.tracks.isNullOrEmpty()) {
-                        _searchResults.postValue(emptyList()) // Track-lər boşsa nəticələri boş qaytarırıq
-                        Log.d("Search", "ExactShow tracks: ${exactShow?.tracks}")
-                    } else {
-                        _searchResults.postValue(exactShow?.let { listOf(it) } ?: emptyList())
-                    }
+                    val tracks = response.body()?.tracks
+                    _searchResults.postValue(tracks ?: listOf())
                 } else {
                     // Əgər API-dən səhv cavab alınıbsa
                     Log.e("Search", "Xəta: ${response.message()}")
@@ -153,19 +144,9 @@ class SharedViewModel @Inject constructor(
     }
 
 
-
-    fun setPlayerTracks(tracks: List<TrackResponse>, activeTrack: TrackResponse? = null) {
+    fun setPlayerTracks(tracks: List<TrackResponse>) {
         if (_playerTracks.value != tracks)
             _playerTracks.postValue(tracks)
-        playerActiveTrack = activeTrack
-    }
-    fun mapStringsToTrackResponses(tracks: List<String>): List<TrackResponse> {
-        return tracks.map { trackString ->
-            TrackResponse(
-                title = trackString, // String dəyəri `title` kimi istifadə olunur
-                mp3Url = null // Digər sahələri `null` olaraq saxlayırıq
-            )
-        }
     }
 
     fun getPlaylistDetailsBySlug(
@@ -176,7 +157,6 @@ class SharedViewModel @Inject constructor(
             try {
                 val response = musicApiService.getPlaylistDetails(slug)
                 if (response.isSuccessful) {
-                    playerActiveTrack = activeTrack
                     _playerTracks.postValue(response.body()?.entries?.filterNot { it.track == null }
                         ?.map { it.track!! } ?: listOf())
                 } else {

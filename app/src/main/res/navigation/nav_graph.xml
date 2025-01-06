@@ -101,9 +101,12 @@
         android:id="@+id/musicFragment"
         android:name="com.example.music.presentation.auth.bottomMenu.music.MusicFragment"
         android:label="MusicFragment">
+
         <argument
             android:name="track"
-            app:argType="com.example.music.data.model.response.TrackResponse" />
+            app:argType="com.example.music.data.model.response.TrackResponse"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
 

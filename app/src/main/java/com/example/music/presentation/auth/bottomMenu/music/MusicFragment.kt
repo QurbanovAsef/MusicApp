@@ -3,6 +3,7 @@ package com.example.music.presentation.auth.bottomMenu.music
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +31,7 @@ class MusicFragment : Fragment() {
     private var currentSongEntity: TrackResponse? = null
     private var songsList: List<TrackResponse> = listOf()
     private var currentSongIndex = 0
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
 
     private val args: MusicFragmentArgs by navArgs()
 
@@ -260,4 +261,11 @@ class MusicFragment : Fragment() {
         val seconds = (timeInMillis / 1000) % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
+
+    override fun onPause() {
+        super.onPause()
+        mediaPlayer?.pause()
+        mediaPlayer?.release()
+    }
+
 }

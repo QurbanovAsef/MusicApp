@@ -9,9 +9,9 @@ data class SearchResponse(
     @SerializedName("other_shows")
     val otherShows: List<OtherShow>?,
     val songs: List<Song>?,
-    val venues: Venue?,
-    val tracks: List<Track>?,
-    val tags: Tag?,
+    val venues: List<Venue>?,
+    val tracks: List<TrackResponse>?,
+    val tags: List<Tag>?,
     val playlists: List<Playlist>?
 )
 
@@ -54,14 +54,6 @@ data class OtherShow(
     val id: Int,
     val name: String?,
     val date: String?
-)
-
-data class Track(
-    val id: Int,
-    val title: String?,
-    val duration: Int?,
-    @SerializedName("mp3_url")
-    val mp3Url: String?
 )
 
 data class TagItem(
