@@ -1,50 +1,74 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background_color"
     tools:context="com.example.music.presentation.auth.bottomMenu.profile.fragments.AboutAppFragment">
 
     <!-- Tətbiq Haqqında Başlıq -->
-    <TextView
-        android:id="@+id/app_title"
-        android:layout_width="wrap_content"
+    <!-- AppBar with Back Button -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/about_app"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:textColor="@color/text_color_primary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/background_color"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Back Button -->
+            <ImageView
+                android:id="@+id/back_buttonAboutApp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/text_color_primary" />
+
+            <TextView
+                android:id="@+id/app_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/about_app"
+                android:textColor="@color/text_color_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                app:layout_constraintStart_toEndOf="@id/back_buttonAboutApp"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Tətbiqin Xüsusiyyətləri -->
     <TextView
         android:id="@+id/features_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/features"
+        android:textColor="@color/text_color_primary"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/text_color_primary"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_title" />
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
     <TextView
         android:id="@+id/features_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/listen_music"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/listen_music"
         android:textColor="@color/text_color_primary"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/features_title" />
 
@@ -53,12 +77,12 @@
         android:id="@+id/version_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/version"
+        android:textColor="@color/text_color_primary"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:textColor="@color/text_color_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/features_list" />
 
@@ -66,12 +90,12 @@
         android:id="@+id/version_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/version_number"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:text="@string/version_number"
         android:textColor="@color/text_color_primary"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/version_title" />
 
     <!-- Əlaqə və Dəstək -->
@@ -79,12 +103,12 @@
         android:id="@+id/contact_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/contact"
+        android:textColor="@color/text_color_primary"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:textColor="@color/text_color_primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/version_info" />
 
@@ -92,14 +116,13 @@
         android:id="@+id/contact_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/support_email"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/support_email"
         android:textColor="@color/text_color_primary"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/contact_title" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

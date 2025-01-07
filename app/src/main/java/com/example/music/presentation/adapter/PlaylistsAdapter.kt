@@ -1,10 +1,10 @@
 package com.example.music.presentation.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ItemShowBinding
 import com.example.music.data.model.response.Playlist
 
@@ -20,8 +20,7 @@ class PlaylistsAdapter(
         "https://phish.in/blob/go06iennkv0k7bxw49b0vkb6pewv.jpg",
         "https://phish.in/blob/3vpg8fe2hkf7tkwvqsfrnbd0svud.jpg",
         "https://phish.in/blob/jkicdm12ug3l7nc48flpf7xwwikg.jpg",
-
-        )
+    )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowViewHolder {
         val binding = ItemShowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -47,7 +46,7 @@ class PlaylistsAdapter(
             showUsername.text = show.username ?: "Naməlum İstifadəçi"
 
             val imageUrl = if (show.albumCoverURL.isNullOrEmpty()) {
-                defaultImageUrls.random() // Random default şəkil URL
+                defaultImageUrls[adapterPosition % defaultImageUrls.size] // Random default şəkil URL
             } else {
                 show.albumCoverURL
             }
@@ -60,5 +59,10 @@ class PlaylistsAdapter(
             root.setOnClickListener { onItemClick(show) }
         }
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
 }
 

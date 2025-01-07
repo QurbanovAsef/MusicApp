@@ -1,14 +1,13 @@
 package com.example.music.activity
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.ViewModelProvider
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ActivityContainer2Binding
 import com.example.music.presentation.viewmodel.SharedViewModel
@@ -47,18 +46,33 @@ class ContainerActivity : AppCompatActivity() {
             binding.bottomNavigationView.isVisible = when (destination.id) {
                 R.id.nav_home,
                 R.id.nav_search,
-                R.id.musicFragment,
                 R.id.favoriteFragment,
                 R.id.profileFragment -> true
+
                 else -> false
             }
         }
+
+        // SharedPreferences ilə istifadəçi girişini yoxlamaq
+        val sharedPreferences = getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
+
+        if (isLoggedIn) {
+            val navGraph = navController.navInflater.inflate(R.navigation.nav_graph).apply {
+                setStartDestination(R.id.nav_home)
+            }
+            navController.graph = navGraph
+        }
+
     }
 
     fun logout() {
-        val sharedPreferences = getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+        // SharedPreferences-u təmizləmək
         sharedPreferences.edit().clear().apply()
-        val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+
+        // Login fragment-ə keçmək
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
         navController.navigate(R.id.loginFragment)
     }
 
@@ -66,6 +80,8 @@ class ContainerActivity : AppCompatActivity() {
         val theme = sharedPreferences.getString("theme", "light") ?: "light"
         val currentMode = AppCompatDelegate.getDefaultNightMode()
         val newMode = if (theme == "dark") AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+
+        // Yalnız tələb olunduqda mod dəyişdiririk
         if (currentMode != newMode) {
             AppCompatDelegate.setDefaultNightMode(newMode)
         }
@@ -80,16 +96,13 @@ class ContainerActivity : AppCompatActivity() {
             else -> Locale("en")
         }
 
+        // Yalnız lazım olduqda dil dəyişdiririk
         if (currentLocale != newLocale) {
             val config = resources.configuration
             config.setLocale(newLocale)
-            createConfigurationContext(config)
-            recreate()
+            createConfigurationContext(config)  // Yenilənmiş lokal tənzimləmələr
+            recreate()  // Tətbiqi yenidən başladırıq
         }
     }
-    //
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }

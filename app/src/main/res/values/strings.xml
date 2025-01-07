@@ -33,9 +33,14 @@
     <string name="profile">Profil</string>
     <string name="shuffle">Təsadüfi seç</string>
     <string name="no_results_found">Nəticə tapılmadı</string>
-    <string name="song_title">Mahnının adı</string>
+    <string name="song_title">Mahnının başlığı</string>
+    <string name="song_name">Mahnının adı</string>
+    <string name="show_name">Album adı</string>
+    <string name="show_surName">Album İfaçısı</string>
     <string name="artist">İfaçı</string>
     <string name="favorite_songs">Sevimli mahnılar</string>
+    <string name="album_name">Albom Adı</string>
+    <string name="artist_name">İfaçı Adı</string>
 
     <!-- Tətbiq məlumatları -->
     <string name="about_app">Tətbiq Haqqında</string>
@@ -78,10 +83,10 @@
     <string name="user_email">email@example.com</string>
     <string name="name">Ad və soyad</string>
     <string name="save">Yadda saxla</string>
-    <string name="album_name">Albom Adı</string>
-    <string name="artist_name">İfaçı Adı</string>
     <string name="duration">Müddət</string>
     <string name="todo" translatable="false">TODO</string>
     <string name="Topic">Mövzu</string>
     <string name="Edit_profile">Profili redaktə edin</string>
+    <string name="song_date">0000-00-00</string>
+    <string name="track_Id">0000</string>
 </resources>

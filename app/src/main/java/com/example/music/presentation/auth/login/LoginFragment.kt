@@ -33,14 +33,6 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // SharedPreferences ilə istifadəçi girişini yoxlamaq
-        val sharedPreferences = requireContext().getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
-        val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
-
-        if (isLoggedIn) {
-            findNavController().navigate(R.id.nav_home) // HomeFragment-ə keçid
-        }
-
         // Sahələr və düymələr
         binding.apply {
             TextInputLayoutEmail.error = null

@@ -6,13 +6,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.databinding.ItemSongBinding
-import com.example.music.data.model.response.ExactShow
+import com.example.music.data.model.response.TrackResponse
 
-class SearchAdapter(private val onTrackClick: (ExactShow) -> Unit) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+class SearchAdapter(private val onTrackClick: (TrackResponse) -> Unit) :
+    RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
-    private var items: List<ExactShow> = listOf()
+    var items: List<TrackResponse> = listOf()
+        private set
 
-    fun setItems(newItems: List<ExactShow>) {
+    fun setItems(newItems: List<TrackResponse>) {
         items = newItems
         notifyDataSetChanged()
     }
@@ -31,23 +33,19 @@ class SearchAdapter(private val onTrackClick: (ExactShow) -> Unit) : RecyclerVie
 
     inner class SearchViewHolder(private val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(exactShow: ExactShow) {
-            binding.songArtist.text = exactShow.venueName ?: "Naməlum İfaçı"
-            binding.songTitle.text = exactShow.tourName ?: "Naməlum Tur"
-            binding.trackIdTextView.text = exactShow.id.toString()
+        fun bind(track: TrackResponse) {
+            binding.songArtist.text = track.venueName ?: "Naməlum İfaçı"
+            binding.songTitle.text = track.title ?: "Naməlum Tur"
+            binding.trackIdTextView.text = track.id.toString()
 
-
-            val trackString = exactShow.tracks?.joinToString(", ") ?: "No tracks available"
-            binding.trackIdTextView.text = trackString
-
-            val imageUrl = exactShow.albumCoverUrl
+            val imageUrl = track.showAlbumCoverURL
 
             Glide.with(itemView.context)
                 .load(imageUrl)
                 .into(binding.songImage)
 
             binding.root.setOnClickListener {
-                onTrackClick(exactShow) // Click etdikdə ExactShow-u geri göndəririk
+                onTrackClick(track) // Click etdikdə ExactShow-u geri göndəririk
             }
         }
 

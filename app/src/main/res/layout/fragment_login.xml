@@ -223,43 +223,18 @@
             app:layout_constraintTop_toBottomOf="@id/orAndSeparator"
             app:strokeColor="@color/grey"
             app:strokeWidth="1dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_apple"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15.5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="15.5dp"
-            android:backgroundTint="@color/text_color_secondary"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="13dp"
-            android:text="@string/continue_with_apple"
-            android:textColor="@color/text_color_primary"
-            android:textSize="16sp"
-            app:cornerRadius="10dp"
-            app:icon="@drawable/ic_apple_foreground"
-            app:iconGravity="textStart"
-            app:iconPadding="12dp"
-            app:iconTint="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_google"
-            app:strokeColor="@color/grey"
-            app:strokeWidth="1dp" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="65dp"
             android:gravity="center"
+            android:padding="16dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_apple">
+            app:layout_constraintTop_toBottomOf="@id/button_google">
 
-            <TextView
+
+        <TextView
                 android:id="@+id/haveAccountText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -275,8 +250,6 @@
                 android:textColor="@color/primary_color"
                 android:textSize="14sp" />
         </LinearLayout>
-
-
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineStart"
             android:layout_width="wrap_content"
