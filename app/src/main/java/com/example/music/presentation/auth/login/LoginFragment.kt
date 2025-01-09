@@ -76,7 +76,6 @@ class LoginFragment : Fragment() {
             val sharedPreferences = requireContext().getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
             sharedPreferences.edit().putBoolean("is_logged_in", true).apply()
 
-            Toast.makeText(requireContext(), "Giriş Uğurlu", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_loginFragment_to_successfullyRegister2)
         } else {
             binding.apply {

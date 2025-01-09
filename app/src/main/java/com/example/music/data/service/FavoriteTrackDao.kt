@@ -1,6 +1,5 @@
 package com.example.music.data.service
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -20,8 +19,4 @@ interface FavoriteTrackDao {
 
     @Query("SELECT * FROM favorite_tracks")
     fun getAllFavoriteTracks(): Flow<List<FavoriteTrack>>
-
-    @Query("UPDATE favorite_tracks SET isLiked = :isLiked WHERE id = :trackId")
-    suspend fun updateLikeStatus(trackId: Int, isLiked: Boolean)
-
 }

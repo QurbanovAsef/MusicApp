@@ -203,10 +203,10 @@
             android:layout_marginStart="15.5dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="15.5dp"
-            android:backgroundTint="@color/primary_color"
+            android:backgroundTint="@color/dark_color"
             android:padding="13dp"
             android:text="@string/login"
-            android:textColor="@color/text_color_secondary"
+            android:textColor="@color/write_color"
             android:textSize="16sp"
             app:cornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -297,7 +297,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/login"
-                android:textColor="@color/primary_color"
+                android:textStyle="bold"
+                android:textColor="@color/dark_color"
                 android:textSize="14sp" />
         </LinearLayout>
 

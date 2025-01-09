@@ -3,8 +3,6 @@ package com.example.music.data.model.response
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-
-
 @Parcelize
 data class TrackResponse(
     val id: Int? = null,
@@ -28,10 +26,8 @@ data class TrackResponse(
     val venueLocation: String? = null,
     val songs: List<Song>? = null,
     val likedByUser: Boolean? = null,
-
     @SerializedName("mp3_url")
     val mp3Url: String? = null,
-
     var isLiked: Boolean? = null
 ) : Parcelable
 

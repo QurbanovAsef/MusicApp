@@ -7,20 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ItemSongBinding
-import com.example.music.data.model.response.FavoriteTrack
-
+import com.example.music.data.model.response.TrackResponse
 
 class FavoriteAdapter(
-    private val onItemClick: (FavoriteTrack) -> Unit,
-    private val onLikeDislike: (FavoriteTrack) -> Unit
+    private val onItemClick: (TrackResponse) -> Unit,
+    private val onLikeDislike: (TrackResponse) -> Unit
 ) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
-    private var favoriteTracks: List<FavoriteTrack> = emptyList()
-
-    fun updateData(updatedTracks: List<FavoriteTrack>) {
-        favoriteTracks = updatedTracks
-        notifyDataSetChanged()
-    }
+    private var tracks = listOf<TrackResponse>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
         val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -28,34 +22,47 @@ class FavoriteAdapter(
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
-        holder.bind(favoriteTracks[position])
+        val track = tracks[position]
+        holder.bind(track)
     }
 
-    override fun getItemCount(): Int = favoriteTracks.size
+    override fun getItemCount() = tracks.size
+
+    fun updateData(newTracks: List<TrackResponse>) {
+        tracks = newTracks
+        notifyDataSetChanged()
+    }
 
     inner class FavoriteViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            binding.root.setOnClickListener {
+                // Track seçildikdə
+                onItemClick(tracks[adapterPosition])
+            }
+            binding.favoriteIcon.setOnClickListener {
+                // Like/Dislike işləmi üçün
+                onLikeDislike(tracks[adapterPosition])
+            }
+        }
 
         @SuppressLint("SetTextI18n")
-        fun bind(favoriteTracks: FavoriteTrack) = with(binding) {
-            songTitle.text = favoriteTracks.title ?: "Naməlum Mahnı"
-            songArtist.text = favoriteTracks.venueName ?: "Naməlum İfaçı"
-            songDate.text = favoriteTracks.showDate ?: "Naməlum vaxt"
-
+        fun bind(track: TrackResponse) = with(binding) {
+            songTitle.text = track.title ?: "Naməlum Mahnı"
+            songArtist.text = track.slug ?: "Naməlum İfaçı"
             Glide.with(root.context)
-                .load(favoriteTracks.showAlbumCoverURL)
+                .load(track.showAlbumCoverURL)
                 .into(songImage)
 
-            binding.favoriteIcon.setImageResource(
-                if (favoriteTracks.isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+            favoriteIcon.setImageResource(
+                if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
             )
-            root.setOnClickListener { onItemClick(favoriteTracks) }
-            binding.favoriteIcon.setOnClickListener {
-                favoriteTracks.isLiked = !(favoriteTracks.isLiked)
-                onLikeDislike(favoriteTracks)
+            favoriteIcon.setOnClickListener {
+                track.isLiked = !(track.isLiked ?: false)
+                notifyItemChanged(adapterPosition)
+                onLikeDislike(track)
             }
         }
     }
 }
-

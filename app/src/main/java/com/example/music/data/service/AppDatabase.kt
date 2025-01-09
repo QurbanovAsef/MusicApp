@@ -6,9 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.music.data.model.response.FavoriteTrack
 
-@Database(entities = [FavoriteTrack::class], version = 1)
+@Database(entities = [FavoriteTrack::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun favoriteTrackDao(): FavoriteTrackDao
 
     companion object {

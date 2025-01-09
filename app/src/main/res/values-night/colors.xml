@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Dark Mode Colors -->
-    <color name="background_color">#000000</color>
+    <color name="background_color">#DE010316</color>
+    <color name="dark_color">#F44336</color>
+    <color name="write_color">#FFFFFFFF</color>
     <color name="text_color_primary">#FFFFFFFF</color>
     <color name="text_color_secondary">#212121</color>
     <color name="primary_color">#00C2CB</color>

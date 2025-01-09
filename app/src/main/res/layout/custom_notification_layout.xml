@@ -3,28 +3,31 @@
     android:layout_height="wrap_content"
     android:background="@color/background_color"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:gravity="center_vertical">
 
     <!-- Album Art -->
     <ImageView
         android:id="@+id/notification_album_art"
         android:layout_width="70dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="12dp"
         android:scaleType="centerCrop"
         android:src="@drawable/notification" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
-        android:orientation="vertical">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
         <!-- Title and Artist -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start">
 
             <TextView
                 android:id="@+id/notification_title"
@@ -50,10 +53,12 @@
 
         <!-- Playback Controls -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:weightSum="3">
 
             <!-- Previous Button -->
             <ImageButton
@@ -61,8 +66,9 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:padding="12dp"
-                android:src="@drawable/previous" />
+                android:src="@drawable/previous"
+                android:layout_weight="1"
+                android:padding="12dp" />
 
             <!-- Play/Pause Button -->
             <ImageButton
@@ -70,8 +76,9 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:padding="12dp"
-                android:src="@drawable/play" />
+                android:src="@drawable/play"
+                android:layout_weight="1"
+                android:padding="12dp" />
 
             <!-- Next Button -->
             <ImageButton
@@ -79,8 +86,9 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:padding="12dp"
-                android:src="@drawable/next" />
+                android:src="@drawable/next"
+                android:layout_weight="1"
+                android:padding="12dp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

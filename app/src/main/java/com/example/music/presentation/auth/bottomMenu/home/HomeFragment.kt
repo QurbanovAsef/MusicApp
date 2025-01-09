@@ -15,15 +15,18 @@ import com.example.androidprojecttest1.databinding.FragmentHomeBinding
 import com.example.music.presentation.adapter.FavoriteAdapter
 import com.example.music.presentation.adapter.PlaylistsAdapter
 import com.example.music.presentation.adapter.TracksAdapter
+import com.example.music.presentation.auth.bottomMenu.favorite.FavoriteTrackViewModel
 import com.example.music.presentation.viewmodel.SharedViewModel
 import kotlinx.coroutines.flow.collectLatest
+
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val sharedViewModel by activityViewModels<SharedViewModel>()
+    private val favoriteTrackViewModel by activityViewModels<FavoriteTrackViewModel>()
+    val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var tracksAdapter: TracksAdapter
     private lateinit var favoriteAdapter: FavoriteAdapter
@@ -51,21 +54,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.showRecyclerView.adapter = playlistsAdapter
         binding.showRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
         // HomeFragment-də Track məlumatını göndərmək
         tracksAdapter = TracksAdapter(
             onItemClick = { trackEntry ->
-                // `trackEntry` məlumatını MusicFragment-ə göndəririk
-                findNavController().navigate(HomeFragmentDirections.actionNavHomeToMusicFragment(trackEntry))
+                findNavController().navigate(
+                    HomeFragmentDirections.actionNavHomeToMusicFragment(
+                        trackEntry
+                    )
+                )
             },
             onLikeDislike = { track ->
-                sharedViewModel.toggleFavorite(track)
+                favoriteTrackViewModel.toggleFavorite(track)
             }
         )
 
         binding.songRecyclerView.adapter = tracksAdapter
         binding.songRecyclerView.layoutManager = LinearLayoutManager(context)
-
-        // Playlistləri toplayıb adapterə göndər
         lifecycleScope.launch {
             sharedViewModel.playlistsFlow.collectLatest { playlists ->
                 playlists?.let {
@@ -75,8 +80,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     binding.progressTracks.isGone = false
                 }
             }
-        }
 
+        }
         // Player trackləri müşahidə et və adapteri yenilə
         sharedViewModel.playerTracks.observe(viewLifecycleOwner) { tracks ->
             if (tracks.isNullOrEmpty()) {
@@ -88,7 +93,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         // Favorit trackləri müşahidə et və adapteri yenilə
-        sharedViewModel.favoriteTracks.observe(viewLifecycleOwner) { favoriteTracks ->
+        favoriteTrackViewModel.favoriteTracks.observe(viewLifecycleOwner) { favoriteTracks ->
             val favoriteTrackSlugs = favoriteTracks.map { it.slug }
             val updatedTracks = tracksAdapter.items.map { track ->
                 track.isLiked = favoriteTrackSlugs.contains(track.slug)

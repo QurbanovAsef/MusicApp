@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp"
-            android:background="@color/grey">
+            android:background="@color/background_color">
 
             <!-- Favorite Icon -->
             <ImageView

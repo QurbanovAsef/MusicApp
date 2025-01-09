@@ -4,7 +4,6 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,12 +17,14 @@ import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentMusicBinding
 import com.example.music.data.model.response.TrackResponse
+import com.example.music.presentation.auth.bottomMenu.favorite.FavoriteTrackViewModel
 import com.example.music.presentation.viewmodel.SharedViewModel
 
 class MusicFragment : Fragment() {
 
     private var _binding: FragmentMusicBinding? = null
     private val binding get() = _binding!!
+    private val favoriteTrackViewModel: FavoriteTrackViewModel by activityViewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var mediaPlayer: MediaPlayer? = null
     private var isPlaying = false
@@ -51,10 +52,12 @@ class MusicFragment : Fragment() {
         currentSongEntity = args.track
 
         currentSongEntity?.let {
+            Toast.makeText(requireContext(), "Track: ${it.title}, Slug: ${it.slug}", Toast.LENGTH_SHORT).show()
             updateUI(it)
-            isLiked = sharedViewModel.isFavorite(it)
+            isLiked = favoriteTrackViewModel.isFavorite(it)
             updateLikeButton()
         }
+
 
         sharedViewModel.playerTracks.observe(viewLifecycleOwner) { songs ->
             if (songs.isEmpty()) {
@@ -130,19 +133,26 @@ class MusicFragment : Fragment() {
         binding.likeButton.setOnClickListener {
             if (isLiked) {
                 binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)
-                currentSongEntity?.let { sharedViewModel.removeFavorite(it) }
+                currentSongEntity?.let {
+                    if (favoriteTrackViewModel.removeFavorite(it)) {
+                        Toast.makeText(requireContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to remove", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } else {
-                val addedSuccessfully =
-                    currentSongEntity?.let { sharedViewModel.addFavorite(it) } ?: false
-                if (addedSuccessfully as Boolean) {
-                    binding.likeButton.setImageResource(R.drawable.ic_favorite_full)
-                } else {
-                    Toast.makeText(requireContext(), "Already in Favorites", Toast.LENGTH_SHORT)
-                        .show()
+                currentSongEntity?.let {
+                    if (favoriteTrackViewModel.addFavorite(it)) {
+                        binding.likeButton.setImageResource(R.drawable.ic_favorite_full)
+                        Toast.makeText(requireContext(), "Added to Favorites", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to add", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             isLiked = !isLiked
         }
+
 
         // Geri düyməsi
         binding.backArrow.setOnClickListener {

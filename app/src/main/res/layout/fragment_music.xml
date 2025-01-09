@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background_color"
+        android:padding="8dp"
         tools:ignore="MissingConstraints">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/song_title"
-                android:textColor="@color/primary_color"
+                android:textColor="@color/text_color_primary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:ellipsize="marquee"
@@ -72,9 +73,9 @@
         android:id="@+id/artistCoverContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="8dp"
         app:cardCornerRadius="10dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,6 +96,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:layout_marginStart="4dp"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true"
@@ -102,8 +104,9 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:text="@string/song_title"
-        android:textColor="@color/primary_color"
+        android:textColor="@color/text_color_primary"
         android:textSize="20sp"
+        android:padding="1dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -115,10 +118,11 @@
         android:id="@+id/artistName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="4dp"
         android:text="@string/coldplay"
         android:textColor="@color/text_color_primary"
         android:textSize="16sp"
+        android:padding="1dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/songName" />
 
@@ -128,9 +132,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:padding="4dp"
         android:progressBackgroundTint="@color/text_color_primary"
         android:progressTint="@color/text_color_primary"
-        android:thumbTint="@color/primary_color"
+        android:thumbTint="@color/text_color_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/artistName" />
@@ -142,6 +147,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:orientation="horizontal"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/SeekBar">
@@ -214,7 +221,8 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:contentDescription="@string/todo"
-            android:src="@drawable/repeat_button_state" />
+            android:src="@drawable/repeat_button_state"
+          />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

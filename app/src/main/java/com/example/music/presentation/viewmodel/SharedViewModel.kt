@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.music.data.model.response.FavoriteTrack
 import com.example.music.data.model.response.Playlist
 import com.example.music.data.model.response.TrackResponse
-import com.example.music.data.model.response.toFavoriteTrack
 import com.example.music.data.retrofit.RetrofitInstance
 import com.example.music.data.service.AppDatabase
 import com.example.music.data.service.FavoriteTrackDao
@@ -25,18 +24,13 @@ class SharedViewModel @Inject constructor(
     application: Application,
 ) : AndroidViewModel(application) {
 
-
     private val _playerTracks = MutableLiveData<List<TrackResponse>>(emptyList())
     val playerTracks: LiveData<List<TrackResponse>> get() = _playerTracks
-
-    private val _favoriteTracks = MutableLiveData<List<FavoriteTrack>>(emptyList())
-    val favoriteTracks: LiveData<List<FavoriteTrack>> get() = _favoriteTracks
 
     private val _searchResults = MutableLiveData<List<TrackResponse>>()
     val searchResults: LiveData<List<TrackResponse>> = _searchResults
     private val musicApiService: MusicApiService = RetrofitInstance.api
 
-    private val favoriteTrackDao: FavoriteTrackDao = AppDatabase.getDatabase(application).favoriteTrackDao()
 
     private val _playlistsFlow = MutableStateFlow<List<Playlist>?>(null)
     val playlistsFlow = _playlistsFlow.asStateFlow()
@@ -65,61 +59,6 @@ class SharedViewModel @Inject constructor(
             playlistApiCall()
     }
 
-    // Favoritləri əlavə etmək
-    fun addFavorite(song: TrackResponse) {
-        val favoriteTrack = FavoriteTrack(
-            title = song.title,
-            venueName = song.venueName,
-            isLiked = true
-        )
-        viewModelScope.launch {
-            favoriteTrackDao.insert(favoriteTrack)
-            loadFavoriteTracks()  // Yenilənmiş favoritləri yükləyirik
-        }
-    }
-
-    // Favoritləri silmək
-    fun removeFavorite(song: TrackResponse) {
-        val favoriteTrack = FavoriteTrack(
-            title = song.title,
-            venueName = song.venueName,
-            isLiked = false
-        )
-        viewModelScope.launch {
-            favoriteTrackDao.delete(favoriteTrack)
-            loadFavoriteTracks()  // Yenilənmiş favoritləri yükləyirik
-        }
-    }
-
-    // Favorit trackləri yükləmək
-    fun loadFavoriteTracks() {
-        viewModelScope.launch {
-            favoriteTrackDao.getAllFavoriteTracks().collect { tracks ->
-                _favoriteTracks.value = tracks
-            }
-        }
-    }
-
-
-    // Mahnının favorit olub olmadığını yoxlamaq
-    fun isFavorite(song: TrackResponse): Boolean {
-        return _favoriteTracks.value?.any { it.slug == song.slug } == true
-    }
-
-    // Favorit statusunu dəyişdirmək
-    fun toggleFavorite(song: TrackResponse) {
-        val updatedStatus = song.isLiked ?: false // Default olaraq false
-        song.isLiked = !updatedStatus
-        val favoriteTrack = song.toFavoriteTrack()
-        viewModelScope.launch {
-            if (song.isLiked == true) {
-                favoriteTrackDao.insert(favoriteTrack)
-            } else {
-                favoriteTrackDao.delete(favoriteTrack)
-            }
-            loadFavoriteTracks()
-        }
-    }
 
     // Axtarış funksiyası
     fun searchSongs(query: String) {
