@@ -14,8 +14,7 @@ class TracksAdapter(
     private val onLikeDislike: (TrackResponse) -> Unit
 ) : RecyclerView.Adapter<TracksAdapter.TrackViewHolder>() {
 
-    var items: MutableList<TrackResponse> = mutableListOf()
-        private set
+    private var tracks = listOf<TrackResponse>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val binding = ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,47 +22,67 @@ class TracksAdapter(
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(tracks[position])
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount() = tracks.size
 
-    // Yeni gələn itemləri adapterə əlavə edirik
-    fun setItems(newItems: List<TrackResponse>) {
-        items.clear()
-        items.addAll(newItems)
+    @SuppressLint("NotifyDataSetChanged")
+    fun setItems(newTracks: List<TrackResponse>) {
+        tracks = newTracks
         notifyDataSetChanged()
     }
 
-    // Favorit trackləri yeniləyən metod
-    fun updateFavoriteStatus(favoriteTracks: List<TrackResponse>) {
-        items.forEach { track ->
-            track.isLiked = favoriteTracks.any { it.slug == track.slug && it.isLiked == true }
-        }
-        notifyDataSetChanged()
-    }
+//    @SuppressLint("NotifyDataSetChanged")
+//    fun addItem(track: TrackResponse) {
+//        val updatedList = tracks.toMutableList()
+//        updatedList.add(track)
+//        tracks = updatedList
+//        notifyItemInserted(tracks.size - 1)
+//    }
+//
+//    @SuppressLint("NotifyDataSetChanged")
+//    fun removeItem(track: TrackResponse) {
+//        val updatedList = tracks.toMutableList()
+//        val index = updatedList.indexOfFirst { it.slug == track.slug }
+//        if (index != -1) {
+//            updatedList.removeAt(index)
+//            tracks = updatedList
+//            notifyItemRemoved(index)
+//        }
+//    }
 
     inner class TrackViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        @SuppressLint("SetTextI18n")
         fun bind(track: TrackResponse) = with(binding) {
             songTitle.text = track.title ?: "Naməlum Mahnı"
             songArtist.text = track.slug ?: "Naməlum İfaçı"
-            songName.text = track.venueName ?: "Naməlum İfaçı"
-            songDate.text = track.showDate ?: "Naməlum vaxt"
+
+            // Şəkil yüklənməsi
             Glide.with(root.context)
                 .load(track.showAlbumCoverURL)
+                .placeholder(R.drawable.blackicon)
                 .into(songImage)
-            root.setOnClickListener { onItemClick(track) }
 
+            // İkonun vəziyyəti
             favoriteIcon.setImageResource(
                 if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
             )
-            favoriteIcon.setOnClickListener {
-                track.isLiked = !(track.isLiked ?: false)
-                notifyItemChanged(adapterPosition)
+
+            // İtem klik
+            binding.root.setOnClickListener {
+                onItemClick(track)
+            }
+
+            // Like/Dislike ikon klik
+            binding.favoriteIcon.setOnClickListener {
                 onLikeDislike(track)
+            }
+
+            // Element klik dinləyicisi
+            root.setOnClickListener {
+                onItemClick(track)
             }
         }
     }

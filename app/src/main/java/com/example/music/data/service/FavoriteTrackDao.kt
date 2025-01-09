@@ -17,6 +17,6 @@ interface FavoriteTrackDao {
     @Delete
     suspend fun delete(favoriteTrack: FavoriteTrack)
 
-    @Query("SELECT * FROM favorite_tracks")
+    @Query("SELECT * FROM favorite_track")
     fun getAllFavoriteTracks(): Flow<List<FavoriteTrack>>
 }

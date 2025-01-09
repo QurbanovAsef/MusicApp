@@ -16,6 +16,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentMusicBinding
+import com.example.music.data.model.response.FavoriteTrack
 import com.example.music.data.model.response.TrackResponse
 import com.example.music.presentation.auth.bottomMenu.favorite.FavoriteTrackViewModel
 import com.example.music.presentation.viewmodel.SharedViewModel
@@ -49,10 +50,13 @@ class MusicFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val track: TrackResponse? = arguments?.getParcelable("track")
+        track?.let {
+            binding.songTitle.text = it.title
+        }
         currentSongEntity = args.track
 
         currentSongEntity?.let {
-            Toast.makeText(requireContext(), "Track: ${it.title}, Slug: ${it.slug}", Toast.LENGTH_SHORT).show()
             updateUI(it)
             isLiked = favoriteTrackViewModel.isFavorite(it)
             updateLikeButton()
@@ -131,27 +135,34 @@ class MusicFragment : Fragment() {
 
         // Like düyməsi
         binding.likeButton.setOnClickListener {
-            if (isLiked) {
-                binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)
-                currentSongEntity?.let {
-                    if (favoriteTrackViewModel.removeFavorite(it)) {
+            currentSongEntity?.let { trackResponse ->
+                val favoriteTrack = FavoriteTrack(
+                    id = 0,
+                    trackName = trackResponse.title ?: "Naməlum Mahnı",
+                    artistName = trackResponse.slug ?: "Naməlum İfaçı",
+                    isLiked = true,
+                    showAlbumCoverURL = trackResponse.showAlbumCoverURL
+                )
+
+                if (isLiked) {
+                    binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)
+                    if (favoriteTrackViewModel.removeFavorite(trackResponse)) {
                         Toast.makeText(requireContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "Failed to remove", Toast.LENGTH_SHORT).show()
                     }
-                }
-            } else {
-                currentSongEntity?.let {
-                    if (favoriteTrackViewModel.addFavorite(it)) {
+                } else {
+                    if (favoriteTrackViewModel.addFavorite(trackResponse)) {
                         binding.likeButton.setImageResource(R.drawable.ic_favorite_full)
                         Toast.makeText(requireContext(), "Added to Favorites", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "Failed to add", Toast.LENGTH_SHORT).show()
                     }
                 }
+                isLiked = !isLiked
             }
-            isLiked = !isLiked
         }
+
 
 
         // Geri düyməsi
@@ -275,7 +286,12 @@ class MusicFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         mediaPlayer?.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         mediaPlayer?.release()
+        mediaPlayer = null
     }
 
 }

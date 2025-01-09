@@ -29,12 +29,9 @@ object DatabaseModule {
             AppDatabase::class.java,
             "music_database"
         )
-            .fallbackToDestructiveMigration() // Verilənlər bazası sıfırlanır
+            .fallbackToDestructiveMigration()
             .build()
     }
-
-
-
     @Provides
     @Singleton
     fun provideFavoriteTrackDao(database: AppDatabase): FavoriteTrackDao {

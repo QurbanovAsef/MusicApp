@@ -26,7 +26,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/circle_background1" />
 
-            <EditText
+            <TextView
                 android:id="@+id/editName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 android:textColor="@color/text_color_primary"
                 android:textSize="18sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/editEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

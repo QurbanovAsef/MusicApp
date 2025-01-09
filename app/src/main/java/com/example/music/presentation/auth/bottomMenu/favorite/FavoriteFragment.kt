@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentFavoriteBinding
-import com.example.music.data.model.response.TrackResponse
 import com.example.music.presentation.adapter.FavoriteAdapter
 
 class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
@@ -20,7 +20,7 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -28,25 +28,25 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Adapter yaradılması
         adapter = FavoriteAdapter(
             onItemClick = { selectedTrack ->
-                // Track məlumatları sadəcə Toast ilə göstərilir
-                Toast.makeText(requireContext(), "Selected track: ${selectedTrack.title}", Toast.LENGTH_SHORT).show()
+                // MusicFragment-ə keçid
+                val bundle = Bundle().apply {
+                    putParcelable("track", selectedTrack)
+                }
+                findNavController().navigate(R.id.action_favoriteFragment_to_musicFragment, bundle)
             },
             onLikeDislike = { track -> favoriteTrackViewModel.toggleFavorite(track) }
         )
 
-        // RecyclerView-ya adapter əlavə edilməsi
-        binding.favoriteRecyclerView.adapter = adapter
+        binding.favoriteRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@FavoriteFragment.adapter
+        }
 
         favoriteTrackViewModel.favoriteTracks.observe(viewLifecycleOwner) { updatedTracks ->
             adapter.updateData(updatedTracks)
         }
 
-        // Favorite CardView tıklama işlemi
-        binding.favoriteCardView.setOnClickListener {
-            Toast.makeText(requireContext(), "Favorite Card clicked", Toast.LENGTH_SHORT).show()
-        }
     }
 }

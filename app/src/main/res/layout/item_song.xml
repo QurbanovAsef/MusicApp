@@ -5,7 +5,10 @@
     android:layout_margin="8dp"
     app:cardBackgroundColor="@color/background_color"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -93,6 +96,9 @@
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:contentDescription="@string/todo"
-            android:src="@drawable/ic_favorite_empty" />
+            android:src="@drawable/ic_favorite_empty"
+            android:clickable="true"
+            android:focusable="true" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

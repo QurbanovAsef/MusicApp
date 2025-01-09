@@ -26,10 +26,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val favoriteTrackViewModel by activityViewModels<FavoriteTrackViewModel>()
-    val sharedViewModel: SharedViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var tracksAdapter: TracksAdapter
-    private lateinit var favoriteAdapter: FavoriteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,11 +94,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // Favorit trackləri müşahidə et və adapteri yenilə
         favoriteTrackViewModel.favoriteTracks.observe(viewLifecycleOwner) { favoriteTracks ->
             val favoriteTrackSlugs = favoriteTracks.map { it.slug }
-            val updatedTracks = tracksAdapter.items.map { track ->
+            val updatedTracks = sharedViewModel.playerTracks.value?.map { track ->
                 track.isLiked = favoriteTrackSlugs.contains(track.slug)
                 track
             }
-            tracksAdapter.setItems(updatedTracks)
+            updatedTracks?.let { tracksAdapter.setItems(it) }
         }
     }
 

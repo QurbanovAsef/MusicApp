@@ -45,8 +45,9 @@ class SearchAdapter(private val onTrackClick: (TrackResponse) -> Unit) :
                 .into(binding.songImage)
 
             binding.root.setOnClickListener {
-                onTrackClick(track) // Click etdikdə ExactShow-u geri göndəririk
+                onTrackClick(track)
             }
+
         }
 
 

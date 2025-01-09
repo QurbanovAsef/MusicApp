@@ -28,6 +28,7 @@ class FavoriteAdapter(
 
     override fun getItemCount() = tracks.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newTracks: List<TrackResponse>) {
         tracks = newTracks
         notifyDataSetChanged()
@@ -37,32 +38,35 @@ class FavoriteAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         init {
+            // Elementə kliklər üçün dinləyicilər
             binding.root.setOnClickListener {
-                // Track seçildikdə
                 onItemClick(tracks[adapterPosition])
             }
+
+            // Like/Dislike ikonunun klik dinləyicisi
             binding.favoriteIcon.setOnClickListener {
-                // Like/Dislike işləmi üçün
-                onLikeDislike(tracks[adapterPosition])
+                val track = tracks[adapterPosition]
+                track.isLiked = !(track.isLiked ?: false)  // Vəziyyəti dəyişdirir
+                notifyItemChanged(adapterPosition)        // Dəyişiklikləri yeniləyir
+                onLikeDislike(track)                       // ViewModel-ə bildirir
             }
         }
 
-        @SuppressLint("SetTextI18n")
         fun bind(track: TrackResponse) = with(binding) {
             songTitle.text = track.title ?: "Naməlum Mahnı"
             songArtist.text = track.slug ?: "Naməlum İfaçı"
+
             Glide.with(root.context)
                 .load(track.showAlbumCoverURL)
+                .placeholder(R.drawable.blackicon)
+                .error(R.drawable.blackicon)
                 .into(songImage)
 
+            // İkonun vəziyyəti
             favoriteIcon.setImageResource(
-                if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+                if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_full
             )
-            favoriteIcon.setOnClickListener {
-                track.isLiked = !(track.isLiked ?: false)
-                notifyItemChanged(adapterPosition)
-                onLikeDislike(track)
-            }
         }
     }
+
 }
