@@ -73,21 +73,13 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/songDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/song_date"
-                android:textColor="@color/text_color_primary"
-                android:textSize="14sp" />
-
-            <TextView
                 android:id="@+id/trackIdTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/track_Id"
                 android:textColor="@color/text_color_primary"
                 android:textSize="14sp"
-                android:visibility="gone" />
+       />
         </LinearLayout>
         <!-- Favorite Icon -->
         <ImageView

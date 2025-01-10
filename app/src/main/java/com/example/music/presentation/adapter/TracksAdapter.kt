@@ -57,30 +57,22 @@ class TracksAdapter(
 
         fun bind(track: TrackResponse) = with(binding) {
             songTitle.text = track.title ?: "Naməlum Mahnı"
+            songName.text = track.venueName ?: "Naməlum Mahnı"
             songArtist.text = track.slug ?: "Naməlum İfaçı"
+            trackIdTextView.text = track.id.toString()
 
-            // Şəkil yüklənməsi
             Glide.with(root.context)
                 .load(track.showAlbumCoverURL)
                 .placeholder(R.drawable.blackicon)
                 .into(songImage)
 
-            // İkonun vəziyyəti
             favoriteIcon.setImageResource(
                 if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
             )
-
-            // İtem klik
-            binding.root.setOnClickListener {
-                onItemClick(track)
-            }
-
-            // Like/Dislike ikon klik
-            binding.favoriteIcon.setOnClickListener {
+            favoriteIcon.setOnClickListener {
                 onLikeDislike(track)
+                notifyItemChanged(adapterPosition)
             }
-
-            // Element klik dinləyicisi
             root.setOnClickListener {
                 onItemClick(track)
             }

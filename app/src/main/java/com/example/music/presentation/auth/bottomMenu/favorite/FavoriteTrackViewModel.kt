@@ -58,7 +58,7 @@ class FavoriteTrackViewModel @Inject constructor(
                     // Yeni mahnını əlavə edir
                     val index = indexOfFirst { it.id == track.id }
                     if (index != -1) {
-                        this[index] = track // Mövcud mahnını yeniləyir
+                        this[index] = track
                     } else {
                         add(track)
                     }
@@ -94,6 +94,7 @@ class FavoriteTrackViewModel @Inject constructor(
             }
         }
     }
+
     fun isFavorite(song: TrackResponse?): Boolean {
         if (song == null) return false
         return _favoriteTracks.value?.any { it.slug == song.slug } == true

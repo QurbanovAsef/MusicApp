@@ -5,15 +5,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ItemSongBinding
 import com.example.music.data.model.response.TrackResponse
 
-class SearchAdapter(private val onTrackClick: (TrackResponse) -> Unit) :
-    RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+class SearchAdapter(
+    private val onItemClick: (TrackResponse) -> Unit,
+    private val onLikeDislike: (TrackResponse) -> Unit
+) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     var items: List<TrackResponse> = listOf()
         private set
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setItems(newItems: List<TrackResponse>) {
         items = newItems
         notifyDataSetChanged()
@@ -25,31 +29,60 @@ class SearchAdapter(private val onTrackClick: (TrackResponse) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-        val exactShow = items[position]
-        holder.bind(exactShow)
+        holder.bind(items[position])
     }
+
+    override fun onBindViewHolder(
+        holder: SearchViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isNotEmpty() && payloads.contains("TOGGLE_FAVORITE")) {
+            holder.binding.favoriteIcon.setImageResource(
+                if (items[position].isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+            )
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
+
 
     override fun getItemCount(): Int = items.size
 
-    inner class SearchViewHolder(private val binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class SearchViewHolder(val binding: ItemSongBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(track: TrackResponse) {
-            binding.songArtist.text = track.venueName ?: "Naməlum İfaçı"
-            binding.songTitle.text = track.title ?: "Naməlum Tur"
-            binding.trackIdTextView.text = track.id.toString()
+        fun bind(track: TrackResponse) = with(binding) {
+            // İkonu düzgün vəziyyətə gətiririk
+            favoriteIcon.setImageResource(
+                if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+            )
 
-            val imageUrl = track.showAlbumCoverURL
+            songTitle.text = track.title ?: "Naməlum Mahnı"
+            songName.text = track.venueName ?: "Naməlum Mahnı"
+            songArtist.text = track.slug ?: "Naməlum İfaçı"
+            trackIdTextView.text = track.id.toString()
 
-            Glide.with(itemView.context)
-                .load(imageUrl)
-                .into(binding.songImage)
+            Glide.with(root.context)
+                .load(track.showAlbumCoverURL)
+                .placeholder(R.drawable.blackicon)
+                .into(songImage)
 
-            binding.root.setOnClickListener {
-                onTrackClick(track)
+            favoriteIcon.setOnClickListener {
+                track.isLiked = !(track.isLiked == true)
+
+                favoriteIcon.setImageResource(
+                    if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
+                )
+
+                onLikeDislike(track)
             }
 
+            root.setOnClickListener {
+                onItemClick(track)
+            }
         }
-
 
     }
 }
+

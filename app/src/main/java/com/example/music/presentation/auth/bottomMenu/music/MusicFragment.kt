@@ -1,5 +1,6 @@
 package com.example.music.presentation.auth.bottomMenu.music
 
+import android.annotation.SuppressLint
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -37,9 +38,8 @@ class MusicFragment : Fragment() {
 
     private val args: MusicFragmentArgs by navArgs()
 
-    private var isShuffleEnabled = false // Shuffle rejimi
-    private var isRepeatEnabled = false // Repeat rejimi
-
+    private var isShuffleEnabled = false
+    private var isRepeatEnabled = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -277,6 +277,7 @@ class MusicFragment : Fragment() {
         handler.postDelayed(updateRunnable, 0)
     }
 
+    @SuppressLint("DefaultLocale")
     private fun formatTime(timeInMillis: Int): String {
         val minutes = (timeInMillis / 1000) / 60
         val seconds = (timeInMillis / 1000) % 60

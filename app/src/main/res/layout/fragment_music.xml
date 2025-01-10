@@ -126,6 +126,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/songName" />
 
+
+
     <!-- SeekBar -->
     <SeekBar
         android:id="@+id/SeekBar"
