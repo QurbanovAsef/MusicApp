@@ -1,13 +1,13 @@
 package com.example.music.presentation.auth.bottomMenu.profile
 
 import android.content.Context
-import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentProfileBinding
@@ -15,12 +15,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.music.activity.ContainerActivity
 import java.util.Locale
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
     private var binding: FragmentProfileBinding? = null
-    private lateinit var profileViewModel: ProfileViewModel
-    private lateinit var sharedPreferences: SharedPreferences
+
+    // Hilt ilə `ProfileViewModel`-in təmin edilməsi
+    private val profileViewModel: ProfileViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -31,35 +35,55 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        // SharedPreferences-dən istifadəçi ID-sini alın
+        val userId = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            .getLong("user_id", -1)
 
-        // Dil və tema LiveData izlənir
-        profileViewModel.language.observe(viewLifecycleOwner) { language ->
-            // Dil dəyişdikdə UI-ni yeniləyirik
-            updateLanguageUI(language)
+        // `id`-ni ötürərək istifadəçi profilini yükləyin
+        if (userId != -1L) {
+            profileViewModel.loadUserProfile(userId)
         }
 
-        profileViewModel.theme.observe(viewLifecycleOwner) { theme ->
-            // Tema dəyişdikdə UI-ni yeniləyirik
-            updateThemeUI(theme)
+        // Profil məlumatlarını izləyirik
+        profileViewModel.userProfile.observe(viewLifecycleOwner) { userProfile ->
+            if (userProfile != null) {
+                if (userProfile.imageUri != null) {
+                    binding?.profileImage?.setImageURI(Uri.parse(userProfile.imageUri))
+                }
+                binding?.editName?.text = userProfile.username
+            }
         }
 
+        // Profil məlumatlarını redaktə etmək üçün UserInfoFragment-ə yönləndiririk
         binding?.btnEditProfile?.setOnClickListener {
             findNavController().navigate(R.id.userInfoFragment)
         }
 
+        // Dil və tema LiveData izlənir
+        profileViewModel.language.observe(viewLifecycleOwner) { language ->
+            updateLanguageUI(language)
+        }
+
+        profileViewModel.theme.observe(viewLifecycleOwner) { theme ->
+            updateThemeUI(theme)
+        }
+
+        // Dil seçimi üçün dialoq
         binding?.languageSection?.setOnClickListener {
             showLanguageDialog()
         }
 
+        // Tema seçimi üçün dialoq
         binding?.themeSection?.setOnClickListener {
             showThemeDialog()
         }
 
+        // App haqqında məlumat üçün fragmentə keçid
         binding?.aboutApp?.setOnClickListener {
             findNavController().navigate(R.id.aboutAppFragment)
         }
 
+        // Çıxış etmək üçün dialoq
         binding?.logout?.setOnClickListener {
             showLogoutDialog()
             val activity = requireActivity() as ContainerActivity
@@ -132,7 +156,6 @@ class ProfileFragment : Fragment() {
             requireActivity().recreate()
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

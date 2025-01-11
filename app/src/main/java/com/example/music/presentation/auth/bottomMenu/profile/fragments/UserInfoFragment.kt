@@ -1,21 +1,59 @@
 package com.example.music.presentation.auth.bottomMenu.profile.fragments
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentUserInfoBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+
+@AndroidEntryPoint
 class UserInfoFragment : Fragment() {
 
     private var _binding: FragmentUserInfoBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: UserInfoViewModel by viewModels()
+
+    private val imagePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data
+                uri?.let {
+                    // Şəkilin formatını və ölçüsünü yoxlayırıq
+                    if (validateImage(it)) {
+                        viewModel.setImageUri(it) // Şəkil URI-si ViewModel-ə təyin olunur
+                        binding.profileImage.setImageURI(it) // Şəkil göstərilir
+                        binding.progressBar.visibility = View.VISIBLE // ProgressBar göstərilir
+                    } else {
+                        // Şəkil formatı və ya ölçüsü düzgün deyil, xəbərdarlıq göstəririk
+                        Toast.makeText(requireContext(), "Şəkil formatı və ya ölçüsü düzgün deyil", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+    private fun validateImage(uri: Uri): Boolean {
+        val file = File(uri.path!!)
+        val maxSizeInMB = 2 // MB
+        val allowedFormats = listOf("image/jpeg", "image/png")
+
+        val fileSizeInMB = file.length() / (1024 * 1024)
+        val fileFormat = requireContext().contentResolver.getType(uri)
+
+        return fileSizeInMB <= maxSizeInMB && allowedFormats.contains(fileFormat)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,71 +65,44 @@ class UserInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.backButtonUserinfo.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        // Yadda saxla düyməsinə klik
+        binding.profileImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            imagePickerLauncher.launch(intent)
+        }
+
         binding.saveButton.setOnClickListener {
             val name = binding.editName.text.toString()
-            val email = binding.editEmail.text.toString()
-            val password = binding.editPassword.text.toString()
 
-            if (validateInputs(name, email, password)) {
-                // Firebase ilə məlumatları yenilə
-                updateFirebaseUserInfo(name, email, password)
+            viewModel.validateInputs(name)
+
+            viewModel.validationState.observe(viewLifecycleOwner) { validationState ->
+                if (!validationState.hasErrorsProfile()) {
+                    viewModel.updateUserProfile(name, viewModel.profileImageUri.value)
+                } else {
+                    binding.inputName.error = validationState.nameErrorProfile
+                }
             }
         }
+
+        viewModel.profileUpdateStatus.observe(viewLifecycleOwner) { success ->
+            binding.progressBar.visibility = View.GONE
+            if (success) {
+                Toast.makeText(requireContext(), "Məlumatlar uğurla yeniləndi", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.profileFragment) // Profilə keçid
+            } else {
+                Toast.makeText(requireContext(), "Xəta baş verdi", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
-    private fun validateInputs(name: String, email: String, password: String): Boolean {
-        // Əsas yoxlama məntiqi
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), "Bütün sahələri doldurun!", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        return true
-    }
-
-    private fun updateFirebaseUserInfo(name: String, email: String, password: String) {
-        val user = FirebaseAuth.getInstance().currentUser
-
-        // Əgər istifadəçi varsa, məlumatları Firebase ilə yeniləyirik
-        user?.let {
-            // Email və şifrə yeniləməsi
-            it.updateEmail(email).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(requireContext(), "Email yeniləndi", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "Email yenilənmədi", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            it.updatePassword(password).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(requireContext(), "Şifrə yeniləndi", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "Şifrə yenilənmədi", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            // Firebase Realtime Database-də istifadəçi məlumatlarını saxlayırıq
-            val databaseRef = FirebaseDatabase.getInstance().reference.child("users")
-            val userId = it.uid
-
-            val userMap = mapOf(
-                "username" to name,
-                "email" to email
-                // Burada şəkil URL-sini əlavə etmirik, çünki şəkil seçmək funksiyasını ləğv etdik
-            )
-
-            databaseRef.child(userId).setValue(userMap)
-                .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Məlumatlar uğurla saxlanıldı", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Xəta baş verdi", Toast.LENGTH_SHORT).show()
-                }
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

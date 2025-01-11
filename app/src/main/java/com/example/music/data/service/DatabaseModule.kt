@@ -29,9 +29,10 @@ object DatabaseModule {
             AppDatabase::class.java,
             "music_database"
         )
-            .fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_3_4) // 3-dən 4-ə keçid
             .build()
     }
+
     @Provides
     @Singleton
     fun provideFavoriteTrackDao(database: AppDatabase): FavoriteTrackDao {

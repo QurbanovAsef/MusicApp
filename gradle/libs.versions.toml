@@ -33,6 +33,7 @@ firebaseAuth = "23.1.0"
 firebaseStorage = "21.0.1"
 firebaseDatabase = "21.0.0"
 swiperefreshlayout = "1.1.0"
+firebaseAnalytics = "22.1.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -75,6 +76,7 @@ loggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-intercept
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

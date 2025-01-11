@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.hilt)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.analytics)
     kapt(libs.hiltCompiler)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)

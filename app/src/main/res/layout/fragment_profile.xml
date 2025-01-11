@@ -17,14 +17,15 @@
             android:gravity="center"
             android:layout_marginTop="16dp">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profileImage"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:background="@drawable/circle_background"
-                android:contentDescription="@string/todo"
-                android:scaleType="centerCrop"
-                android:src="@drawable/circle_background1" />
+                android:layout_marginTop="32dp"
+                android:src="@drawable/circle_background1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/appBarLayout"/>
 
             <TextView
                 android:id="@+id/editName"
@@ -36,14 +37,6 @@
                 android:textColor="@color/text_color_primary"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/editEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="alexmarshall2022@gmail.com"
-                android:textColor="@color/text_color_primary"
-                android:textSize="16sp" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
