@@ -23,40 +23,41 @@ class ProfileViewModel @Inject constructor(
     val language: MutableLiveData<String> = MutableLiveData("English")
     val theme: MutableLiveData<String> = MutableLiveData("light")
     private val _userProfile = MutableLiveData<UserProfile?>()
-    val userProfile: MutableLiveData<UserProfile?> get() = _userProfile
+    val userProfile: LiveData<UserProfile?> get() = _userProfile
     private val sharedPreferences = application.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     private val userProfileDao = appDatabase.userProfileDao()
 
-    // User profile update method with database insertion
+    // Profil məlumatlarını yeniləyir
     fun updateUserProfile(username: String, imageUri: Uri?) {
         val userProfile = UserProfile(username = username, imageUri = imageUri?.toString())
         _userProfile.value = userProfile
 
-        // Launch a coroutine to insert the user profile into the database
         viewModelScope.launch {
             try {
+                // Yeni istifadəçi profilini verilənlər bazasına əlavə edir
                 userProfileDao.insertUserProfile(userProfile)
             } catch (e: Exception) {
-                // Handle any error
+                // Xətanı idarə edin
             }
         }
     }
 
-    // Profil yükləmə metodu
-    fun loadUserProfile(id: Long) {
+    // Profil məlumatlarını yükləyir
+    fun loadUserProfile() {
         viewModelScope.launch {
             try {
-                // İstifadəçi profilini ID-ə görə yükləyirik
-                val profile = userProfileDao.getUserProfile(id)
+                // Verilənlər bazasından istifadəçi profilini yükləyirik
+                val profile = userProfileDao.getAllUserProfiles().value?.firstOrNull() // İlk profili alırıq
                 _userProfile.value = profile
             } catch (e: Exception) {
-                // Hata baş verdikdə buranı işlədə bilərsiniz
+                // Xətalarla əlaqəli əməliyyatları buraya əlavə edin
+                _userProfile.value = null
             }
         }
     }
 
-    // Language and Theme preference methods
+    // Dil və Tema dəyişikliklərini saxlayır
     fun setLanguage(language: String, context: Context) {
         if (this.language.value != language) {
             this.language.value = language

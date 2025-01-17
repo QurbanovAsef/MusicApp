@@ -22,7 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "music_database"
-                ).addMigrations(MIGRATION_3_4)  // Migration-u əlavə edin
+                ).addMigrations(MIGRATION_3_4)
                     .build()
                 INSTANCE = instance
                 instance

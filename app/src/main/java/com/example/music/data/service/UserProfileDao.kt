@@ -6,8 +6,7 @@ import com.example.music.data.model.response.UserProfile
 
 @Dao
 interface UserProfileDao {
-
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserProfile(userProfile: UserProfile)
 
     @Update

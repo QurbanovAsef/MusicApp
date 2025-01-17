@@ -8,7 +8,6 @@ object ValidationUtilsProfile {
             nameErrorProfile = validateNameProfile(name),
         )
     }
-
     private fun validateNameProfile(name: String): String? {
         return when {
             name.isBlank() -> "Ad boş ola bilməz"

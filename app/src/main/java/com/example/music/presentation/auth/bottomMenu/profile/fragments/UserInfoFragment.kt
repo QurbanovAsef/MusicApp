@@ -13,9 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentUserInfoBinding
-
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -31,14 +29,13 @@ class UserInfoFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri = result.data?.data
                 uri?.let {
-                    // Şəkilin formatını və ölçüsünü yoxlayırıq
                     if (validateImage(it)) {
-                        viewModel.setImageUri(it) // Şəkil URI-si ViewModel-ə təyin olunur
-                        binding.profileImage.setImageURI(it) // Şəkil göstərilir
-                        binding.progressBar.visibility = View.VISIBLE // ProgressBar göstərilir
+                        viewModel.loadUserProfile() // Profilin məlumatlarını yeniləyirik
+                        binding.profileImage.setImageURI(it)
+                        binding.progressBar.visibility = View.GONE
                     } else {
-                        // Şəkil formatı və ya ölçüsü düzgün deyil, xəbərdarlıq göstəririk
                         Toast.makeText(requireContext(), "Şəkil formatı və ya ölçüsü düzgün deyil", Toast.LENGTH_SHORT).show()
+                        binding.progressBar.visibility = View.GONE
                     }
                 }
             }
@@ -77,9 +74,8 @@ class UserInfoFragment : Fragment() {
 
         binding.saveButton.setOnClickListener {
             val name = binding.editName.text.toString()
-
+            viewModel.updateUserProfile(name, viewModel.profileImageUri.value)
             viewModel.validateInputs(name)
-
             viewModel.validationState.observe(viewLifecycleOwner) { validationState ->
                 if (!validationState.hasErrorsProfile()) {
                     viewModel.updateUserProfile(name, viewModel.profileImageUri.value)
@@ -87,18 +83,24 @@ class UserInfoFragment : Fragment() {
                     binding.inputName.error = validationState.nameErrorProfile
                 }
             }
-        }
-
-        viewModel.profileUpdateStatus.observe(viewLifecycleOwner) { success ->
-            binding.progressBar.visibility = View.GONE
-            if (success) {
-                Toast.makeText(requireContext(), "Məlumatlar uğurla yeniləndi", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.profileFragment) // Profilə keçid
-            } else {
-                Toast.makeText(requireContext(), "Xəta baş verdi", Toast.LENGTH_SHORT).show()
+            viewModel.profileUpdateStatus.observe(viewLifecycleOwner) { success ->
+                if (success) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Profil məlumatları yeniləndi",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Profil məlumatları yeniləndikdən sonra, ProfileFragment-ə keçin
+                    findNavController().popBackStack() // Profil məlumatları saxlandıqdan sonra geri qayıdırıq
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Profil yenilənməsi uğursuz oldu",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
-
     }
 
     override fun onDestroyView() {

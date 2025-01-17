@@ -4,13 +4,13 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.music.data.model.response.UserProfile
 import com.example.music.data.service.AppDatabase
 import com.example.music.utils.proileutils.ValidationStateProfile
 import com.example.music.utils.proileutils.ValidationUtilsProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,20 +34,43 @@ class UserInfoViewModel @Inject constructor(
         _validationState.value = validationResult
     }
 
-    fun updateUserProfile(name: String, imageUri: Uri?) {
-        val userProfile = UserProfile(username = name, imageUri = imageUri?.toString())
-
-        CoroutineScope(Dispatchers.IO).launch {
+    fun loadUserProfile() {
+        viewModelScope.launch {
             try {
-                userProfileDao.insertUserProfile(userProfile)  // Insert the user profile into the database
-                _profileUpdateStatus.postValue(true)
+                val profile = userProfileDao.getAllUserProfiles().value?.firstOrNull()
+                profile?.let {
+                    _profileImageUri.value = Uri.parse(it.imageUri)
+                }
             } catch (e: Exception) {
                 _profileUpdateStatus.postValue(false)
             }
         }
     }
 
-    fun setImageUri(uri: Uri) {
-        _profileImageUri.value = uri
+    fun updateUserProfile(name: String, imageUri: Uri?) {
+        val validationResult = ValidationUtilsProfile.validateProfile(name)
+        _validationState.postValue(validationResult)
+
+        if (validationResult.hasErrorsProfile()) {
+            return
+        }
+        viewModelScope.launch {
+            try {
+                val existingUser = userProfileDao.getAllUserProfiles().value?.firstOrNull()
+                if (existingUser != null) {
+                    // Mövcud profili yenilə
+                    existingUser.username = name
+                    existingUser.imageUri = imageUri?.toString()
+                    userProfileDao.updateUserProfile(existingUser)
+                } else {
+                    // Yeni profil əlavə et
+                    val newUser = UserProfile(username = name, imageUri = imageUri?.toString())
+                    userProfileDao.insertUserProfile(newUser)
+                }
+                _profileUpdateStatus.postValue(true)
+            } catch (e: Exception) {
+                _profileUpdateStatus.postValue(false)
+            }
+        }
     }
 }
