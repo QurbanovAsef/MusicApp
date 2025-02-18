@@ -1,9 +1,9 @@
 package com.example.music.activity
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -11,8 +11,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ActivityContainer2Binding
 import com.example.music.presentation.viewmodel.SharedViewModel
+import com.example.music.utils.AppConst.LANG_KEY_DEFAULT
+import com.example.music.utils.AppConst.LANG_KEY_LANGUAGE
+import com.example.music.utils.AppConst.SHARED_KEY_PREFERENCES
+import com.example.music.utils.LocaleUtil
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
 
 @AndroidEntryPoint
 class ContainerActivity : AppCompatActivity() {
@@ -28,12 +31,7 @@ class ContainerActivity : AppCompatActivity() {
         setContentView(binding.root)
         sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
-        // SharedPreferences-dən tema və dil seçimlərini yüklə
-        sharedPreferences = getSharedPreferences("user_preferences", MODE_PRIVATE)
-        loadThemePreference()
-        loadLanguagePreference()
-
-        // NavHostFragment və NavController ilə işləyirik
+        // NavHostFragment və NavController ilə işləyirikk
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
@@ -54,7 +52,7 @@ class ContainerActivity : AppCompatActivity() {
         }
 
         // SharedPreferences ilə istifadəçi girişini yoxlamaq
-        val sharedPreferences = getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences(SHARED_KEY_PREFERENCES, android.content.Context.MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
 
         if (isLoggedIn) {
@@ -63,7 +61,6 @@ class ContainerActivity : AppCompatActivity() {
             }
             navController.graph = navGraph
         }
-
     }
 
     fun logout() {
@@ -76,33 +73,11 @@ class ContainerActivity : AppCompatActivity() {
         navController.navigate(R.id.loginFragment)
     }
 
-    private fun loadThemePreference() {
-        val theme = sharedPreferences.getString("theme", "light") ?: "light"
-        val currentMode = AppCompatDelegate.getDefaultNightMode()
-        val newMode = if (theme == "dark") AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-
-        // Yalnız tələb olunduqda mod dəyişdiririk
-        if (currentMode != newMode) {
-            AppCompatDelegate.setDefaultNightMode(newMode)
-        }
-    }
-
-    private fun loadLanguagePreference() {
-        val language = sharedPreferences.getString("language", "English") ?: "English"
-        val currentLocale = resources.configuration.locales[0]
-        val newLocale = when (language) {
-            "English" -> Locale("en")
-            "Azərbaycan" -> Locale("az")
-            else -> Locale("en")
-        }
-
-        // Yalnız lazım olduqda dil dəyişdiririk
-        if (currentLocale != newLocale) {
-            val config = resources.configuration
-            config.setLocale(newLocale)
-            createConfigurationContext(config)  // Yenilənmiş lokal tənzimləmələr
-            recreate()  // Tətbiqi yenidən başladırıq
-        }
+    override fun attachBaseContext(newBase: Context) {
+        sharedPreferences = newBase.getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
+        val lang = sharedPreferences.getString(LANG_KEY_LANGUAGE, LANG_KEY_DEFAULT) ?: LANG_KEY_DEFAULT
+        applyOverrideConfiguration(LocaleUtil.getLocalizedConfiguration(lang))
+        super.attachBaseContext(newBase)
     }
 
 }

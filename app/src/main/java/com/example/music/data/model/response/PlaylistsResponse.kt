@@ -1,15 +1,16 @@
 package com.example.music.data.model.response
 
 import com.google.gson.annotations.SerializedName
+import kotlin.random.Random
 
-data class PlaylistsResponse (
+data class PlaylistsResponse(
     val playlists: List<Playlist>? = null,
     val totalPages: Int? = null,
     val currentPage: Int? = null,
     val totalEntries: Int? = null
 )
 
-data class Playlist (
+data class Playlist(
     val id: Int? = null,
     val slug: String? = null,
     val name: String? = null,
@@ -23,5 +24,6 @@ data class Playlist (
     @SerializedName("track_ids")
     val trackIds: Int? = null,
     val likedByUser: Boolean? = null,
-    val albumCoverURL: String? = null
+    val albumCoverURL: String? = null,
+    val seconds: Int = 0
 )

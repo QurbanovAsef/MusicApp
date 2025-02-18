@@ -18,6 +18,7 @@ import com.example.androidprojecttest1.databinding.FragmentSearchBinding
 import com.example.music.presentation.adapter.SearchAdapter
 import com.example.music.presentation.auth.bottomMenu.favorite.FavoriteTrackViewModel
 import com.example.music.presentation.viewmodel.SharedViewModel
+import com.example.music.utils.AppConst.SHARED_KEY_PREFERENCES
 import com.google.android.material.chip.Chip
 
 class SearchFragment : Fragment() {
@@ -29,7 +30,7 @@ class SearchFragment : Fragment() {
     private lateinit var searchAdapter: SearchAdapter
     private val searchHistory = mutableListOf<String>() // Search history storage
     private val sharedPreferences by lazy {
-        requireActivity().getSharedPreferences("SearchHistory", Context.MODE_PRIVATE)
+        requireActivity().getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
     }
 
     override fun onCreateView(

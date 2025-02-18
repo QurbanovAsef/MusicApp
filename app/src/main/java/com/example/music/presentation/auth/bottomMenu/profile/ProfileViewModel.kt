@@ -3,6 +3,7 @@ package com.example.music.presentation.auth.bottomMenu.profile
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -10,6 +11,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.music.data.model.response.UserProfile
 import com.example.music.data.service.AppDatabase
+import com.example.music.utils.AppConst.LANG_KEY_DEFAULT
+import com.example.music.utils.AppConst.LANG_KEY_LANGUAGE
+import com.example.music.utils.AppConst.SHARED_KEY_PREFERENCES
+import com.example.music.utils.AppConst.SHARED_KEY_THEME
+import com.example.music.utils.AppConst.THEME_KEY_DARK
+import com.example.music.utils.AppConst.THEME_KEY_LIGHT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,14 +24,16 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     application: Application,
-    private val appDatabase: AppDatabase
+    appDatabase: AppDatabase
 ) : AndroidViewModel(application) {
 
-    val language: MutableLiveData<String> = MutableLiveData("English")
-    val theme: MutableLiveData<String> = MutableLiveData("light")
+    private val sharedPreferences = application.getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
+
+    val language: MutableLiveData<String> =
+        MutableLiveData(sharedPreferences.getString(LANG_KEY_LANGUAGE, LANG_KEY_DEFAULT))
+
     private val _userProfile = MutableLiveData<UserProfile?>()
     val userProfile: LiveData<UserProfile?> get() = _userProfile
-    private val sharedPreferences = application.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
     private val userProfileDao = appDatabase.userProfileDao()
 
@@ -58,48 +67,33 @@ class ProfileViewModel @Inject constructor(
     }
 
     // Dil və Tema dəyişikliklərini saxlayır
-    fun setLanguage(language: String, context: Context) {
+    fun setLanguage(language: String) {
         if (this.language.value != language) {
-            this.language.value = language
             saveLanguagePreference(language)
-            changeAppLanguage(language, context)
+            this.language.value = language
         }
     }
 
-    fun setTheme(theme: String, context: Context) {
-        if (this.theme.value != theme) {
-            this.theme.value = theme
-            saveThemePreference(theme)
-            changeAppTheme(theme, context)
-        }
+    fun setTheme(theme: String) {
+        saveThemePreference(theme)
+        changeAppTheme(theme)
     }
 
-    private fun changeAppLanguage(language: String, context: Context) {
-        val locale = when (language) {
-            "English" -> java.util.Locale("en")
-            "Azərbaycan" -> java.util.Locale("az")
-            else -> java.util.Locale("en")
-        }
-        val config = context.resources.configuration
-        config.setLocale(locale)
-        context.createConfigurationContext(config)
-    }
-
-    private fun changeAppTheme(theme: String, context: Context) {
+    private fun changeAppTheme(theme: String) {
         AppCompatDelegate.setDefaultNightMode(
-            if (theme == "dark") AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            if (theme == THEME_KEY_DARK) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         )
     }
 
     private fun saveLanguagePreference(language: String) {
-        if (sharedPreferences.getString("language", "") != language) {
-            sharedPreferences.edit().putString("language", language).apply()
+        if (sharedPreferences.getString(LANG_KEY_LANGUAGE, LANG_KEY_DEFAULT) != language) {
+            sharedPreferences.edit().putString(LANG_KEY_LANGUAGE, language).apply()
         }
     }
 
     private fun saveThemePreference(theme: String) {
-        if (sharedPreferences.getString("theme", "") != theme) {
-            sharedPreferences.edit().putString("theme", theme).apply()
+        if (sharedPreferences.getString(SHARED_KEY_THEME, THEME_KEY_LIGHT) != theme) {
+            sharedPreferences.edit().putString(SHARED_KEY_THEME, theme).apply()
         }
     }
 }

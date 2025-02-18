@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentLoginBinding
 import com.example.music.presentation.auth.core.CoreUIState
+import com.example.music.utils.AppConst.SHARED_KEY_PREFERENCES
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -73,7 +74,7 @@ class LoginFragment : Fragment() {
     private fun handleSuccess(state: LoginVM.State) {
         if (state.isLoggedIn) {
             // SharedPreferences-də giriş məlumatını qeyd etmək
-            val sharedPreferences = requireContext().getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
+            val sharedPreferences = requireContext().getSharedPreferences(SHARED_KEY_PREFERENCES, android.content.Context.MODE_PRIVATE)
             sharedPreferences.edit().putBoolean("is_logged_in", true).apply()
 
             findNavController().navigate(R.id.action_loginFragment_to_successfullyRegister2)
