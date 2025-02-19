@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:background="@color/background_color">
 
     <!-- Album başlığı -->
@@ -11,68 +12,76 @@
         android:id="@+id/albumTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:text="@string/album"
         android:textColor="@color/text_color_primary"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <!-- Albomlar üçün RecyclerView -->
-    <com.example.music.presentation.custom.CustomScrollingRecycler
-        android:id="@+id/showRecyclerView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/albumContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/albumTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/albumTitle" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Albomlar üçün ProgressBar -->
-    <ProgressBar
-        android:id="@+id/progressAlbums"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/showRecyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/showRecyclerView" />
+        <com.example.music.presentation.custom.CustomScrollingRecycler
+            android:id="@+id/showRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <!-- Albomlar üçün ProgressBar -->
+        <ProgressBar
+            android:id="@+id/progressAlbums"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Songs başlığı -->
     <TextView
         android:id="@+id/songsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:text="@string/songs"
         android:textColor="@color/text_color_primary"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/showRecyclerView" />
+        app:layout_constraintTop_toBottomOf="@id/albumContainer"/>
 
     <!-- Mahnılar üçün RecyclerView -->
-    <com.example.music.presentation.custom.CustomScrollingRecycler
-        android:id="@+id/songRecyclerView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/songContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/songsTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/songsTitle" />
-
-    <!-- Mahnılar üçün ProgressBar -->
-    <ProgressBar
-        android:id="@+id/progressTracks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/songRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/songRecyclerView" />
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <com.example.music.presentation.custom.CustomScrollingRecycler
+            android:id="@+id/songRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <!-- Mahnılar üçün ProgressBar -->
+        <ProgressBar
+            android:id="@+id/progressTracks"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

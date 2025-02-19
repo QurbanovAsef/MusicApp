@@ -32,25 +32,36 @@
     <string name="favorites">Favoritlər</string>
     <string name="profile">Profil</string>
     <string name="shuffle">Təsadüfi seç</string>
-    <string name="no_results_found">Nəticə tapılmadı</string>
     <string name="song_title">Mahnının başlığı</string>
     <string name="song_name">Mahnının adı</string>
     <string name="show_name">Album adı</string>
     <string name="show_surName">Album İfaçısı</string>
     <string name="artist">İfaçı</string>
     <string name="favorite_songs">Sevimli mahnılar</string>
-    <string name="album_name">Albom Adı</string>
+    <string name="album_name">Albom %1$d</string>
     <string name="artist_name">İfaçı Adı</string>
+    <!-- Axtar -->
+    <string name="search_hint">Axtarış...</string>
+    <string name="search_no_results">Nəticə tapılmadı</string>
+    <string name="search_suggestion">Axtarış üçün nəsə yazın</string>
+
 
     <!-- Tətbiq məlumatları -->
     <string name="about_app">Tətbiq Haqqında</string>
     <string name="features">Xüsusiyyətlər</string>
-    <string name="listen_music">• Musiqi dinləmək\n• Öz pleylistlərinizi yaratmaq\n• Musiqi keyfiyyətini seçmək</string>
+    <string name="listen_music">
+        \n
+• Sevdiyiniz musiqiləri dinləyin\n
+• Favorit mahnılarınızı siyahıya əlavə edin\n
+• Axtarış vasitəsilə istədiyiniz mahnını tez tapın\n
+• Mahnıları irəli və geri sarın, rahat idarə edin
+</string>
+
+
     <string name="version">Versiya</string>
     <string name="version_number">Versiya 1.0.0</string>
     <string name="contact">Əlaqə</string>
-    <string name="support_email">Dəstək üçün: support@musicapp.com</string>
-
+    <string name="support_email">Dəstək üçün: asaf.qurbanov98@gmail.com</string>
     <!-- Hata mesajları -->
     <string name="error_occurred">Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.</string>
     <string name="enter_search_term">Zəhmət olmasa axtarış sözünü daxil edin</string>
@@ -81,7 +92,7 @@
     <string name="again_new_password">Təkrar yeni şifrə</string>
     <string name="user_name">İstifadəçi Adı</string>
     <string name="user_email">email@example.com</string>
-    <string name="name">Ad və soyad</string>
+    <string name="Name_and_Surname">Ad və soyad</string>
     <string name="save">Yadda saxla</string>
     <string name="duration">Müddət</string>
     <string name="Topic">Mövzu</string>
@@ -90,5 +101,8 @@
     <string name="track_Id">0000</string>
     <string name="album">Albom</string>
     <string name="songs">Musiqilər</string>
+    <string name="language">Dil</string>
+    <string name="theme">Mövzu</string>
+    <string name="logout">Çıxış</string>
 
 </resources>

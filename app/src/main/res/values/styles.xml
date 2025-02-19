@@ -6,4 +6,5 @@
     <item name="contentInsetStart">0dp</item>
     <item name="titleMarginStart">16dp</item>
 </style>
+
 </resources>

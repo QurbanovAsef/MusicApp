@@ -65,7 +65,7 @@ class MusicFragment : Fragment() {
 
         sharedViewModel.playerTracks.observe(viewLifecycleOwner) { songs ->
             if (songs.isEmpty()) {
-                Toast.makeText(requireContext(), "No song found", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "No song found", Toast.LENGTH_SHORT).show()
                 return@observe
             }
 
@@ -146,20 +146,14 @@ class MusicFragment : Fragment() {
 
                 if (isLiked) {
                     binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)
-                    if (favoriteTrackViewModel.removeFavorite(trackResponse)) {
-                        Toast.makeText(requireContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to remove", Toast.LENGTH_SHORT).show()
-                    }
+                    favoriteTrackViewModel.removeFavorite(trackResponse)
                 } else {
                     if (favoriteTrackViewModel.addFavorite(trackResponse)) {
                         binding.likeButton.setImageResource(R.drawable.ic_favorite_full)
-                        Toast.makeText(requireContext(), "Added to Favorites", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to add", Toast.LENGTH_SHORT).show()
                     }
                 }
                 isLiked = !isLiked
+
             }
         }
 
@@ -245,7 +239,7 @@ class MusicFragment : Fragment() {
                 if (it.isEmpty()) return
                 setDataSource(it)
             } ?: run {
-                Toast.makeText(requireContext(), "Song URL not found", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "Song URL not found", Toast.LENGTH_SHORT).show()
                 return@apply
             }
             prepareAsync()

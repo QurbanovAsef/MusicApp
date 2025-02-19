@@ -58,8 +58,8 @@ class FavoriteAdapter(
 
             Glide.with(root.context)
                 .load(track.showAlbumCoverURL)
-                .placeholder(R.drawable.blackicon)
-                .error(R.drawable.blackicon)
+                .placeholder(R.drawable.black_icon)
+                .error(R.drawable.black_icon)
                 .into(songImage)
 
             // İkonun vəziyyəti

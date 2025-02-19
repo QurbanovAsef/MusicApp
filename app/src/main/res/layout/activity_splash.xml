@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/background_light">
     <!-- Balaca logo - bu başlanğıcda gizlənəcək -->
     <ImageView
         android:id="@+id/smallLogoImage"
@@ -12,25 +12,24 @@
         android:contentDescription="@string/app_name"
         android:layout_centerInParent="true"
         android:background="@drawable/rounded_background"
-        android:src="@drawable/blackicon"
-        android:clipToOutline="true"
+        android:src="@drawable/black_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone" />  <!-- Başlanğıcda gizlidir -->
+       />  <!-- Başlanğıcda gizlidir -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_centerInParent="true"
         android:background="@drawable/rounded_background"
-        android:clipToOutline="true"
         android:contentDescription="@string/todo"
-        android:src="@drawable/blackicon"
+        android:src="@drawable/black_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+      />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

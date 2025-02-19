@@ -19,7 +19,6 @@ import com.example.music.presentation.adapter.SearchAdapter
 import com.example.music.presentation.auth.bottomMenu.favorite.FavoriteTrackViewModel
 import com.example.music.presentation.viewmodel.SharedViewModel
 import com.example.music.utils.AppConst.SHARED_KEY_PREFERENCES
-import com.google.android.material.chip.Chip
 
 class SearchFragment : Fragment() {
 
@@ -28,14 +27,14 @@ class SearchFragment : Fragment() {
     private val viewModel: SharedViewModel by activityViewModels()
     private val favoriteTrackViewModel: FavoriteTrackViewModel by activityViewModels()
     private lateinit var searchAdapter: SearchAdapter
-    private val searchHistory = mutableListOf<String>() // Search history storage
+    private val searchHistory = mutableListOf<String>()
     private val sharedPreferences by lazy {
         requireActivity().getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -45,7 +44,10 @@ class SearchFragment : Fragment() {
 
         setupRecyclerView()
         setupSearchFunctionality()
+        loadSearchHistory()
         observeSearchResults()
+        binding.emptyStateTextView.isVisible = true
+        binding.emptyStateTextView.text = getString(R.string.search_suggestion)
     }
 
     private fun setupRecyclerView() {
@@ -63,7 +65,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupSearchFunctionality() {
-        // "search" ikonasına klikləmə
         binding.searchIcon.setOnClickListener {
             val query = binding.searchEditText.text.toString()
             if (query.isNotEmpty()) {
@@ -71,7 +72,6 @@ class SearchFragment : Fragment() {
             }
         }
 
-        // Klaviaturadakı search ikonuna basıldığında da axtarış et
         binding.searchEditText.setOnEditorActionListener { _, _, _ ->
             val query = binding.searchEditText.text.toString()
             if (query.isNotEmpty()) {
@@ -80,105 +80,76 @@ class SearchFragment : Fragment() {
             true
         }
 
-        // Klaviaturada hər dəyişiklikdə chip əlavə olunmasın
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
-            @SuppressLint("SetTextI18n")
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(editable: Editable?) {
-                val query = editable.toString()
-                if (query.isEmpty()) {
-                    binding.recyclerView.isVisible = false
-                    binding.emptyStateTextView.isVisible = true
-                    binding.emptyStateTextView.text = "Enter text to search"
+                if (editable.toString().isEmpty()) {
+                    binding.recyclerView.isVisible = true
+                    searchAdapter.setItems(viewModel.searchResults.value ?: emptyList())
                 }
             }
         })
     }
 
     private fun searchSongs(query: String) {
+        if (!searchHistory.contains(query)) {
+            searchHistory.add(0, query)
+            saveSearchHistory()
+        }
+
         binding.progressBar.isVisible = true
         binding.emptyStateTextView.isVisible = false
         viewModel.searchSongs(query)
-        addSearchChip(query)  // Yeni axtarış sözü əlavə et
     }
 
-    private fun addSearchChip(query: String) {
-        if (!searchHistory.contains(query)) {
-            searchHistory.add(query)
-            saveSearchHistory() // Yeni axtarışı saxla
-        }
-        val chip = Chip(requireContext()).apply {
-            text = query
-            isCloseIconVisible = true
-            setOnCloseIconClickListener {
-                removeSearchChip(query)
-            }
-            setOnClickListener {
-                binding.searchEditText.setText(query) // Çipi seçərək təkrar axtarış
-            }
-        }
-        binding.chipGroup.addView(chip)
-    }
-
-    private fun removeSearchChip(query: String) {
-        searchHistory.remove(query)
-        saveSearchHistory() // Yenilənmiş siyahını saxla
-        binding.chipGroup.removeAllViews()
-        for (item in searchHistory) {
-            addSearchChip(item) // Qalan çipləri yenidən əlavə et
-        }
-    // SharedPreferences-də yadda saxla
-        saveSearchHistory()
-    }
-    // Search tarixini SharedPreferences-ə saxlamaq
     private fun saveSearchHistory() {
-        val editor = sharedPreferences.edit()
-        editor.putStringSet("history", searchHistory.toSet()) // Unikal məlumatlar saxla
-        editor.apply()
+        sharedPreferences.edit()
+            .putStringSet("history", searchHistory.toSet())
+            .apply()
     }
 
-
-
-    // Search tarixini SharedPreferences-dən yükləmək
     private fun loadSearchHistory() {
         val savedHistory = sharedPreferences.getStringSet("history", emptySet())?.toMutableList()
         savedHistory?.let {
             searchHistory.clear()
             searchHistory.addAll(it)
-            binding.chipGroup.removeAllViews() // Əvvəlki chip-ləri təmizlə
-            for (query in searchHistory) {
-                addSearchChip(query) // Hər bir query üçün chip əlavə et
-            }
         }
     }
-
 
     @SuppressLint("SetTextI18n")
     private fun observeSearchResults() {
         viewModel.searchResults.observe(viewLifecycleOwner) { response ->
             binding.progressBar.isVisible = false
-            if (response.isEmpty()) {
+
+            if (binding.searchEditText.text.isEmpty()) {
+                // Heç bir şey yazılmayıbsa, "Type something to search" göstər
                 binding.recyclerView.isVisible = false
                 binding.emptyStateTextView.isVisible = true
-                binding.emptyStateTextView.text = "No results found"
+                binding.emptyStateTextView.text = getString(R.string.search_suggestion)
+            } else if (response.isEmpty()) {
+                // Axtarış var, amma nəticə tapılmayıbsa "No results found" göstər
+                binding.recyclerView.isVisible = false
+                binding.emptyStateTextView.isVisible = true
+                binding.emptyStateTextView.text = getString(R.string.search_no_results)
             } else {
+                // Axtarış nəticələri varsa, onları göstər
                 binding.recyclerView.isVisible = true
                 binding.emptyStateTextView.isVisible = false
                 searchAdapter.setItems(response)
             }
         }
     }
-    override fun onPause() {
-        super.onPause()
-        saveSearchHistory() // Axtarışları saxla
-    }
 
     override fun onResume() {
         super.onResume()
-        loadSearchHistory() // Axtarış məlumatlarını yüklə
         binding.searchEditText.text.clear() // Input-u sıfırla
+        if (searchHistory.isNotEmpty()) {
+            binding.recyclerView.isVisible = true
+            searchAdapter.setItems(viewModel.searchResults.value ?: emptyList())
+        }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

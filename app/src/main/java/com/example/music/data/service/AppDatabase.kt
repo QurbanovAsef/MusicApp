@@ -10,7 +10,7 @@ import com.example.music.data.model.response.UserProfile
 @Database(entities = [FavoriteTrack::class, UserProfile::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteTrackDao(): FavoriteTrackDao
-    abstract fun userProfileDao(): UserProfileDao // Yeni DAO əlavə edin
+    abstract fun userProfileDao(): UserProfileDao // Yeni DAO əlavə edildi
 
     companion object {
         @Volatile
@@ -22,7 +22,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "music_database"
-                ).addMigrations(MIGRATION_3_4)
+                )
+                    .fallbackToDestructiveMigration() // Köhnə məlumatlar silinir
                     .build()
                 INSTANCE = instance
                 instance

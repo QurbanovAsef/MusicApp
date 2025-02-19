@@ -9,7 +9,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
@@ -20,7 +19,6 @@ object DatabaseModule {
         return application.applicationContext
     }
 
-
     @Provides
     @Singleton
     fun provideDatabase(context: Context): AppDatabase {
@@ -29,7 +27,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "music_database"
         )
-            .addMigrations(MIGRATION_3_4) // 3-dən 4-ə keçid
+            .fallbackToDestructiveMigration()
             .build()
     }
 

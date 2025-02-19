@@ -31,22 +31,32 @@
     <string name="favorites">Favorites</string>
     <string name="profile">Profile</string>
     <string name="shuffle">Shuffle</string>
-    <string name="no_results_found">No results found</string>
-    <string name="song_title">Song Title</string>
-    <string name="song_name">Song Name</string>
-    <string name="show_name">Show Name </string>
-    <string name="show_surName">Show Surname</string>
+    <string name="song_title">Song title</string>
+    <string name="song_name">Song name</string>
+    <string name="show_name">Show name </string>
+    <string name="show_surName">Show surname</string>
     <string name="artist">Artist</string>
     <string name="favorite_songs">Favorite Songs</string>
+    <!-- search -->
+    <string name="search_hint">Search...</string>
+    <string name="search_no_results">No results found</string>
+    <string name="search_suggestion">Type something to search</string>
+
 
     <!-- App Information -->
-    <string name="about_app">About App</string>
+    <string name="about_app">About app</string>
     <string name="features">Features</string>
-    <string name="listen_music">• Listen to music\n• Create your playlists\n• Choose music quality</string>
+    <string name="listen_music">\n
+• Listen to your favorite music\n
+• Add songs to your favorites list\n
+• Quickly find any song with the search feature\n
+• Rewind and fast-forward songs with ease
+</string>
+
     <string name="version">Version</string>
     <string name="version_number">Version 1.0.0</string>
     <string name="contact">Contact</string>
-    <string name="support_email">Support: support@musicapp.com</string>
+    <string name="support_email">Support: asaf.qurbanov98@gmail.com</string>
 
     <!-- Error Messages -->
     <string name="error_occurred">An error occurred. Please try again.</string>
@@ -78,17 +88,20 @@
     <string name="again_new_password">Repeat New Password</string>
     <string name="user_name">Username</string>
     <string name="user_email">email@example.com</string>
-    <string name="name">Name and Surname</string>
+    <string name="Name_and_Surname">Name and Surname</string>
     <string name="save">Save</string>
-    <string name="album_name">Album Name</string>
+    <string name="album_name">Album %1$d</string>
     <string name="artist_name">Artist Name</string>
     <string name="duration">Duration</string>
     <string name="Topic">Topic</string>
-    <string name="Edit_profile">Edit_profile</string>
+    <string name="Edit_profile">Edit profile</string>
     <string name="music">music</string>
     <string name="song_date">0000-00-00</string>
     <string name="track_Id">0000</string>
     <string name="album">Album</string>
     <string name="songs">Songs</string>
     <string name="todo" translatable="false">TODO</string>
+    <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="logout">Logout</string>
 </resources>

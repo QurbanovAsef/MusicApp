@@ -1,7 +1,6 @@
 package com.example.music.presentation.adapter
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -52,7 +51,7 @@ class PlaylistsAdapter(
 
         @SuppressLint("SetTextI18n")
         fun bind(show: Playlist) = with(binding) {
-            showName.text = "Album ${adapterPosition + 1}"
+            showName.text = itemView.context.getString(R.string.album_name, adapterPosition + 1)
 
             val imageUrl = if (show.albumCoverURL.isNullOrEmpty()) {
                 defaultImageUrls[adapterPosition % defaultImageUrls.size] // Random default şəkil URL
@@ -63,7 +62,7 @@ class PlaylistsAdapter(
             // Şəkli Glide ilə yükləyin
             Glide.with(itemView.context)
                 .load(imageUrl)
-                .placeholder(R.drawable.blackicon)
+                .placeholder(R.drawable.black_icon)
                 .into(binding.imageShow)
 
             root.setOnClickListener { onItemClick(show) }

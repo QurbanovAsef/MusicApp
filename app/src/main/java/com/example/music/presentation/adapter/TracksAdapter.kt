@@ -33,25 +33,6 @@ class TracksAdapter(
         notifyDataSetChanged()
     }
 
-//    @SuppressLint("NotifyDataSetChanged")
-//    fun addItem(track: TrackResponse) {
-//        val updatedList = tracks.toMutableList()
-//        updatedList.add(track)
-//        tracks = updatedList
-//        notifyItemInserted(tracks.size - 1)
-//    }
-//
-//    @SuppressLint("NotifyDataSetChanged")
-//    fun removeItem(track: TrackResponse) {
-//        val updatedList = tracks.toMutableList()
-//        val index = updatedList.indexOfFirst { it.slug == track.slug }
-//        if (index != -1) {
-//            updatedList.removeAt(index)
-//            tracks = updatedList
-//            notifyItemRemoved(index)
-//        }
-//    }
-
     inner class TrackViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -63,7 +44,7 @@ class TracksAdapter(
 
             Glide.with(root.context)
                 .load(track.showAlbumCoverURL)
-                .placeholder(R.drawable.blackicon)
+                .placeholder(R.drawable.black_icon)
                 .into(songImage)
 
             favoriteIcon.setImageResource(
