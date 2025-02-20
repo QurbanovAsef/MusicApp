@@ -1,6 +1,6 @@
 <resources>
     <!-- Ümumi -->
-    <string name="app_name">Blue Music</string>
+    <string name="app_name">Musiqi Tətbiqi</string>
     <string name="welcome">Xoş gəlmisiniz!</string>
     <string name="please_fill_fields">Mobil tətbiqimizə daxil olmaq üçün zəhmət olmasa uyğun xanaları doldurun</string>
     <string name="please_fill_fields_register">Mobil tətbiqimizə daxil olmaq üçün zəhmət olmasa uyğun xanaları doldurun</string>
@@ -103,6 +103,25 @@
     <string name="songs">Musiqilər</string>
     <string name="language">Dil</string>
     <string name="theme">Mövzu</string>
-    <string name="logout">Çıxış</string>
 
+
+
+
+
+
+    <string name="language_english">İngilis dili</string>
+    <string name="language_azerbaijani">Azərbaycan dili</string>
+    <string name="select_language">Dil seçin</string>
+    <string name="select_theme">Tema seçin</string>
+    <string name="light_theme">İşıqlı tema</string>
+    <string name="dark_theme">Qaranlıq tema</string>
+    <string name="logout">Çıxış et</string>
+    <string name="logout_confirmation">Çıxış etmək istəyirsiniz?</string>
+    <string name="yes">Bəli</string>
+    <string name="no">Xeyr</string>
+    <string name="cancel">İmtina et</string>
+    <string name="successful_logout">Uğurla çıxış etdiniz</string>
+    <string name="edit_profile">Profilini redaktə et</string>
+    <string name="profile_image">Profil şəkli</string>
+    <string name="edit_name">Adınızı redaktə edin</string>
 </resources>

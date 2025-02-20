@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.androidprojecttest1.R
@@ -64,13 +65,25 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     fun logout() {
-        // SharedPreferences-u təmizləmək
+        val sharedPreferences = getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply()
 
-        // Login fragment-ə keçmək
         val navController =
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+
+        navController.popBackStack(R.id.nav_home, true) // Stack-i tam təmizlə
         navController.navigate(R.id.loginFragment)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val sharedPreferences = getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
+
+        if (!isLoggedIn) {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.loginFragment)
+        }
     }
 
     override fun attachBaseContext(newBase: Context) {
