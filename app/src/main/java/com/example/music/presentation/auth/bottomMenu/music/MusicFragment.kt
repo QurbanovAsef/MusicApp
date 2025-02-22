@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +38,7 @@ class MusicFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
 
     private val args: MusicFragmentArgs by navArgs()
-
+    private var originalSongsList: List<TrackResponse> = listOf()
     private var isShuffleEnabled = false
     private var isRepeatEnabled = false
     override fun onCreateView(
@@ -64,43 +65,15 @@ class MusicFragment : Fragment() {
 
 
         sharedViewModel.playerTracks.observe(viewLifecycleOwner) { songs ->
-            if (songs.isEmpty()) {
-//                Toast.makeText(requireContext(), "No song found", Toast.LENGTH_SHORT).show()
-                return@observe
-            }
-
+            if (songs.isEmpty()) return@observe
             songsList = songs
-            if (currentSongEntity == null) {
-                currentSongEntity = songs[0]
-                currentSongIndex = 0
-            } else {
-                currentSongIndex =
-                    songsList.indexOfFirst { it.slug == currentSongEntity?.slug }
-                if (currentSongIndex == -1) {
-                    currentSongEntity = songs[0]
-                    currentSongIndex = 0
-                }
-            }
-            currentSongEntity?.let {
-                updateUI(it)
-                setupMediaPlayer(it)
-            }
+            currentSongIndex = songsList.indexOfFirst { it.slug == currentSongEntity?.slug }
+            if (currentSongIndex == -1) currentSongIndex = 0
+            currentSongEntity = songsList[currentSongIndex]
+            updateUI(currentSongEntity!!)
+            setupMediaPlayer(currentSongEntity!!)
         }
 
-        mediaPlayer?.setOnCompletionListener {
-            if (isRepeatEnabled) {
-                playSongAt(currentSongIndex) // Repeat mahnı
-            } else if (currentSongIndex < songsList.size - 1) {
-                currentSongIndex++
-                playSongAt(currentSongIndex)
-            } else {
-                Toast.makeText(requireContext(), "No next song", Toast.LENGTH_SHORT).show()
-                binding.playPauseButton.setImageResource(R.drawable.ic_play)
-                binding.SeekBar.progress = 0
-            }
-        }
-
-        // Play/Pause düyməsi
         binding.playPauseButton.setOnClickListener {
             if (isPlaying) {
                 mediaPlayer?.pause()
@@ -113,68 +86,54 @@ class MusicFragment : Fragment() {
             isPlaying = !isPlaying
         }
 
-        // Geri düyməsi
-        binding.rewindButton.setOnClickListener {
-            if (currentSongIndex > 0) {
-                currentSongIndex--
-                playSongAt(currentSongIndex)
-            } else {
-                Toast.makeText(requireContext(), "No previous song", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        // İrəli düyməsi
         binding.forwardButton.setOnClickListener {
             if (currentSongIndex < songsList.size - 1) {
                 currentSongIndex++
                 playSongAt(currentSongIndex)
-            } else {
-                Toast.makeText(requireContext(), "No next song", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Like düyməsi
+        binding.rewindButton.setOnClickListener {
+            if (currentSongIndex > 0) {
+                currentSongIndex--
+                playSongAt(currentSongIndex)
+            }
+        }
+
         binding.likeButton.setOnClickListener {
             currentSongEntity?.let { trackResponse ->
-                val favoriteTrack = FavoriteTrack(
-                    id = 0,
-                    trackName = trackResponse.title ?: "Naməlum Mahnı",
-                    artistName = trackResponse.slug ?: "Naməlum İfaçı",
-                    isLiked = true,
-                    showAlbumCoverURL = trackResponse.showAlbumCoverURL
-                )
-
                 if (isLiked) {
-                    binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)
                     favoriteTrackViewModel.removeFavorite(trackResponse)
+                    binding.likeButton.setImageResource(R.drawable.ic_favorite_empty)
+                    isLiked = false
                 } else {
-                    if (favoriteTrackViewModel.addFavorite(trackResponse)) {
-                        binding.likeButton.setImageResource(R.drawable.ic_favorite_full)
-                    }
+                    favoriteTrackViewModel.addFavorite(trackResponse)
+                    binding.likeButton.setImageResource(R.drawable.ic_favorite_full)
+                    isLiked = true
                 }
-                isLiked = !isLiked
-
             }
         }
-
-
 
         // Geri düyməsi
         binding.backArrow.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        // Shuffle düyməsi
         binding.shuffleButton.setOnClickListener {
             isShuffleEnabled = !isShuffleEnabled
             binding.shuffleButton.setImageResource(
-                if (isShuffleEnabled) {
-                    R.drawable.shuffle_on
-                } else R.drawable.shuffle_off
+                if (isShuffleEnabled) R.drawable.shuffle_on else R.drawable.shuffle_off
             )
+
             if (isShuffleEnabled) {
-                shuffleSongs()
+                originalSongsList = songsList // Orijinal siyahını saxla
+                songsList = songsList.shuffled()
+                currentSongIndex = 0
+                playSongAt(currentSongIndex)
             } else {
+                songsList = originalSongsList // Əsas siyahını geri qaytar
+                currentSongIndex = songsList.indexOfFirst { it.slug == currentSongEntity?.slug }
+                if (currentSongIndex == -1) currentSongIndex = 0
                 playSongAt(currentSongIndex)
             }
         }
@@ -202,52 +161,47 @@ class MusicFragment : Fragment() {
 
     private fun playSongAt(index: Int) {
         currentSongEntity = songsList[index]
-        currentSongEntity?.let {
-            updateUI(it)
-            setupMediaPlayer(it)
-        }
+        updateUI(currentSongEntity!!)
+        setupMediaPlayer(currentSongEntity!!)
     }
+
     private fun updateUI(songEntity: TrackResponse) {
         binding.songTitle.text = songEntity.title
         binding.songTitle.isSelected = true // Enable marquee for song title
         binding.artistName.text = songEntity.slug
         binding.songName.text = songEntity.venueName
         binding.songName.isSelected = true // Enable marquee for song name
-
         Glide.with(requireContext())
             .load(songEntity.showAlbumCoverURL)
             .into(binding.songImage)
     }
-
-
     private fun updateLikeButton() {
         binding.likeButton.setImageResource(
             if (isLiked) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
         )
     }
 
-    private fun shuffleSongs() {
-        songsList = songsList.shuffled()
-        currentSongIndex = 0
-        playSongAt(currentSongIndex)
-    }
-
     private fun setupMediaPlayer(song: TrackResponse) {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
-            song.mp3Url?.let {
-                if (it.isEmpty()) return
-                setDataSource(it)
-            } ?: run {
-//                Toast.makeText(requireContext(), "Song URL not found", Toast.LENGTH_SHORT).show()
-                return@apply
-            }
+            setDataSource(song.mp3Url ?: return)
             prepareAsync()
             setOnPreparedListener {
                 start()
                 binding.playPauseButton.setImageResource(R.drawable.ic_pause)
                 this@MusicFragment.isPlaying = true
                 updateSeekBar()
+            }
+            setOnCompletionListener {
+                if (isRepeatEnabled) {
+                    playSongAt(currentSongIndex)
+                } else if (currentSongIndex < songsList.size - 1) {
+                    currentSongIndex++
+                    playSongAt(currentSongIndex)
+                } else {
+                    this@MusicFragment.isPlaying = false
+                    binding.playPauseButton.setImageResource(R.drawable.ic_play)
+                }
             }
         }
     }

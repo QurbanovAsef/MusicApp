@@ -8,6 +8,7 @@ import com.example.music.data.model.response.FavoriteTrack
 import com.example.music.data.model.response.TrackResponse
 import com.example.music.data.service.FavoriteTrackDao
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,61 +24,43 @@ class FavoriteTrackViewModel @Inject constructor(
         loadFavoriteTracks()
     }
 
+    /**
+     * Bazadan favoritləri yükləyir və UI-ni yeniləyir
+     */
     private fun loadFavoriteTracks() {
         viewModelScope.launch {
-            favoriteTrackDao.getAllFavoriteTracks().collect { favoriteTracks ->
-                _favoriteTracks.value = favoriteTracks.map { favoriteTrack ->
-                    TrackResponse(
-                        id = favoriteTrack.id,
-                        title = favoriteTrack.trackName,
-                        slug = favoriteTrack.artistName,
-                        isLiked = favoriteTrack.isLiked,
-                        showAlbumCoverURL = favoriteTrack.showAlbumCoverURL // Şəkil URL-i əlavə edildi
-                    )
-                }
-            }
+            val favoriteTracks = favoriteTrackDao.getAllFavoriteTracks().first()
+            _favoriteTracks.postValue(favoriteTracks.map { it.toTrackResponse() })
         }
     }
 
-    private fun TrackResponse.toFavoriteTrack(): FavoriteTrack {
-        return FavoriteTrack(
-            id = this.id ?: 0,
-            trackName = this.title ?: "",
-            artistName = this.slug ?: "",
-            isLiked = this.isLiked == true,
-            showAlbumCoverURL = this.showAlbumCoverURL ?: "" // Şəkil URL-i əlavə edildi
-        )
-    }
-
+    /**
+     * Mahnını favoritlərə əlavə edir və UI-ni yeniləyir
+     */
     fun addFavorite(track: TrackResponse): Boolean {
         return try {
             viewModelScope.launch {
                 val favoriteTrack = track.toFavoriteTrack()
                 favoriteTrackDao.insert(favoriteTrack)
-                _favoriteTracks.value = _favoriteTracks.value?.toMutableList()?.apply {
-                    // Yeni mahnını əlavə edir
-                    val index = indexOfFirst { it.id == track.id }
-                    if (index != -1) {
-                        this[index] = track
-                    } else {
-                        add(track)
-                    }
-                }
+                track.isLiked = true
+                loadFavoriteTracks()
             }
             true
         } catch (e: Exception) {
             false
         }
     }
+    /**
+     * Mahnını favoritlərdən silir və UI-ni yeniləyir
+     */
 
     fun removeFavorite(track: TrackResponse): Boolean {
         return try {
             viewModelScope.launch {
                 val favoriteTrack = track.toFavoriteTrack()
                 favoriteTrackDao.delete(favoriteTrack)
-                _favoriteTracks.value = _favoriteTracks.value?.toMutableList()?.apply {
-                    remove(track)
-                }
+                track.isLiked = false
+                loadFavoriteTracks()
             }
             true
         } catch (e: Exception) {
@@ -85,19 +68,74 @@ class FavoriteTrackViewModel @Inject constructor(
         }
     }
 
+
+
+    /**
+     * Favorit olub-olmadığını dəyişir və statusu yeniləyir
+     */
     fun toggleFavorite(track: TrackResponse) {
         viewModelScope.launch {
-            if (track.isLiked == true) {
+            val isFavorite = isFavorite(track)
+            track.isLiked = !isFavorite
+
+            if (isFavorite) {
                 removeFavorite(track)
             } else {
                 addFavorite(track)
             }
+
+            // UI-ni yeniləyir ki, gecikmə olmasın
+            val updatedList = _favoriteTracks.value?.map {
+                if (it.id == track.id) it.copy(isLiked = track.isLiked) else it
+            } ?: emptyList()
+
+            _favoriteTracks.postValue(updatedList)
         }
     }
 
-    fun isFavorite(song: TrackResponse?): Boolean {
-        if (song == null) return false
-        return _favoriteTracks.value?.any { it.slug == song.slug } == true
+
+    /**
+     * Mahnının favorit olub-olmadığını yoxlayır və statusunu yeniləyir
+     */
+    fun isFavorite(track: TrackResponse?): Boolean {
+        val isFav = _favoriteTracks.value?.any { it.id == track?.id } == true
+        track?.isLiked = isFav
+        return isFav
     }
 
+    /**
+     * UI-ni dərhal yeniləyir ki, gecikmə olmasın
+     */
+    private fun updateUI(track: TrackResponse, isLiked: Boolean) {
+        val updatedList = _favoriteTracks.value?.map {
+            if (it.id == track.id) it.copy(isLiked = isLiked) else it
+        } ?: emptyList()
+        _favoriteTracks.postValue(updatedList)
+    }
+
+    /**
+     * TrackResponse -> FavoriteTrack çevirmə metodu
+     */
+    private fun TrackResponse.toFavoriteTrack(): FavoriteTrack {
+        return FavoriteTrack(
+            id = this.id ?: 0,
+            trackName = this.title ?: "Naməlum Mahnı",
+            artistName = this.slug ?: "Naməlum İfaçı",
+            isLiked = this.isLiked ?: false,
+            showAlbumCoverURL = this.showAlbumCoverURL ?: ""
+        )
+    }
+
+    /**
+     * FavoriteTrack -> TrackResponse çevirmə metodu
+     */
+    private fun FavoriteTrack.toTrackResponse(): TrackResponse {
+        return TrackResponse(
+            id = this.id,
+            title = this.trackName,
+            slug = this.artistName,
+            isLiked = this.isLiked,
+            showAlbumCoverURL = this.showAlbumCoverURL
+        )
+    }
 }

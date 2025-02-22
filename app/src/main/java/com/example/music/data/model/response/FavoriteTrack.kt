@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "favorite_track")
 data class FavoriteTrack(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int = 0,  // Room avtomatik `id` versin
     val trackName: String,
     val artistName: String,
     val isLiked: Boolean,

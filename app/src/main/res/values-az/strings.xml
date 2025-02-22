@@ -106,6 +106,9 @@
 
 
 
+    <string name="speak_now">Speak now…</string>
+    <string name="voice_search">Voice Search</string>
+    <string name="speech_not_supported">Speech recognition is not supported on this device</string>
 
 
 
