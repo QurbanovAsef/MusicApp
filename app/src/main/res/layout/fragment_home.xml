@@ -7,6 +7,41 @@
     android:padding="16dp"
     android:background="@color/background_color">
 
+    <!-- Musiqi loqosu -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/musicLogo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/music_logo_1"
+        android:scaleType="centerCrop"
+        app:tint="@color/dark_color_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- Music yazısı -->
+    <TextView
+        android:id="@+id/musicText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Music"
+        android:textColor="@color/text_color_primary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/musicLogo"
+        app:layout_constraintTop_toTopOf="@id/musicLogo"
+        app:layout_constraintBottom_toBottomOf="@id/musicLogo"
+        android:layout_marginStart="8dp"/>
+
+    <!-- Profil şəkli -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profileImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/circle_background1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearance="@style/ShapeAppearance.MaterialComponents.SmallComponent"/>
+
     <!-- Album başlığı -->
     <TextView
         android:id="@+id/albumTitle"
@@ -17,7 +52,8 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/musicLogo"
+        android:layout_marginTop="16dp"/>
 
     <!-- Albomlar üçün RecyclerView -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +67,10 @@
         <com.example.music.presentation.custom.CustomScrollingRecycler
             android:id="@+id/showRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:scrollbars="horizontal"
+            android:fadeScrollbars="false"
+            android:scrollbarThumbHorizontal="@color/primary_color"/>
 
         <!-- Albomlar üçün ProgressBar -->
         <ProgressBar
@@ -70,7 +109,10 @@
         <com.example.music.presentation.custom.CustomScrollingRecycler
             android:id="@+id/songRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="false"
+            android:scrollbarThumbVertical="@color/primary_color"/>
 
         <!-- Mahnılar üçün ProgressBar -->
         <ProgressBar

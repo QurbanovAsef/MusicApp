@@ -1,9 +1,8 @@
 
-
+package com.example.music.utils
 
 
 import android.util.Patterns
-import com.example.music.utils.ValidationState
 object ValidationUtils {
 
     // Əsas doğrulama funksiyası
@@ -16,7 +15,7 @@ object ValidationUtils {
     }
 
     // Email doğrulaması
-    private fun validateEmail(email: String): String? {
+    fun validateEmail(email: String): String? {
         return when {
             email.isBlank() -> "Email boş ola bilməz"
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "E-poçt formatı düzgün deyil"

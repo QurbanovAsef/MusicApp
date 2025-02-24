@@ -64,16 +64,6 @@ class ContainerActivity : AppCompatActivity() {
         }
     }
 
-    fun logout() {
-        val sharedPreferences = getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
-        sharedPreferences.edit().clear().apply()
-
-        val navController =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
-
-        navController.popBackStack(R.id.nav_home, true) // Stack-i tam təmizlə
-        navController.navigate(R.id.loginFragment)
-    }
 
     override fun onResume() {
         super.onResume()

@@ -7,6 +7,8 @@ import android.animation.ObjectAnimator
 import android.animation.AnimatorSet
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,6 +20,7 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.write_color)
 
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -30,6 +30,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var playlistsAdapter: PlaylistsAdapter
     private lateinit var tracksAdapter: TracksAdapter
 
+    companion object {
+        private var isAlbumLoaded = false // Albomun artıq yüklənib-yüklənmədiyini yoxlayırıq
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -42,20 +46,27 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         setupAdapters()
         observeData()
-        sharedViewModel.getPlaylists() // İlk açılışda playlistləri yüklə
+
+        if (!isAlbumLoaded) {
+            binding.progressAlbums.isGone = false // İlk açılışda görünsün
+            sharedViewModel.getPlaylists() // İlk açılışda playlistləri yüklə
+        } else {
+            binding.progressAlbums.isGone = true
+        }
     }
 
     private fun setupAdapters() {
-        // Playlist adapter
         playlistsAdapter = PlaylistsAdapter { playlist ->
+            binding.progressTracks.isGone = false
             sharedViewModel.getPlaylistDetailsBySlug(playlist.slug)
         }
+
         binding.showRecyclerView.apply {
             adapter = playlistsAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            setHasFixedSize(true)
+            isVerticalScrollBarEnabled = true
         }
-
-        // Track adapter
         tracksAdapter = TracksAdapter(
             onItemClick = { trackEntry ->
                 findNavController().navigate(
@@ -66,33 +77,41 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 favoriteTrackViewModel.toggleFavorite(track)
             }
         )
+
+
         binding.songRecyclerView.apply {
             adapter = tracksAdapter
             layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+            isVerticalScrollBarEnabled = true
         }
     }
 
     private fun observeData() {
-        // **Playlistlər üçün Flow müşahidəsi**
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             sharedViewModel.playlistsFlow.collectLatest { playlists ->
-                binding.progressAlbums.isGone = playlists != null
-                playlists?.let { playlistsAdapter.setItems(it) }
+                playlistsAdapter.setItems(playlists ?: emptyList())
+
+                if (!isAlbumLoaded && playlists?.isNotEmpty() == true) {
+                    binding.progressAlbums.isGone = true // Albom yükləndi, artıq göstərilməsin
+                    isAlbumLoaded = true
+                }
             }
         }
 
-        // **Mahnılar üçün LiveData müşahidəsi**
         sharedViewModel.playerTracks.observe(viewLifecycleOwner) { tracks ->
             binding.progressTracks.isGone = tracks?.isNotEmpty() == true
-            tracks?.let { tracksAdapter.setItems(it) }
+            tracksAdapter.setItems(tracks ?: emptyList())
         }
 
-        // **Favorit tracklər üçün müşahidə**
+        sharedViewModel.loadingTracks.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressTracks.isGone = !isLoading
+        }
+
         favoriteTrackViewModel.favoriteTracks.observe(viewLifecycleOwner) { favoriteTracks ->
             val favoriteTrackSlugs = favoriteTracks.map { it.slug }
             val updatedTracks = sharedViewModel.playerTracks.value?.map { track ->
-                track.isLiked = favoriteTrackSlugs.contains(track.slug)
-                track
+                track.copy(isLiked = favoriteTrackSlugs.contains(track.slug))
             }
             updatedTracks?.let { tracksAdapter.setItems(it) }
         }

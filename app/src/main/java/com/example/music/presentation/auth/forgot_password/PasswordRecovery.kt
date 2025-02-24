@@ -20,17 +20,15 @@ class PasswordRecovery : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentPasswordRecoveryBinding.inflate(inflater, container, false)
-        return binding?.root
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Validation nəticələrini müşahidə edirik
         passwordViewModel.validationState.observe(viewLifecycleOwner) { validationState ->
-            // E-poçt sahəsində xətanı göstəririk
             binding?.EmailRecovery?.error = validationState.emailError
         }
 
@@ -40,13 +38,18 @@ class PasswordRecovery : Fragment() {
 
         binding?.Continue?.setOnClickListener {
             val email = binding?.textInputEditTextEmail?.text.toString()
-            val password = "" // Şifrəni əlavə edə bilərsiniz
-            val repeatPassword = "" // Təkrarlanan şifrəni əlavə edə bilərsiniz
 
-            passwordViewModel.validateFields(email, password, repeatPassword)
+            passwordViewModel.validateEmail(email)
 
-            if (!passwordViewModel.validationState.value?.hasErrors()!!) {
-                findNavController().navigate(R.id.action_passwordRecovery_to_updatePassword)
+            if (passwordViewModel.validationState.value?.hasErrors() == false) {
+                passwordViewModel.sendPasswordResetEmail(email) { success, error ->
+                    if (success) {
+                        Toast.makeText(requireContext(), "Şifrə sıfırlama e-poçtu göndərildi!", Toast.LENGTH_SHORT).show()
+                        findNavController().navigate(R.id.action_passwordRecovery_to_updatePassword)
+                    } else {
+                        Toast.makeText(requireContext(), "Xəta: $error", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }

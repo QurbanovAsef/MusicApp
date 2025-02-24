@@ -16,44 +16,45 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class UpdatePassword : Fragment() {
     private var binding: FragmentUpdatePasswordBinding? = null
-    private val viewModel: UpdatePasswordViewModel by activityViewModels() // ViewModel-in əldə edilməsi
+    private val viewModel: UpdatePasswordViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentUpdatePasswordBinding.inflate(inflater, container, false)
-        return binding?.root
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ViewModel-dən validation vəziyyətini müşahidə edirik
         viewModel.validationState.observe(viewLifecycleOwner) { validationState ->
             handleValidationState(validationState)
         }
 
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            handleLoading(isLoading)
+        }
+
         binding?.backButtonUpdate?.setOnClickListener {
             findNavController().popBackStack()
-            Toast.makeText(requireContext(), "Geri qayıt", Toast.LENGTH_SHORT).show()
         }
 
         binding?.ContinueUP?.setOnClickListener {
             val password = binding?.recoveryPassword?.text.toString()
             val confirmPassword = binding?.confirmationPassword?.text.toString()
 
-            // Validasiya prosesi
             viewModel.validatePasswords(password, confirmPassword)
 
-            // Validasiya nəticəsini yoxlayırıq
-            viewModel.validationState.observe(viewLifecycleOwner) { validationState ->
-                if (!validationState.hasErrors()) {
-                    findNavController().navigate(R.id.action_updatePassword_to_successfullyRegister2)
-                } else {
-                    // Xətalar varsa, UI-ni yeniləyirik
-                    binding?.recovery?.error = validationState.passwordError
-                    binding?.confirmation?.error = validationState.repeatPasswordError
+            if (viewModel.validationState.value?.hasErrors() == false) {
+                viewModel.updatePassword(password) { success, error ->
+                    if (success) {
+                        Toast.makeText(requireContext(), "Şifrə uğurla yeniləndi!", Toast.LENGTH_SHORT).show()
+                        findNavController().navigate(R.id.action_updatePassword_to_successfullyRegister2)
+                    } else {
+                        Toast.makeText(requireContext(), "Xəta: $error", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -62,6 +63,11 @@ class UpdatePassword : Fragment() {
     private fun handleValidationState(validationState: ValidationState) {
         binding?.recovery?.error = validationState.passwordError
         binding?.confirmation?.error = validationState.repeatPasswordError
+    }
+
+    private fun handleLoading(isLoading: Boolean) {
+        binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding?.ContinueUP?.isEnabled = !isLoading
     }
 
     override fun onDestroyView() {

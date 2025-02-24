@@ -6,12 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.music.data.model.response.FavoriteTrack
 import com.example.music.data.model.response.Playlist
 import com.example.music.data.model.response.TrackResponse
 import com.example.music.data.retrofit.RetrofitInstance
-import com.example.music.data.service.AppDatabase
-import com.example.music.data.service.FavoriteTrackDao
 import com.example.music.data.service.MusicApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,22 +24,28 @@ class SharedViewModel @Inject constructor(
     private val _playerTracks = MutableLiveData<List<TrackResponse>>(emptyList())
     val playerTracks: LiveData<List<TrackResponse>> get() = _playerTracks
 
+    private val _loadingAlbums = MutableLiveData<Boolean>(true)
+    val loadingAlbums: LiveData<Boolean> get() = _loadingAlbums
+
+    private val _loadingTracks = MutableLiveData<Boolean>(false)
+    val loadingTracks: LiveData<Boolean> get() = _loadingTracks
+
     private val _searchResults = MutableLiveData<List<TrackResponse>>()
     val searchResults: LiveData<List<TrackResponse>> = _searchResults
-    private val musicApiService: MusicApiService = RetrofitInstance.api
-
 
     private val _playlistsFlow = MutableStateFlow<List<Playlist>?>(null)
     val playlistsFlow = _playlistsFlow.asStateFlow()
 
+    private val musicApiService: MusicApiService = RetrofitInstance.api
+
     private fun playlistApiCall() {
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getPlaylists()
+                val response = musicApiService.getPlaylists()
                 if (response.isSuccessful) {
                     val playlists = response.body()?.playlists.orEmpty()
                     _playlistsFlow.emit(playlists)
-                    getPlaylistDetailsBySlug(playlists[0].slug)
+                    getPlaylistDetailsBySlug(playlists.firstOrNull()?.slug)
                 } else {
                     Log.e("SharedViewModel", "API Error: ${response.message()}")
                 }
@@ -53,56 +56,41 @@ class SharedViewModel @Inject constructor(
     }
 
     fun getPlaylists(force: Boolean = true) {
-        if (force)
+        if (force || playlistsFlow.value == null) {
             playlistApiCall()
-        else if (playlistsFlow.value == null)
-            playlistApiCall()
+        }
     }
 
-
-    // Axtarış funksiyası
     fun searchSongs(query: String) {
         viewModelScope.launch {
             try {
                 val response = musicApiService.searchExactShows(query)
                 if (response.isSuccessful) {
-                    // Cavab alındıqda success handler
-                    val tracks = response.body()?.tracks
-                    _searchResults.postValue(tracks ?: listOf())
+                    _searchResults.postValue(response.body()?.tracks ?: emptyList())
                 } else {
-                    // Əgər API-dən səhv cavab alınıbsa
                     Log.e("Search", "Xəta: ${response.message()}")
                     _searchResults.postValue(emptyList())
                 }
             } catch (e: Exception) {
-                // Xəta baş verdikdə
                 Log.e("Search", "İstisna: ${e.message}")
                 _searchResults.postValue(emptyList())
             }
         }
     }
 
-
-    fun setPlayerTracks(tracks: List<TrackResponse>) {
-        if (_playerTracks.value != tracks)
-            _playerTracks.postValue(tracks)
-    }
-
-    fun getPlaylistDetailsBySlug(
-        slug: String?,
-        activeTrack: TrackResponse? = null,
-    ) = slug?.let {
+    fun getPlaylistDetailsBySlug(slug: String?) {
+        if (slug == null) return
         viewModelScope.launch {
+            _playerTracks.postValue(emptyList())
+            _loadingTracks.postValue(true)
+
             try {
                 val response = musicApiService.getPlaylistDetails(slug)
-                if (response.isSuccessful) {
-                    _playerTracks.postValue(response.body()?.entries?.filterNot { it.track == null }
-                        ?.map { it.track!! } ?: listOf())
-                } else {
-                    _playerTracks.postValue(emptyList())
-                }
+                _playerTracks.postValue(response.body()?.entries?.mapNotNull { it.track } ?: emptyList())
             } catch (e: Exception) {
-                _searchResults.postValue(emptyList())
+                _playerTracks.postValue(emptyList())
+            } finally {
+                _loadingTracks.postValue(false)
             }
         }
     }
