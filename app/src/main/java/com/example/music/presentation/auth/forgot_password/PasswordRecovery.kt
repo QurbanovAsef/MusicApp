@@ -32,6 +32,11 @@ class PasswordRecovery : Fragment() {
             binding?.EmailRecovery?.error = validationState.emailError
         }
 
+        passwordViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding?.progressBarPR?.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding?.Continue?.isEnabled = !isLoading
+        }
+
         binding?.backButton?.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -44,10 +49,10 @@ class PasswordRecovery : Fragment() {
             if (passwordViewModel.validationState.value?.hasErrors() == false) {
                 passwordViewModel.sendPasswordResetEmail(email) { success, error ->
                     if (success) {
-                        Toast.makeText(requireContext(), "Şifrə sıfırlama e-poçtu göndərildi!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.password_reset_email_sent), Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.action_passwordRecovery_to_updatePassword)
                     } else {
-                        Toast.makeText(requireContext(), "Xəta: $error", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.password_reset_email_failed) + ": $error", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

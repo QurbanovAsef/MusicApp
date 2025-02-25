@@ -1,76 +1,109 @@
 package com.example.music.presentation.auth.bottomMenu.profile.fragments
 
+import android.app.Application
+import android.content.Context
 import android.net.Uri
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.music.data.model.response.UserProfile
-import com.example.music.data.service.AppDatabase
-import com.example.music.utils.proileutils.ValidationStateProfile
-import com.example.music.utils.proileutils.ValidationUtilsProfile
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
-
-import kotlinx.coroutines.launch
+import java.io.InputStream
 import javax.inject.Inject
 
 @HiltViewModel
 class UserInfoViewModel @Inject constructor(
-    private val appDatabase: AppDatabase
-) : ViewModel() {
-    private val _validationState = MutableLiveData<ValidationStateProfile>()
-    val validationState: LiveData<ValidationStateProfile> get() = _validationState
+    application: Application
+) : AndroidViewModel(application) {
 
-    private val _profileUpdateStatus = MutableLiveData<Boolean>()
-    val profileUpdateStatus: LiveData<Boolean> get() = _profileUpdateStatus
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance().reference
 
-    private val _profileImageUri = MutableLiveData<Uri?>()
-    val profileImageUri: LiveData<Uri?> get() = _profileImageUri
+    private val _userProfile = MutableLiveData<UserProfile>()
+    val userProfile: LiveData<UserProfile> get() = _userProfile
 
-    private val userProfileDao = appDatabase.userProfileDao() // Get the UserProfileDao from AppDatabase
-
-    fun validateInputs(name: String) {
-        val validationResult = ValidationUtilsProfile.validateProfile(name)
-        _validationState.value = validationResult
+    init {
+        loadUserProfile()
     }
 
     fun loadUserProfile() {
-        viewModelScope.launch {
-            try {
-                val profile = userProfileDao.getAllUserProfiles().value?.firstOrNull()
-                profile?.let {
-                    _profileImageUri.value = Uri.parse(it.imageUri)
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        firestore.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val profile = document.toObject(UserProfile::class.java)
+                    _userProfile.value = profile
                 }
-            } catch (e: Exception) {
-                _profileUpdateStatus.postValue(false)
             }
-        }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseFirestore", "Profil məlumatları yüklənmədi", e)
+            }
     }
 
-    fun updateUserProfile(name: String, imageUri: Uri?) {
-        val validationResult = ValidationUtilsProfile.validateProfile(name)
-        _validationState.postValue(validationResult)
+    fun updateUserProfile(firstName: String, lastName: String, imageUri: Uri?, callback: (Boolean, String) -> Unit) {
+        val userId = firebaseAuth.currentUser?.uid ?: return
 
-        if (validationResult.hasErrorsProfile()) {
+        val userData = hashMapOf(
+            "firstName" to firstName,
+            "lastName" to lastName
+        )
+
+        firestore.collection("users").document(userId).set(userData, SetOptions.merge())
+            .addOnSuccessListener {
+                if (imageUri != null) {
+                    uploadProfileImage(userId, imageUri, callback)
+                } else {
+                    callback(true, "Profil məlumatları uğurla yeniləndi")
+                }
+            }
+            .addOnFailureListener { e ->
+                callback(false, "Məlumatları yeniləmək mümkün olmadı")
+                Log.e("FirebaseFirestore", "Məlumatları yeniləmək mümkün olmadı", e)
+            }
+    }
+
+    fun uploadProfileImage(userId: String, imageUri: Uri, callback: (Boolean, String) -> Unit) {
+        val imageRef = storage.child("profile_images/$userId.jpg")
+
+        try {
+            val inputStream: InputStream? =
+                getApplication<Application>().applicationContext.contentResolver.openInputStream(imageUri)
+            val fileSizeInBytes = inputStream?.available() ?: 0
+            val fileSizeInMB = fileSizeInBytes / (1024 * 1024) // MB-a çevirmək
+            inputStream?.close()
+
+            if (fileSizeInMB > 5) {
+                callback(false, "Şəkilin həcmi çox böyükdür")
+                return
+            }
+        } catch (e: Exception) {
+            callback(false, "Şəkilin ölçüsü yoxlanmadı")
             return
         }
-        viewModelScope.launch {
-            try {
-                val existingUser = userProfileDao.getAllUserProfiles().value?.firstOrNull()
-                if (existingUser != null) {
-                    // Mövcud profili yenilə
-                    existingUser.username = name
-                    existingUser.imageUri = imageUri?.toString()
-                    userProfileDao.updateUserProfile(existingUser)
-                } else {
-                    // Yeni profil əlavə et
-                    val newUser = UserProfile(username = name, imageUri = imageUri?.toString())
-                    userProfileDao.insertUserProfile(newUser)
+
+        imageRef.putFile(imageUri)
+            .addOnSuccessListener {
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    firestore.collection("users").document(userId)
+                        .update("imageUrl", uri.toString())
+                        .addOnSuccessListener {
+                            _userProfile.value = _userProfile.value?.copy(imageUrl = uri.toString())
+                            callback(true, "Şəkil uğurla yükləndi")
+                        }
+                        .addOnFailureListener { e ->
+                            callback(false, "Firestore-a imageUrl yazmaq mümkün olmadı")
+                        }
                 }
-                _profileUpdateStatus.postValue(true)
-            } catch (e: Exception) {
-                _profileUpdateStatus.postValue(false)
             }
-        }
+            .addOnFailureListener {
+                callback(false, "Şəkili yükləmək mümkün olmadı")
+            }
     }
 }
+1`

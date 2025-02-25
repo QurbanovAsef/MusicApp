@@ -45,9 +45,19 @@ class Registration : Fragment() {
 
         // Error sıfırlamaq və sahələri izləmək
         binding.apply {
+            TextInputLayoutFirstName.error = null
+            TextInputLayoutLastName.error = null
             TextInputLayoutEmail.error = null
             TextInputLayoutPassword.error = null
             repeatPasswordTI.error = null
+
+            textInputEditTextFirstName.doAfterTextChanged {
+                TextInputLayoutFirstName.error = null
+            }
+
+            textInputEditTextLastName.doAfterTextChanged {
+                TextInputLayoutLastName.error = null
+            }
 
             textInputEditTextEmail.doAfterTextChanged {
                 TextInputLayoutEmail.error = null
@@ -60,13 +70,16 @@ class Registration : Fragment() {
             repeatPasswordET.doAfterTextChanged {
                 repeatPasswordTI.error = null
             }
-
             buttonRegister.setOnClickListener { onRegisterClick() }
             singInLink.setOnClickListener {
                 _binding?.apply {
+                    TextInputLayoutFirstName.error = null
+                    TextInputLayoutLastName.error = null
                     TextInputLayoutEmail.error = null
                     TextInputLayoutPassword.error = null
                     repeatPasswordTI.error = null
+                    textInputEditTextFirstName.clearFocus()
+                    textInputEditTextLastName.clearFocus()
                     textInputEditTextEmail.clearFocus()
                     textInputEditTextPassword.clearFocus()
                     repeatPasswordET.clearFocus()
@@ -75,13 +88,14 @@ class Registration : Fragment() {
             }
         }
     }
-
     private fun onRegisterClick() {
         binding.apply {
+            val firstName = textInputEditTextFirstName.text.toString()
+            val lastName = textInputEditTextLastName.text.toString()
             val email = textInputEditTextEmail.text.toString()
             val password = textInputEditTextPassword.text.toString()
             val repeatPassword = repeatPasswordET.text.toString()
-            viewModel.registerUser(email, password, repeatPassword)
+            viewModel.registerUser(firstName, lastName, email, password, repeatPassword)
         }
     }
 
@@ -98,6 +112,8 @@ class Registration : Fragment() {
             findNavController().navigate(R.id.action_registration_to_successfullyRegister2)
         } else {
             binding.apply {
+                TextInputLayoutFirstName.error = state.firstNameError
+                TextInputLayoutLastName.error = state.lastNameError
                 TextInputLayoutEmail.error = state.emailError
                 TextInputLayoutPassword.error = state.passwordError
                 repeatPasswordTI.error = state.repeatPasswordError
@@ -108,7 +124,6 @@ class Registration : Fragment() {
     private fun handleError(errorMessage: String?) {
         Toast.makeText(requireContext(), "Xəta: $errorMessage", Toast.LENGTH_SHORT).show()
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

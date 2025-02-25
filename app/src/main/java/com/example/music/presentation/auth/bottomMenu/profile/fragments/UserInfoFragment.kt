@@ -9,102 +9,104 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.databinding.FragmentUserInfoBinding
+import com.example.music.utils.proileutils.ValidationUtilsProfile
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
 
 @AndroidEntryPoint
 class UserInfoFragment : Fragment() {
-
-    private var _binding: FragmentUserInfoBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentUserInfoBinding
     private val viewModel: UserInfoViewModel by viewModels()
-
-    private val imagePickerLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data
-                uri?.let {
-                    if (validateImage(it)) {
-                        viewModel.loadUserProfile() // Profilin məlumatlarını yeniləyirik
-                        binding.profileImage.setImageURI(it)
-                        binding.progressBar.visibility = View.GONE
-                    } else {
-                        Toast.makeText(requireContext(), "Şəkil formatı və ya ölçüsü düzgün deyil", Toast.LENGTH_SHORT).show()
-                        binding.progressBar.visibility = View.GONE
-                    }
-                }
-            }
-        }
-
-    private fun validateImage(uri: Uri): Boolean {
-        val file = File(uri.path!!)
-        val maxSizeInMB = 2 // MB
-        val allowedFormats = listOf("image/jpeg", "image/png")
-
-        val fileSizeInMB = file.length() / (1024 * 1024)
-        val fileFormat = requireContext().contentResolver.getType(uri)
-
-        return fileSizeInMB <= maxSizeInMB && allowedFormats.contains(fileFormat)
-    }
+    private var selectedImageUri: Uri? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentUserInfoBinding.inflate(inflater, container, false)
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentUserInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.backButtonUserinfo.setOnClickListener {
-            findNavController().popBackStack()
+        viewModel.userProfile.observe(viewLifecycleOwner) { userProfile ->
+            binding.editName.setText(userProfile.firstName)
+            binding.editSurName.setText(userProfile.lastName)
+
+            if (!userProfile.imageUrl.isNullOrEmpty()) {
+                Glide.with(this)
+                    .load(userProfile.imageUrl)
+                    .circleCrop()
+                    .into(binding.profileImage)
+            }
         }
 
-        binding.profileImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            imagePickerLauncher.launch(intent)
+        binding.profileContainer.setOnClickListener {
+            pickImageFromGallery()
         }
 
         binding.saveButton.setOnClickListener {
-            val name = binding.editName.text.toString()
-            viewModel.updateUserProfile(name, viewModel.profileImageUri.value)
-            viewModel.validateInputs(name)
-            viewModel.validationState.observe(viewLifecycleOwner) { validationState ->
-                if (!validationState.hasErrorsProfile()) {
-                    viewModel.updateUserProfile(name, viewModel.profileImageUri.value)
-                } else {
-                    binding.inputName.error = validationState.nameErrorProfile
-                }
-            }
-            viewModel.profileUpdateStatus.observe(viewLifecycleOwner) { success ->
-                if (success) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Profil məlumatları yeniləndi",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    // Profil məlumatları yeniləndikdən sonra, ProfileFragment-ə keçin
-                    findNavController().popBackStack() // Profil məlumatları saxlandıqdan sonra geri qayıdırıq
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Profil yenilənməsi uğursuz oldu",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            saveUserProfile()
+        }
+
+        binding.backButtonUserinfo.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun saveUserProfile() {
+        val name = binding.editName.text.toString().trim()
+        val surname = binding.editSurName.text.toString().trim()
+
+        val validationState = ValidationUtilsProfile.validateProfile(name, surname)
+
+        binding.inputName.error = validationState.nameError
+        binding.inputSurname.error = validationState.surnameError
+
+        if (!validationState.hasErrors()) {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+            binding.progressBar.visibility = View.VISIBLE
+
+            viewModel.updateUserProfile(name, surname, selectedImageUri) { success, message ->
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+
+                if (success) findNavController().navigateUp()
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, IMAGE_PICK_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
+            selectedImageUri = data?.data
+            binding.profileImage.setImageURI(selectedImageUri)
+            uploadImage()
+        }
+    }
+
+    private fun uploadImage() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        binding.progressBar.visibility = View.VISIBLE
+
+        viewModel.uploadProfileImage(userId, selectedImageUri!!) { success, message ->
+            binding.progressBar.visibility = View.GONE
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    companion object {
+        private const val IMAGE_PICK_CODE = 1000
     }
 }

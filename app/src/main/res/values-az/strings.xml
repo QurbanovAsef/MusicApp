@@ -92,6 +92,8 @@
     <string name="again_new_password">Təkrar yeni şifrə</string>
     <string name="user_name">İstifadəçi Adı</string>
     <string name="user_email">email@example.com</string>
+    <string name="Name">Ad</string>
+    <string name="Surname">Soyad</string>
     <string name="Name_and_Surname">Ad və soyad</string>
     <string name="save">Yadda saxla</string>
     <string name="duration">Müddət</string>
@@ -127,4 +129,16 @@
     <string name="edit_profile">Profilini redaktə et</string>
     <string name="profile_image">Profil şəkli</string>
     <string name="edit_name">Adınızı redaktə edin</string>
+
+
+    <string name="password_updated_successfully">Şifrə uğurla yeniləndi</string>
+    <string name="password_update_failed">Şifrə yenilənmədi</string>
+
+    <string name="password_reset_email_sent">Şifrə sıfırlama e-poçtu uğurla göndərildi</string>
+    <string name="password_reset_email_failed">Şifrə sıfırlama e-poçtu göndərilə bilmədi</string>
+
+    <string name="user_not_logged_in">İstifadəçi daxil olmayıb</string>
+    <string name="password_not_updated">Şifrə dəyişdirilmədi</string>
+    <string name="first_name">Ad</string>
+    <string name="last_name">Soyad</string>
 </resources>

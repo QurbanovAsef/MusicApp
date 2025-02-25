@@ -7,11 +7,9 @@ import androidx.room.RoomDatabase
 import com.example.music.data.model.response.FavoriteTrack
 import com.example.music.data.model.response.UserProfile
 
-@Database(entities = [FavoriteTrack::class, UserProfile::class], version = 4, exportSchema = false)
+@Database(entities = [FavoriteTrack::class], version = 5, exportSchema = false) // version-u artır!
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteTrackDao(): FavoriteTrackDao
-    abstract fun userProfileDao(): UserProfileDao // Yeni DAO əlavə edildi
-
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
@@ -23,7 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "music_database"
                 )
-                    .fallbackToDestructiveMigration() // Köhnə məlumatlar silinir
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

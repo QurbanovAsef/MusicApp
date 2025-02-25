@@ -42,22 +42,18 @@ class UpdatePassword : Fragment() {
         }
 
         binding?.ContinueUP?.setOnClickListener {
-            val password = binding?.recoveryPassword?.text.toString()
-            val confirmPassword = binding?.confirmationPassword?.text.toString()
+            val newPassword = binding?.recoveryPassword?.text.toString()
 
-            viewModel.validatePasswords(password, confirmPassword)
-
-            if (viewModel.validationState.value?.hasErrors() == false) {
-                viewModel.updatePassword(password) { success, error ->
-                    if (success) {
-                        Toast.makeText(requireContext(), "Şifrə uğurla yeniləndi!", Toast.LENGTH_SHORT).show()
-                        findNavController().navigate(R.id.action_updatePassword_to_successfullyRegister2)
-                    } else {
-                        Toast.makeText(requireContext(), "Xəta: $error", Toast.LENGTH_SHORT).show()
-                    }
+            viewModel.updatePassword(newPassword) { success, error ->
+                if (success) {
+                    Toast.makeText(requireContext(), getString(R.string.password_updated_successfully), Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_updatePassword_to_successfullyRegister2)
+                } else {
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
                 }
             }
         }
+
     }
 
     private fun handleValidationState(validationState: ValidationState) {
@@ -68,6 +64,10 @@ class UpdatePassword : Fragment() {
     private fun handleLoading(isLoading: Boolean) {
         binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
         binding?.ContinueUP?.isEnabled = !isLoading
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

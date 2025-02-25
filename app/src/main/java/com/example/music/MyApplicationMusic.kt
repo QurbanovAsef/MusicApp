@@ -11,7 +11,10 @@ import com.example.music.utils.AppConst.SHARED_KEY_THEME
 import com.example.music.utils.AppConst.THEME_KEY_DARK
 import com.example.music.utils.AppConst.THEME_KEY_DEFAULT
 import com.example.music.utils.LocaleUtil
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 
 @HiltAndroidApp
 class MyApplicationMusic : Application() {
@@ -21,6 +24,16 @@ class MyApplicationMusic : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        // Firebase başlat
+        FirebaseApp.initializeApp(this)
+
+        // Firebase App Check aktiv et (Debug üçün)
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        firebaseAppCheck.installAppCheckProviderFactory(
+            DebugAppCheckProviderFactory.getInstance()
+        )
+
+        sharedPreferences = getSharedPreferences(SHARED_KEY_PREFERENCES, MODE_PRIVATE)
         val theme = sharedPreferences.getString(SHARED_KEY_THEME, THEME_KEY_DEFAULT) ?: THEME_KEY_DEFAULT
 
         val nightMode = getNightMode(theme)
@@ -47,5 +60,4 @@ class MyApplicationMusic : Application() {
 
         super.attachBaseContext(LocaleUtil.getLocalizedContext(base, language))
     }
-
 }

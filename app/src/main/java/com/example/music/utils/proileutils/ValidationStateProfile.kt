@@ -1,9 +1,11 @@
 package com.example.music.utils.proileutils
 
+
 data class ValidationStateProfile(
-    val nameErrorProfile: String? = null,
+    val nameError: String? = null,
+    val surnameError: String? = null
 ) {
-    fun hasErrorsProfile(): Boolean {
-        return nameErrorProfile != null
+    fun hasErrors(): Boolean {
+        return nameError != null || surnameError != null
     }
 }

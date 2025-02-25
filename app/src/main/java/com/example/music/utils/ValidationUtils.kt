@@ -1,20 +1,29 @@
-
 package com.example.music.utils
 
-
 import android.util.Patterns
+
 object ValidationUtils {
 
-    // Əsas doğrulama funksiyası
-    fun validate(email: String, password: String, repeatPassword: String): ValidationState {
+    // Validation state'in yaradılmasında istifadə ediləcək metodlar public olacaq
+    fun validate(firstName: String, lastName: String, email: String, password: String, repeatPassword: String): ValidationState {
         return ValidationState(
+            firstNameError = validateFirstName(firstName),
+            lastNameError = validateLastName(lastName),
             emailError = validateEmail(email),
             passwordError = validatePassword(password),
             repeatPasswordError = validateRepeatPassword(password, repeatPassword)
         )
     }
 
-    // Email doğrulaması
+
+    fun validateFirstName(firstName: String): String? {
+        return if (firstName.isBlank()) "Ad boş ola bilməz" else null
+    }
+
+    fun validateLastName(lastName: String): String? {
+        return if (lastName.isBlank()) "Soyad boş ola bilməz" else null
+    }
+
     fun validateEmail(email: String): String? {
         return when {
             email.isBlank() -> "Email boş ola bilməz"
@@ -22,8 +31,6 @@ object ValidationUtils {
             else -> null
         }
     }
-
-    // Şifrə doğrulaması
     fun validatePassword(password: String): String? {
         return when {
             password.isBlank() -> "Şifrə boş ola bilməz"
@@ -35,7 +42,6 @@ object ValidationUtils {
         }
     }
 
-    // Təkrarlanan şifrə doğrulaması
     fun validateRepeatPassword(password: String, repeatPassword: String): String? {
         return if (repeatPassword.isBlank()) {
             "Təkrarlanan şifrə boş ola bilməz"
@@ -45,5 +51,4 @@ object ValidationUtils {
             null
         }
     }
-
 }

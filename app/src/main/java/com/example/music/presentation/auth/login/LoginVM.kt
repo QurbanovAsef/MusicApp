@@ -19,27 +19,23 @@ class LoginVM @Inject constructor(
     val state: LiveData<CoreUIState<State>> = _state
 
     // Login funksiyasının işləyişi
-    fun loginUser( email: String, password: String) {
-        // Validation üçün ValidationUtils istifadə edilir
-        val validationState = ValidationUtils.validate(email, password, password)
+    fun loginUser(email: String, password: String) {
+        val emailError = ValidationUtils.validateEmail(email)
+        val passwordError = ValidationUtils.validatePassword(password)
 
-        if (validationState.hasErrors()) {
-            Log.d("DDDDDDDDD", validationState.toString())
-
-            // Əgər validation xətası varsa, error məlumatı göndərilir
+        if (emailError != null || passwordError != null) {
             _state.value = CoreUIState.Success(
                 State(
-                    emailError = validationState.emailError,
-                    passwordError = validationState.passwordError
+                    emailError = emailError,
+                    passwordError = passwordError
                 )
             )
         } else {
-            // Validation düzgün oldusa, loading vəziyyətini göstəririk
             _state.value = CoreUIState.Loading(true)
-            // Firebase ilə login etmək
             loginWithFirebase(email, password)
         }
     }
+
 
     // Firebase ilə login etmək
     private fun loginWithFirebase(email: String, password: String) {
@@ -84,4 +80,3 @@ class LoginVM @Inject constructor(
     )
 }
 
-//Asef123!!

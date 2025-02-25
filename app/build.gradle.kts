@@ -42,10 +42,13 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.appcheck)
+    implementation(libs.firebase.appcheck.debug)
     implementation(libs.hilt)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.database)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.firestore.ktx)
     kapt(libs.hiltCompiler)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)

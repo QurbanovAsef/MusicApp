@@ -1,5 +1,6 @@
 package com.example.music.presentation.auth.bottomMenu.profile
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentProfileBinding
 import com.example.music.activity.ContainerActivity
@@ -38,20 +40,33 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.progressBar.visibility = View.VISIBLE // 🔥 Məlumat yüklənənə qədər ProgressBar aktiv olsun
+
+        profileViewModel.loadUserProfile()
+
         profileViewModel.userProfile.observe(viewLifecycleOwner) { userProfile ->
             userProfile?.let {
-                binding.profileImage1.setImageURI(Uri.parse(it.imageUri))
-                binding.editName.text = it.username
+                binding.editName.text = "${it.firstName} ${it.lastName}"
+
+                if (!it.imageUrl.isNullOrEmpty()) {
+                    binding.progressBar.visibility = View.VISIBLE // 🔥 Şəkil yüklənən zaman aktiv et
+                    Glide.with(this)
+                        .load(Uri.parse(it.imageUrl))
+                        .circleCrop() // 🔥 Şəkili yumru formaya salır
+                        .into(binding.profileImage1)
+                    binding.progressBar.visibility = View.GONE // 🔥 Şəkil yükləndikdən sonra gizlət
+                }
             }
+            binding.progressBar.visibility = View.GONE // 🔥 Məlumat yükləndikdən sonra gizlət
         }
 
         binding.btnEditProfile.setOnClickListener {
             findNavController().navigate(R.id.userInfoFragment)
         }
-
         binding.languageSection.setOnClickListener { showLanguageDialog() }
         binding.themeSection.setOnClickListener { showThemeDialog() }
         binding.aboutApp.setOnClickListener { findNavController().navigate(R.id.aboutAppFragment) }

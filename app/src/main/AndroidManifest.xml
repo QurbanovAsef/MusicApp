@@ -21,6 +21,9 @@
         android:theme="@style/Theme.Music"
         tools:ignore="DiscouragedApi,ManifestResource"
         tools:targetApi="tiramisu">
+        <meta-data
+            android:name="com.google.firebase.appcheck.v1.AppCheckProvider"
+            android:value="com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory" />
 
         <!-- SplashActivity - animasiya başlatmaq üçün -->
         <activity

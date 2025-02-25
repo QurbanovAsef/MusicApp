@@ -88,7 +88,11 @@
     <string name="again_new_password">Repeat New Password</string>
     <string name="user_name">Username</string>
     <string name="user_email">email@example.com</string>
-    <string name="Name_and_Surname">Name and Surname</string>
+
+    <string name="Name">Name</string>
+    <string name="Surname">Surname</string>
+    <string name="Name_and_Surname">Name and surname</string>
+
     <string name="save">Save</string>
     <string name="album_name">Album %1$d</string>
     <string name="artist_name">Artist Name</string>
@@ -125,4 +129,16 @@
     <string name="voice_search">Voice Search</string>
     <string name="speech_not_supported">Speech recognition is not supported on this device</string>
 
+
+    <string name="password_updated_successfully">Password updated successfully</string>
+    <string name="password_update_failed">Password update failed</string>
+
+    <string name="password_reset_email_sent">Password reset email sent successfully</string>
+    <string name="password_reset_email_failed">Failed to send password reset email</string>
+
+    <string name="user_not_logged_in">User is not logged in</string>
+    <string name="password_not_updated">Password could not be updated</string>
+
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
 </resources>

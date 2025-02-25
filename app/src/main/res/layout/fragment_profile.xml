@@ -28,6 +28,7 @@
         app:layout_constraintStart_toStartOf="@id/profileImage1"
         app:layout_constraintTop_toTopOf="@id/profileImage1" />
 
+
     <!-- Ad və Edit düyməsi -->
     <TextView
         android:id="@+id/editName"

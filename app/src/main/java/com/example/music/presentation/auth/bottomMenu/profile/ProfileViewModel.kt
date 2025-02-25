@@ -17,6 +17,9 @@ import com.example.music.utils.AppConst.SHARED_KEY_PREFERENCES
 import com.example.music.utils.AppConst.SHARED_KEY_THEME
 import com.example.music.utils.AppConst.THEME_KEY_DARK
 import com.example.music.utils.AppConst.THEME_KEY_LIGHT
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,35 +38,23 @@ class ProfileViewModel @Inject constructor(
     private val _userProfile = MutableLiveData<UserProfile?>()
     val userProfile: LiveData<UserProfile?> get() = _userProfile
 
-    private val userProfileDao = appDatabase.userProfileDao()
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance().reference
 
-    // Profil məlumatlarını yeniləyir
-    fun updateUserProfile(username: String, imageUri: Uri?) {
-        val userProfile = UserProfile(username = username, imageUri = imageUri?.toString())
-        _userProfile.value = userProfile
-
-        viewModelScope.launch {
-            try {
-                // Yeni istifadəçi profilini verilənlər bazasına əlavə edir
-                userProfileDao.insertUserProfile(userProfile)
-            } catch (e: Exception) {
-                // Xətanı idarə edin
-            }
-        }
+    init {
+        loadUserProfile()
     }
 
-    // Profil məlumatlarını yükləyir
     fun loadUserProfile() {
-        viewModelScope.launch {
-            try {
-                // Verilənlər bazasından istifadəçi profilini yükləyirik
-                val profile = userProfileDao.getAllUserProfiles().value?.firstOrNull() // İlk profili alırıq
-                _userProfile.value = profile
-            } catch (e: Exception) {
-                // Xətalarla əlaqəli əməliyyatları buraya əlavə edin
-                _userProfile.value = null
+        val userId = firebaseAuth.currentUser?.uid ?: return
+        firestore.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val profile = document.toObject(UserProfile::class.java)
+                    _userProfile.value = profile
+                }
             }
-        }
     }
 
     // Dil və Tema dəyişikliklərini saxlayır
