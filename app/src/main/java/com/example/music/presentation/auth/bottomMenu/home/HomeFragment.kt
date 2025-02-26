@@ -31,7 +31,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var tracksAdapter: TracksAdapter
 
     companion object {
-        private var isAlbumLoaded = false // Albomun artıq yüklənib-yüklənmədiyini yoxlayırıq
+        private var isAlbumLoaded = false
     }
 
     override fun onCreateView(
@@ -48,8 +48,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         observeData()
 
         if (!isAlbumLoaded) {
-            binding.progressAlbums.isGone = false // İlk açılışda görünsün
-            sharedViewModel.getPlaylists() // İlk açılışda playlistləri yüklə
+            binding.progressAlbums.isGone = false
+            sharedViewModel.getPlaylists()
         } else {
             binding.progressAlbums.isGone = true
         }
@@ -78,7 +78,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         )
 
-
         binding.songRecyclerView.apply {
             adapter = tracksAdapter
             layoutManager = LinearLayoutManager(context)
@@ -86,14 +85,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             isVerticalScrollBarEnabled = true
         }
     }
-
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
             sharedViewModel.playlistsFlow.collectLatest { playlists ->
                 playlistsAdapter.setItems(playlists ?: emptyList())
 
                 if (!isAlbumLoaded && playlists?.isNotEmpty() == true) {
-                    binding.progressAlbums.isGone = true // Albom yükləndi, artıq göstərilməsin
+                    binding.progressAlbums.isGone = true
                     isAlbumLoaded = true
                 }
             }

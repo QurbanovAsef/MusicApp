@@ -1,5 +1,6 @@
 package com.example.music.presentation.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,7 @@ class SearchAdapter(
 
     override fun getItemCount(): Int = tracks.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setItems(newTracks: List<TrackResponse>) {
         tracks = newTracks
         notifyDataSetChanged()
@@ -32,12 +34,14 @@ class SearchAdapter(
 
     inner class SearchViewHolder(private val binding: ItemSongBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(track: TrackResponse) = with(binding) {
-            songTitle.text = track.title.orUnknown("Naməlum Mahnı")
-            songName.text = track.venueName.orUnknown("Naməlum Mahnı")
-            songArtist.text = track.slug.orUnknown("Naməlum İfaçı")
-            trackIdTextView.text = track.id.toString()
 
+        fun bind(track: TrackResponse) = with(binding) {
+            val context = root.context
+
+            songTitle.text = track.title ?: context.getString(R.string.unknown_song)
+            songName.text = track.venueName ?: context.getString(R.string.unknown_venue)
+            songArtist.text = track.slug ?: context.getString(R.string.unknown_artist)
+            trackIdTextView.text = track.id.toString()
             favoriteIcon.setImageResource(if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty)
 
             Glide.with(root.context)

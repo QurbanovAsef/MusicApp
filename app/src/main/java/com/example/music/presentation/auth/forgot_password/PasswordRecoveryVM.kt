@@ -27,7 +27,7 @@ class PasswordRecoveryVM : ViewModel() {
     }
 
     fun sendPasswordResetEmail(email: String, onResult: (Boolean, String?) -> Unit) {
-        _isLoading.value = true  // ✅ ProgressBar görünəcək
+        _isLoading.value = true
 
         firebaseAuth.fetchSignInMethodsForEmail(email)
             .addOnCompleteListener { task ->

@@ -30,7 +30,6 @@ object DatabaseModule {
             .fallbackToDestructiveMigration()
             .build()
     }
-
     @Provides
     @Singleton
     fun provideFavoriteTrackDao(database: AppDatabase): FavoriteTrackDao {

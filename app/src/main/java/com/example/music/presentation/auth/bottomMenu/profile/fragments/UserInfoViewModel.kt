@@ -1,12 +1,12 @@
 package com.example.music.presentation.auth.bottomMenu.profile.fragments
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.androidprojecttest1.R
 import com.example.music.data.model.response.UserProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -38,15 +38,22 @@ class UserInfoViewModel @Inject constructor(
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val profile = document.toObject(UserProfile::class.java)
-                    _userProfile.value = profile
+                    profile?.let {
+                        _userProfile.value = it
+                    }
                 }
             }
             .addOnFailureListener { e ->
-                Log.e("FirebaseFirestore", "Profil məlumatları yüklənmədi", e)
+                Log.e("FirebaseFirestorm", getString(R.string.profile_load_error), e)
             }
     }
 
-    fun updateUserProfile(firstName: String, lastName: String, imageUri: Uri?, callback: (Boolean, String) -> Unit) {
+    fun updateUserProfile(
+        firstName: String,
+        lastName: String,
+        imageUri: Uri?,
+        callback: (Boolean, String) -> Unit
+    ) {
         val userId = firebaseAuth.currentUser?.uid ?: return
 
         val userData = hashMapOf(
@@ -59,12 +66,11 @@ class UserInfoViewModel @Inject constructor(
                 if (imageUri != null) {
                     uploadProfileImage(userId, imageUri, callback)
                 } else {
-                    callback(true, "Profil məlumatları uğurla yeniləndi")
+                    callback(true, getString(R.string.profile_update_success))
                 }
             }
-            .addOnFailureListener { e ->
-                callback(false, "Məlumatları yeniləmək mümkün olmadı")
-                Log.e("FirebaseFirestore", "Məlumatları yeniləmək mümkün olmadı", e)
+            .addOnFailureListener {
+                callback(false, getString(R.string.profile_update_error))
             }
     }
 
@@ -73,17 +79,19 @@ class UserInfoViewModel @Inject constructor(
 
         try {
             val inputStream: InputStream? =
-                getApplication<Application>().applicationContext.contentResolver.openInputStream(imageUri)
+                getApplication<Application>().applicationContext.contentResolver.openInputStream(
+                    imageUri
+                )
             val fileSizeInBytes = inputStream?.available() ?: 0
-            val fileSizeInMB = fileSizeInBytes / (1024 * 1024) // MB-a çevirmək
+            val fileSizeInMB = fileSizeInBytes / (1024 * 1024)
             inputStream?.close()
 
             if (fileSizeInMB > 5) {
-                callback(false, "Şəkilin həcmi çox böyükdür")
+                callback(false, getString(R.string.image_size_error))
                 return
             }
         } catch (e: Exception) {
-            callback(false, "Şəkilin ölçüsü yoxlanmadı")
+            callback(false, getString(R.string.image_size_check_error))
             return
         }
 
@@ -94,16 +102,19 @@ class UserInfoViewModel @Inject constructor(
                         .update("imageUrl", uri.toString())
                         .addOnSuccessListener {
                             _userProfile.value = _userProfile.value?.copy(imageUrl = uri.toString())
-                            callback(true, "Şəkil uğurla yükləndi")
+                            callback(true, getString(R.string.image_upload_success))
                         }
-                        .addOnFailureListener { e ->
-                            callback(false, "Firestore-a imageUrl yazmaq mümkün olmadı")
+                        .addOnFailureListener {
+                            callback(false, getString(R.string.image_url_update_error))
                         }
                 }
             }
             .addOnFailureListener {
-                callback(false, "Şəkili yükləmək mümkün olmadı")
+                callback(false, getString(R.string.image_upload_error))
             }
     }
+
+    private fun getString(resId: Int): String {
+        return getApplication<Application>().getString(resId)
+    }
 }
-1`

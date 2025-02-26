@@ -32,15 +32,12 @@ class ContainerActivity : AppCompatActivity() {
         setContentView(binding.root)
         sharedViewModel = ViewModelProvider(this)[SharedViewModel::class.java]
 
-        // NavHostFragment və NavController ilə işləyirikk
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // BottomNavigationView NavController-ə bağlanır
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        // BottomNavigationView görünüşünü idarə edirik
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.bottomNavigationView.isVisible = when (destination.id) {
                 R.id.nav_home,
@@ -52,10 +49,9 @@ class ContainerActivity : AppCompatActivity() {
             }
         }
 
-        // SharedPreferences ilə istifadəçi girişini yoxlamaq
-        val sharedPreferences = getSharedPreferences(SHARED_KEY_PREFERENCES, android.content.Context.MODE_PRIVATE)
+        val sharedPreferences =
+            getSharedPreferences(SHARED_KEY_PREFERENCES, android.content.Context.MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
-
         if (isLoggedIn) {
             val navGraph = navController.navInflater.inflate(R.navigation.nav_graph).apply {
                 setStartDestination(R.id.nav_home)
@@ -63,7 +59,6 @@ class ContainerActivity : AppCompatActivity() {
             navController.graph = navGraph
         }
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -77,8 +72,10 @@ class ContainerActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        sharedPreferences = newBase.getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
-        val lang = sharedPreferences.getString(LANG_KEY_LANGUAGE, LANG_KEY_DEFAULT) ?: LANG_KEY_DEFAULT
+        sharedPreferences =
+            newBase.getSharedPreferences(SHARED_KEY_PREFERENCES, Context.MODE_PRIVATE)
+        val lang =
+            sharedPreferences.getString(LANG_KEY_LANGUAGE, LANG_KEY_DEFAULT) ?: LANG_KEY_DEFAULT
         applyOverrideConfiguration(LocaleUtil.getLocalizedConfiguration(lang))
         super.attachBaseContext(newBase)
     }

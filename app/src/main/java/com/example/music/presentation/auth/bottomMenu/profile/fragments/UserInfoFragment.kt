@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentUserInfoBinding
 import com.example.music.utils.proileutils.ValidationUtilsProfile
 import com.google.firebase.auth.FirebaseAuth
@@ -90,11 +91,15 @@ class UserInfoFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
-            selectedImageUri = data?.data
-            binding.profileImage.setImageURI(selectedImageUri)
-            uploadImage()
+            data?.data?.let { uri ->
+                selectedImageUri = uri
+                binding.profileImage.setImageURI(uri)
+                uploadImage()
+            } ?: run {
+            }
         }
     }
+
 
     private fun uploadImage() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return

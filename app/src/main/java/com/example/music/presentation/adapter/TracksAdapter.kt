@@ -37,9 +37,11 @@ class TracksAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(track: TrackResponse) = with(binding) {
-            songTitle.text = track.title ?: "Naməlum Mahnı"
-            songName.text = track.venueName ?: "Naməlum Mahnı"
-            songArtist.text = track.slug ?: "Naməlum İfaçı"
+            val context = root.context
+
+            songTitle.text = track.title ?: context.getString(R.string.unknown_song)
+            songName.text = track.venueName ?: context.getString(R.string.unknown_venue)
+            songArtist.text = track.slug ?: context.getString(R.string.unknown_artist)
             trackIdTextView.text = track.id.toString()
 
             Glide.with(root.context)
@@ -50,10 +52,12 @@ class TracksAdapter(
             favoriteIcon.setImageResource(
                 if (track.isLiked == true) R.drawable.ic_favorite_full else R.drawable.ic_favorite_empty
             )
+
             favoriteIcon.setOnClickListener {
                 onLikeDislike(track)
                 notifyItemChanged(adapterPosition)
             }
+
             root.setOnClickListener {
                 onItemClick(track)
             }

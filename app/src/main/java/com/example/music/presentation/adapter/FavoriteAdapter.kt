@@ -1,5 +1,6 @@
 package com.example.music.presentation.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,7 @@ class FavoriteAdapter(
 
     override fun getItemCount(): Int = tracks.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newTracks: List<TrackResponse>) {
         tracks = newTracks
         notifyDataSetChanged()
@@ -39,8 +41,9 @@ class FavoriteAdapter(
         }
 
         fun bind(track: TrackResponse) = with(binding) {
-            songTitle.text = track.title ?: "Naməlum Mahnı"
-            songArtist.text = track.slug ?: "Naməlum İfaçı"
+            val context = root.context
+            songTitle.text = track.title ?: context.getString(R.string.unknown_song)
+            songArtist.text = track.slug ?: context.getString(R.string.unknown_artist)
 
             Glide.with(root.context)
                 .load(track.showAlbumCoverURL)

@@ -10,11 +10,11 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
 
-    private const val BASE_URL = "https://phish.in/api/v2/" // API URL
+    private const val BASE_URL = "https://phish.in/api/v2/"
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()) // JSON dönüşümü
+        .addConverterFactory(GsonConverterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .client(provideOkHttpClient())
         .build()

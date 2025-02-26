@@ -44,24 +44,22 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.progressBar.visibility = View.VISIBLE // 🔥 Məlumat yüklənənə qədər ProgressBar aktiv olsun
-
-        profileViewModel.loadUserProfile()
+        binding.progressBar.visibility = View.VISIBLE
 
         profileViewModel.userProfile.observe(viewLifecycleOwner) { userProfile ->
             userProfile?.let {
                 binding.editName.text = "${it.firstName} ${it.lastName}"
 
                 if (!it.imageUrl.isNullOrEmpty()) {
-                    binding.progressBar.visibility = View.VISIBLE // 🔥 Şəkil yüklənən zaman aktiv et
+                    binding.progressBar.visibility = View.VISIBLE
                     Glide.with(this)
                         .load(Uri.parse(it.imageUrl))
-                        .circleCrop() // 🔥 Şəkili yumru formaya salır
+                        .circleCrop()
                         .into(binding.profileImage1)
-                    binding.progressBar.visibility = View.GONE // 🔥 Şəkil yükləndikdən sonra gizlət
+                    binding.progressBar.visibility = View.GONE
                 }
             }
-            binding.progressBar.visibility = View.GONE // 🔥 Məlumat yükləndikdən sonra gizlət
+            binding.progressBar.visibility = View.GONE
         }
 
         binding.btnEditProfile.setOnClickListener {

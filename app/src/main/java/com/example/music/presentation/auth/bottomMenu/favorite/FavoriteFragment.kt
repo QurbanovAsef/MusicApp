@@ -30,7 +30,6 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
 
         adapter = FavoriteAdapter(
             onItemClick = { selectedTrack ->
-                // MusicFragment-ə keçid
                 val bundle = Bundle().apply {
                     putParcelable("track", selectedTrack)
                 }

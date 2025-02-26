@@ -14,8 +14,6 @@ class PlaylistsAdapter(
 ) : RecyclerView.Adapter<PlaylistsAdapter.ShowViewHolder>() {
 
     private var items: List<Playlist> = emptyList()
-
-    // Default şəkil URL-ləri
     private val defaultImageUrls = listOf(
         "https://phish.in/blob/47d1yu9dkmnepy8y9ezkphe8kcm4.jpg",
         "https://phish.in/blob/krjyc5lwd23hkjtosraz1qi7jml0.jpg",
@@ -54,12 +52,11 @@ class PlaylistsAdapter(
             showName.text = itemView.context.getString(R.string.album_name, adapterPosition + 1)
 
             val imageUrl = if (show.albumCoverURL.isNullOrEmpty()) {
-                defaultImageUrls[adapterPosition % defaultImageUrls.size] // Random default şəkil URL
+                defaultImageUrls[adapterPosition % defaultImageUrls.size]
             } else {
                 show.albumCoverURL
             }
 
-            // Şəkli Glide ilə yükləyin
             Glide.with(itemView.context)
                 .load(imageUrl)
                 .placeholder(R.drawable.black_icon)

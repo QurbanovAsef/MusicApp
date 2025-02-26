@@ -23,7 +23,6 @@ class FavoriteTrackViewModel @Inject constructor(
     init {
         loadFavoriteTracks()
     }
-
     /**
      * Bazadan favoritləri yükləyir və UI-ni yeniləyir
      */
@@ -33,7 +32,6 @@ class FavoriteTrackViewModel @Inject constructor(
             _favoriteTracks.postValue(favoriteTracks.map { it.toTrackResponse() })
         }
     }
-
     /**
      * Mahnını favoritlərə əlavə edir və UI-ni yeniləyir
      */
@@ -53,7 +51,6 @@ class FavoriteTrackViewModel @Inject constructor(
     /**
      * Mahnını favoritlərdən silir və UI-ni yeniləyir
      */
-
     fun removeFavorite(track: TrackResponse): Boolean {
         return try {
             viewModelScope.launch {
@@ -67,9 +64,6 @@ class FavoriteTrackViewModel @Inject constructor(
             false
         }
     }
-
-
-
     /**
      * Favorit olub-olmadığını dəyişir və statusu yeniləyir
      */
@@ -83,8 +77,6 @@ class FavoriteTrackViewModel @Inject constructor(
             } else {
                 addFavorite(track)
             }
-
-            // UI-ni yeniləyir ki, gecikmə olmasın
             val updatedList = _favoriteTracks.value?.map {
                 if (it.id == track.id) it.copy(isLiked = track.isLiked) else it
             } ?: emptyList()

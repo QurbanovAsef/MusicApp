@@ -24,8 +24,6 @@
         <meta-data
             android:name="com.google.firebase.appcheck.v1.AppCheckProvider"
             android:value="com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory" />
-
-        <!-- SplashActivity - animasiya başlatmaq üçün -->
         <activity
             android:name="com.example.music.activity.SplashActivity"
             android:exported="true"

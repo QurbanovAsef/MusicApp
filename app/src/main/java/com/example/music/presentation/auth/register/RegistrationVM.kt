@@ -40,7 +40,7 @@ class RegistrationVM @Inject constructor(
     private fun registerWithFirebase(firstName: String, lastName: String, email: String, password: String) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                _state.value = CoreUIState.Loading(false) // 🔥 Yükləmə bitdi
+                _state.value = CoreUIState.Loading(false)
                 if (task.isSuccessful) {
                     val userId = firebaseAuth.currentUser?.uid ?: return@addOnCompleteListener
                     val userData = hashMapOf(
@@ -48,7 +48,7 @@ class RegistrationVM @Inject constructor(
                         "lastName" to lastName
                     )
 
-                    // 🔥 Yalnız ad və soyadı Firestore-a yaz
+
                     FirebaseFirestore.getInstance().collection("users").document(userId).set(userData)
                         .addOnSuccessListener {
                             _state.value = CoreUIState.Success(State(isRegistered = true))
@@ -61,7 +61,7 @@ class RegistrationVM @Inject constructor(
                 }
             }
             .addOnFailureListener { error ->
-                _state.value = CoreUIState.Loading(false) // 🔥 Yükləmə bitdi
+                _state.value = CoreUIState.Loading(false)
                 _state.value = CoreUIState.Error(100, error.localizedMessage)
             }
     }

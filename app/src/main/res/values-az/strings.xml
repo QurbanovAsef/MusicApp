@@ -1,144 +1,151 @@
 <resources>
-    <!-- Ümumi -->
+    <!-- Tətbiq Məlumatı -->
     <string name="app_name">Musiqi Tətbiqi</string>
-    <string name="welcome">Xoş gəlmisiniz!</string>
-    <string name="please_fill_fields">Mobil tətbiqimizə daxil olmaq üçün zəhmət olmasa uyğun xanaları doldurun</string>
-    <string name="please_fill_fields_register">Mobil tətbiqimizə daxil olmaq üçün zəhmət olmasa uyğun xanaları doldurun</string>
-    <string name="email">E-poçt</string>
-    <string name="email_hint">Emailinizi qeyd edin</string>
-    <string name="password">Şifrə</string>
-    <string name="password_hint">Şifrənizi daxil edin</string>
-    <string name="login">Daxil ol</string>
-    <string name="register">Qeydiyyatdan keç</string>
-    <string name="forgot_password">Şifrəmi unutdum</string>
-    <string name="continue_with_google">Google ilə davam et</string>
-    <string name="continue_with_apple">Apple ilə davam et</string>
-    <string name="no_account">Hesabınız yoxdur?</string>
-    <string name="already_have_account">Hesabınız var?</string>
-    <string name="or">Və ya</string>
-    <string name="enter_username_or_email">İstifadəçi adı və ya e-poçt qeyd edin</string>
-
-    <!-- Şifrə ilə əlaqəli -->
-    <string name="password_recovery">Şifrə bərpası</string>
-    <string name="password_update">Şifrəni yenilə</string>
-    <string name="confirm_password">Şifrənin təsdiqi</string>
-    <string name="repeat_password">Təkrar şifrə</string>
-    <string name="please_fill_email">Şifrənizi bərpa etmək üçün zəhmət olmasa emailinizi qeyd edin.</string>
-
-    <!-- Pleylist və musiqi -->
-    <string name="home">Ana səhifə</string>
-    <string name="search">Axtarış</string>
-    <string name="music">musiqi</string>
-    <string name="favorites">Favoritlər</string>
-    <string name="profile">Profil</string>
-    <string name="shuffle">Təsadüfi seç</string>
-    <string name="song_title">Mahnının başlığı</string>
-    <string name="song_name">Mahnının adı</string>
-    <string name="show_name">Album adı</string>
-    <string name="show_surName">Album İfaçısı</string>
-    <string name="artist">İfaçı</string>
-    <string name="favorite_songs">Sevimli mahnılar</string>
-    <string name="album_name">Albom %1$d</string>
-    <string name="artist_name">İfaçı Adı</string>
-    <!-- Axtar -->
-    <string name="search_hint">Axtarış...</string>
-    <string name="search_no_results">Nəticə tapılmadı</string>
-    <string name="search_suggestion">Axtarış üçün nəsə yazın</string>
-
-
-    <!-- Tətbiq məlumatları -->
-    <string name="about_app">Tətbiq Haqqında</string>
+    <string name="about_app">Tətbiq haqqında</string>
     <string name="features">Xüsusiyyətlər</string>
-    <string name="listen_music">
-        \n
-• Sevdiyiniz musiqiləri dinləyin\n
-• Favorit mahnılarınızı siyahıya əlavə edin\n
-• Axtarış vasitəsilə istədiyiniz mahnını tez tapın\n
-• Mahnıları irəli və geri sarın, rahat idarə edin
-</string>
-
-
+    <string name="listen_music">• Sevdiyiniz musiqiləri dinləyin\n• Mahnıları favoritlər siyahısına əlavə edin\n• Axtarış funksiyası ilə istənilən mahnını tez tapın\n• Mahnıları irəli və geri sarın</string>
     <string name="version">Versiya</string>
     <string name="version_number">Versiya 1.0.0</string>
     <string name="contact">Əlaqə</string>
-    <string name="support_email">Dəstək üçün: asaf.qurbanov98@gmail.com</string>
-    <!-- Hata mesajları -->
-    <string name="error_occurred">Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.</string>
-    <string name="enter_search_term">Zəhmət olmasa axtarış sözünü daxil edin</string>
+    <string name="support_email">Dəstək: asaf.qurbanov98@gmail.com</string>
 
-    <!-- menim elave etdiklerim -->
-    <string name="coldplay">soyuq oyun</string>
-    <string name="time_start">00:00</string>
-    <string name="time_end">00:00</string>
-    <string name="continue_">Davam et</string>
-    <string name="Adjustments">Tənzimləmələr</string>
-    <string name="System_settings">Sistem tənzimləmələri</string>
-    <string name="User_data">İstifadəçi məlumatları</string>
-    <string name="exit">Çıxış</string>
-    <string name="About_the_application">Tətbiq haqqında</string>
-    <string name="music_settings">Musiqi Parametrləri</string>
-    <string name="language_selection">Dil Seçimi</string>
-    <string name="azerbaijani">Azərbaycan</string>
-    <string name="english">İngilis</string>
-    <string name="theme_selection">Tema Seçimi</string>
-    <string name="light_mode">İşıq rejimi</string>
-    <string name="dark_mode">Qaranlıq rejim</string>
-    <string name="successfully_register">Qeydiyyatınız uğurla tamamlandı!</string>
-    <string name="click_button">Aşağıdakı düyməyə klikləməklə tətbiqin əsas səhifəsinə keçə bilərsiniz.</string>
-    <string name="go_to_home_page">Əsas səhifəyə keç</string>
-    <string name="update_password">Parolu yeniləyin</string>
+    <!-- Giriş və Qeydiyyat -->
+    <string name="welcome">Xoş gəldiniz!</string>
+    <string name="please_fill_fields">Mobil tətbiqimizə daxil olmaq üçün tələb olunan sahələri doldurun.</string>
+    <string name="please_fill_fields_register">Mobil tətbiqimizdə qeydiyyatdan keçmək üçün tələb olunan sahələri doldurun.</string>
+    <string name="email">E-poçt</string>
+    <string name="email_hint">E-poçtunuzu daxil edin</string>
+    <string name="password">Şifrə</string>
+    <string name="password_hint">Şifrənizi daxil edin</string>
+    <string name="login">Daxil ol</string>
+    <string name="register">Qeydiyyat</string>
+    <string name="forgot_password">Şifrəni unutdun</string>
+    <string name="continue_with_google">Google ilə davam et</string>
+    <string name="continue_with_apple">Apple ilə davam et</string>
+    <string name="no_account">Hesabınız yoxdur?</string>
+    <string name="already_have_account">Artıq hesabınız var?</string>
+    <string name="or">Və ya</string>
+
+    <!-- Şifrə Bərpası -->
+    <string name="password_recovery">Şifrə Bərpası</string>
+    <string name="password_update">Şifrəni Yenilə</string>
+    <string name="confirm_password">Şifrəni Təsdiqlə</string>
+    <string name="repeat_password">Şifrəni Təkrarla</string>
+    <string name="please_fill_email">Şifrənizi bərpa etmək üçün e-poçtunuzu daxil edin.</string>
+    <string name="update_password">Şifrəni Yenilə</string>
     <string name="update_password_again">Şifrənizi yeniləyin və mobil tətbiqimizə yenidən daxil olun.</string>
-    <string name="new_password">Yeni şifrə</string>
-    <string name="again_new_password">Təkrar yeni şifrə</string>
-    <string name="user_name">İstifadəçi Adı</string>
-    <string name="user_email">email@example.com</string>
-    <string name="Name">Ad</string>
-    <string name="Surname">Soyad</string>
-    <string name="Name_and_Surname">Ad və soyad</string>
-    <string name="save">Yadda saxla</string>
+    <string name="new_password">Yeni Şifrə</string>
+    <string name="again_new_password">Yeni Şifrəni Təkrarla</string>
+
+    <!-- Nəzarət -->
+    <string name="home">Ana səhifə</string>
+    <string name="search">Axtar</string>
+    <string name="favorites">Favoritlər</string>
+    <string name="profile">Profil</string>
+
+    <!-- Musiqi Bölməsi -->
+    <string name="shuffle">Təsadüfi çal</string>
+    <string name="song_title">Mahnı başlığı</string>
+    <string name="song_name">Mahnı adı</string>
+    <string name="show_name">Şou adı</string>
+    <string name="show_surName">Şou soyadı</string>
+    <string name="artist">İfaçı</string>
+    <string name="favorite_songs">Sevimli Mahnılar</string>
+    <string name="album_name">Albom %1$d</string>
+    <string name="artist_name">İfaçının Adı</string>
     <string name="duration">Müddət</string>
     <string name="Topic">Mövzu</string>
-    <string name="Edit_profile">Profili redaktə edin</string>
+    <string name="music">Musiqi</string>
     <string name="song_date">0000-00-00</string>
     <string name="track_Id">0000</string>
     <string name="album">Albom</string>
-    <string name="songs">Musiqilər</string>
+    <string name="songs">Mahnılar</string>
+
+    <!-- Axtarış və Səsli Axtarış -->
+    <string name="search_hint">Axtar...</string>
+    <string name="search_no_results">Nəticə tapılmadı</string>
+    <string name="search_suggestion">Axtarış üçün nəsə yazın</string>
+    <string name="speak_now">İndi danışın...</string>
+    <string name="voice_search">Səsli Axtarış</string>
+    <string name="speech_not_supported">Bu cihazda səs tanıma dəstəklənmir</string>
+    <string name="enter_search_term">Axtarış ifadəsini daxil edin</string>
+    <string name="coldplay">Coldplay</string>
+
+    <!-- Parametrlər -->
+    <string name="Adjustments">Tənzimləmələr</string>
+    <string name="System_settings">Sistem ayarları</string>
+    <string name="User_data">İstifadəçi məlumatları</string>
+    <string name="exit">Çıxış</string>
+    <string name="About_the_application">Tətbiq haqqında</string>
+    <string name="music_settings">Musiqi Ayarları</string>
+    <string name="language_selection">Dil Seçimi</string>
+    <string name="azerbaijani">Azərbaycan dili</string>
+    <string name="english">İngilis dili</string>
+    <string name="theme_selection">Mövzu Seçimi</string>
     <string name="language">Dil</string>
     <string name="theme">Mövzu</string>
-
-
-
-    <string name="speak_now">Speak now…</string>
-    <string name="voice_search">Voice Search</string>
-    <string name="speech_not_supported">Speech recognition is not supported on this device</string>
-
-
-
     <string name="language_english">İngilis dili</string>
     <string name="language_azerbaijani">Azərbaycan dili</string>
-    <string name="select_language">Dil seçin</string>
-    <string name="select_theme">Tema seçin</string>
-    <string name="light_theme">İşıqlı tema</string>
-    <string name="dark_theme">Qaranlıq tema</string>
-    <string name="logout">Çıxış et</string>
-    <string name="logout_confirmation">Çıxış etmək istəyirsiniz?</string>
-    <string name="yes">Bəli</string>
-    <string name="no">Xeyr</string>
-    <string name="cancel">İmtina et</string>
-    <string name="successful_logout">Uğurla çıxış etdiniz</string>
-    <string name="edit_profile">Profilini redaktə et</string>
-    <string name="profile_image">Profil şəkli</string>
+    <string name="light_mode">İşıq rejimi</string>
+    <string name="dark_mode">Qaranlıq rejim</string>
+    <string name="select_language">Dili seçin</string>
+    <string name="select_theme">Mövzunu seçin</string>
+    <string name="light_theme">Açıq Mövzu</string>
+    <string name="dark_theme">Tünd Mövzu</string>
+    <!-- Profil -->
+    <string name="user_name">İstifadəçi adı</string>
+    <string name="user_email">email@example.com</string>
+    <string name="Name">Ad</string>
+    <string name="Surname">Soyad</string>
+    <string name="Name_and_Surname">Ad və Soyad</string>
+    <string name="edit_profile">Profili redaktə et</string>
+    <string name="profile_image">Profil Şəkli</string>
     <string name="edit_name">Adınızı redaktə edin</string>
 
+    <!-- Çıxış -->
+    <string name="logout">Çıxış</string>
+    <string name="logout_confirmation">Çıxmaq istədiyinizə əminsiniz?</string>
+    <string name="yes">Bəli</string>
+    <string name="no">Xeyr</string>
+    <string name="cancel">Ləğv et</string>
+    <string name="successful_logout">Uğurla çıxış edildi</string>
 
+    <!-- Xətalar və Mesajlar -->
+    <string name="error_occurred">Xəta baş verdi. Yenidən cəhd edin.</string>
+    <string name="profile_load_error">Profil məlumatları yüklənmədi</string>
+    <string name="profile_update_success">Profil uğurla yeniləndi</string>
+    <string name="profile_update_error">Profil yenilənmədi</string>
+    <string name="image_size_error">Şəkil faylı çox böyükdür</string>
+    <string name="image_size_check_error">Şəklin ölçüsünü yoxlamaq mümkün olmadı</string>
+    <string name="image_upload_success">Şəkil uğurla yükləndi</string>
+    <string name="image_upload_error">Şəkli yükləmək mümkün olmadı</string>
+    <string name="image_url_update_error">Firestore-da şəkil URL-sini yeniləmək mümkün olmadı</string>
+    <!-- Digər -->
+    <string name="time_start">00:00</string>
+    <string name="time_end">00:00</string>
+    <string name="continue_">Davam et</string>
+    <string name="successfully_register">Uğurla qeydiyyatdan keçdiniz!</string>
+    <string name="go_to_home_page">Ana səhifəyə keç</string>
+    <string name="save">Yadda saxla</string>
     <string name="password_updated_successfully">Şifrə uğurla yeniləndi</string>
     <string name="password_update_failed">Şifrə yenilənmədi</string>
-
-    <string name="password_reset_email_sent">Şifrə sıfırlama e-poçtu uğurla göndərildi</string>
+    <string name="password_reset_email_sent">Şifrə sıfırlama e-poçtu göndərildi</string>
     <string name="password_reset_email_failed">Şifrə sıfırlama e-poçtu göndərilə bilmədi</string>
-
+    <string name="enter_username_or_email">İstifadəçi adı və ya e-poçt qeyd edin</string>
     <string name="user_not_logged_in">İstifadəçi daxil olmayıb</string>
     <string name="password_not_updated">Şifrə dəyişdirilmədi</string>
     <string name="first_name">Ad</string>
     <string name="last_name">Soyad</string>
+    <string name="click_button">Aşağıdakı düyməyə klikləməklə tətbiqin əsas səhifəsinə keçə bilərsiniz.</string>
+    <string name="Edit_profile">Profili redaktə et</string>
+    <string name="unknown_song">Naməlum Mahnı</string>
+    <string name="unknown_artist">Naməlum İfaçı</string>
+    <string name="unknown_venue">Naməlum Məkan</string>
+
+    <string name="email_not_registered">Bu e-mail ilə qeydiyyat tapılmadı.</string>
+    <string name="password_reset_error">Şifrə sıfırlama xətası: %1$s</string>
+    <string name="unknown_error">Naməlum xəta</string>
+    <string name="fetch_methods_error">Xəta baş verdi: %1$s</string>
+
+
 </resources>

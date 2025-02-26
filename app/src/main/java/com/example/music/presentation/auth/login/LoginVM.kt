@@ -12,13 +12,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginVM @Inject constructor(
-    private val firebaseAuth: FirebaseAuth // FirebaseAuth burada inject edilir
+    private val firebaseAuth: FirebaseAuth
 ) : ViewModel() {
 
     private val _state: MutableLiveData<CoreUIState<State>> = MutableLiveData()
     val state: LiveData<CoreUIState<State>> = _state
 
-    // Login funksiyasının işləyişi
     fun loginUser(email: String, password: String) {
         val emailError = ValidationUtils.validateEmail(email)
         val passwordError = ValidationUtils.validatePassword(password)
@@ -42,12 +41,10 @@ class LoginVM @Inject constructor(
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
 
-                Log.d("DDDDDDDDD", task.toString())
 
-                // Loading vəziyyətini qapatırıq
                 _state.value = CoreUIState.Loading(false)
                 if (task.isSuccessful) {
-                    // Əgər login uğurludursa, success mesajı göndəririk
+
                     _state.value = CoreUIState.Success(
                         State(
                             isLoggedIn = true,
@@ -56,16 +53,12 @@ class LoginVM @Inject constructor(
                         )
                     )
                 } else {
-                    // Əgər login uğursuz oldusa, error mesajı göndəririk
+
                     _state.value = CoreUIState.Error(100, "Giriş uğursuz oldu!")
                 }
             }
             .addOnFailureListener { error ->
 
-                Log.d("DDDDDDDDD", error.toString())
-
-
-                // Firebase ilə əlaqə kəsilərsə, error mesajı göstəririk
                 _state.value = CoreUIState.Loading(false)
                 _state.value = CoreUIState.Error(100, error.localizedMessage ?: "Xəta baş verdi!")
             }

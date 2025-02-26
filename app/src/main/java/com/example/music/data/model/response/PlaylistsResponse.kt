@@ -9,7 +9,6 @@ data class PlaylistsResponse(
     val currentPage: Int? = null,
     val totalEntries: Int? = null
 )
-
 data class Playlist(
     val id: Int? = null,
     val slug: String? = null,

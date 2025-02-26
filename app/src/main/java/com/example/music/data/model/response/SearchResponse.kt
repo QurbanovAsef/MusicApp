@@ -2,7 +2,6 @@ package com.example.music.data.model.response
 
 import com.google.gson.annotations.SerializedName
 
-// Main response model
 data class SearchResponse(
     @SerializedName("exact_show")
     val exactShow: ExactShow?,
@@ -14,8 +13,6 @@ data class SearchResponse(
     val tags: List<Tag>?,
     val playlists: List<Playlist>?
 )
-
-// Nested models
 data class ExactShow(
     val id: Int,
     val date: String,
@@ -55,7 +52,6 @@ data class OtherShow(
     val name: String?,
     val date: String?
 )
-
 data class TagItem(
     val name: String?,
     val description: String?,

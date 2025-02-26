@@ -25,15 +25,12 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Balaca ikon görünməməlidir
         binding.smallLogoImage.visibility = android.view.View.INVISIBLE
 
-        // Parıltı effekti üçün animasiya
         val glowAnimation = ObjectAnimator.ofFloat(binding.logoImage, "alpha", 0f, 1f, 0f)
         glowAnimation.duration = 2000
         glowAnimation.start()
 
-        // Zoom-in animasiyası
         binding.logoImage.scaleX = 0f
         binding.logoImage.scaleY = 0f
         val zoomIn = ObjectAnimator.ofFloat(binding.logoImage, "scaleX", 1f)
@@ -45,7 +42,6 @@ class SplashActivity : AppCompatActivity() {
         animatorSet.playTogether(zoomIn, zoomInY, glowAnimation)  // Birlikdə işləmək üçün
         animatorSet.start()
 
-        // Ana ekrana keçid
         Handler(mainLooper).postDelayed({
             startActivity(Intent(this, ContainerActivity::class.java))
             finish()

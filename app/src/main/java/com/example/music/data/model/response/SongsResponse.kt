@@ -28,9 +28,9 @@ data class Song(
     @SerializedName("updated_at")
     val updatedAt: String? = null,
     @SerializedName("mp3_url")
-    val mp3Url: String? = null,  // URL sahəsi
-    val trackUrl: String? = null,  // URL sahəsi
-    val imageUrl: String? = null,  // URL sahəsi
-    var isLiked: Boolean = false // Yeni sahə
+    val mp3Url: String? = null,
+    val trackUrl: String? = null,
+    val imageUrl: String? = null,
+    var isLiked: Boolean = false
 ) : Parcelable
 

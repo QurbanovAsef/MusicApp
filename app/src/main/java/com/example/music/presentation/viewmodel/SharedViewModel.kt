@@ -24,9 +24,6 @@ class SharedViewModel @Inject constructor(
     private val _playerTracks = MutableLiveData<List<TrackResponse>>(emptyList())
     val playerTracks: LiveData<List<TrackResponse>> get() = _playerTracks
 
-    private val _loadingAlbums = MutableLiveData<Boolean>(true)
-    val loadingAlbums: LiveData<Boolean> get() = _loadingAlbums
-
     private val _loadingTracks = MutableLiveData<Boolean>(false)
     val loadingTracks: LiveData<Boolean> get() = _loadingTracks
 

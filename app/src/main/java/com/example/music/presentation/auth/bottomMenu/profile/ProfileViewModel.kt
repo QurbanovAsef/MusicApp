@@ -57,8 +57,7 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
-    // Dil və Tema dəyişikliklərini saxlayır
-    fun setLanguage(language: String) {
+       fun setLanguage(language: String) {
         if (this.language.value != language) {
             saveLanguagePreference(language)
             this.language.value = language

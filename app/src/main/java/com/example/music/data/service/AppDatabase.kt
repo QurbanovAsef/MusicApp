@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.music.data.model.response.FavoriteTrack
 import com.example.music.data.model.response.UserProfile
 
-@Database(entities = [FavoriteTrack::class], version = 5, exportSchema = false) // version-u artır!
+@Database(entities = [FavoriteTrack::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteTrackDao(): FavoriteTrackDao
     companion object {

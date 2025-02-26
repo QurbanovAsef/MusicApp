@@ -16,6 +16,6 @@ data class PlaylistItem(
     val likesCount: Int? = null,
     val likedByUser: Boolean? = null,
     val tags: List<String>? = null,
-    val isLiked: Boolean = false // Əlavə edilmiş sahə
+    val isLiked: Boolean = false
 
 ) : Parcelable

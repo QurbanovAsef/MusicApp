@@ -5,12 +5,10 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -18,7 +16,6 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.androidprojecttest1.R
 import com.example.androidprojecttest1.databinding.FragmentMusicBinding
-import com.example.music.data.model.response.FavoriteTrack
 import com.example.music.data.model.response.TrackResponse
 import com.example.music.presentation.auth.bottomMenu.favorite.FavoriteTrackViewModel
 import com.example.music.presentation.viewmodel.SharedViewModel
@@ -36,7 +33,6 @@ class MusicFragment : Fragment() {
     private var songsList: List<TrackResponse> = listOf()
     private var currentSongIndex = 0
     private val handler = Handler(Looper.getMainLooper())
-
     private val args: MusicFragmentArgs by navArgs()
     private var originalSongsList: List<TrackResponse> = listOf()
     private var isShuffleEnabled = false
